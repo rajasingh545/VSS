@@ -1,0 +1,711 @@
+﻿/*@charset "utf-8";
+/* CSS Document 
+@font-face {
+    font-family: Raleway;
+    src: url(../fonts/Raleway-Regular.ttf);
+}*/
+body {
+    font-family: "Raleway",Arial, Helvetica, sans-serif !important;
+    margin: 0px;
+}
+
+div, label, input, select, option, ul, li, a, span, textarea {
+font-size: 13pt;
+}
+textarea {
+min-height: 50px;
+}
+.mobileContainer {
+	width: 100%;
+	height: 100%;
+	
+	position: absolute;
+	margin: 0px auto;
+	top: 0px;
+	bottom: 0px;
+}
+@media (min-width: 768px) {
+	.container {
+	  width: 900px;
+	}
+  }
+
+.ajaxLoadingContainer {
+	min-height: 100%; height:auto;
+	 position:fixed;
+	 z-index:5; width:100%; height:100%; 
+	top: 0px;
+	bottom: 0px;
+	-webkit-background-size: cover;
+	-moz-background-size: cover;
+	-o-background-size: cover;
+	background-size: cover;
+	 background-color: rgba(255,255,255, 0.25);
+}
+
+.ajaxLoadingCentered {
+  position: fixed; /* or absolute */
+  top: 50%;
+  left: 50%;
+  text-align:center;
+  margin-top: -16px;
+  margin-left: -16px;
+}
+.imgFixed {
+    position: absolute; /* or absolute */
+    /* left: 50%;*/
+    right:1%;
+    text-align: center;
+    margin-top: 0px;
+    margin-left: -16px;
+}
+.logout {
+    position: absolute; /* or absolute */
+    /* left: 50%;*/
+    right:10%;
+    text-align: center;
+    margin-top: -4px;
+    margin-left: -16px;
+}
+.VSpacer {
+height: 100%;
+}
+.height30{
+    height:30px;
+}
+.height20 {
+    height: 20px;
+}
+
+.width100 {
+    width:100%;
+}
+
+.pointer {
+    cursor: pointer;
+}
+
+.row {
+    margin-right: 0px !important;
+    margin-left:0px;
+}
+
+.WelomeBK {
+    background: url(../assets/img/images/landing_page_bk.png) no-repeat center center fixed;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.WelcomeMenu {
+margin: 0px;
+padding: 0px;
+background-color: rgba(102, 153, 204, 0.4);
+padding-top: 8px;
+}
+
+.WelcomeMenu li{
+	list-style: none;
+	display: inline-block;
+	width: 22%;
+	text-align: center;
+	opacity: 1;
+}
+
+.WelcomeMenu li span {
+	display: block;
+	font-size: 12px;
+	color: #fff;
+	margin-bottom: 10px;
+	opacity: 1;
+	
+}
+
+.WelcomeMenu li a {
+	text-decoration: none;
+	opacity: 1;
+}
+
+.FormBK {
+    min-height: 100%;
+    height: auto;
+    background: url(../assets/img/images/form_bk.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.LoginBK {
+    min-height: 20%;
+    height: auto;
+    background: url(../assets/img/images/login_bk.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+.headerBK {
+    
+    height: auto;
+    background: url(../assets/img/images/login_bk.jpg) no-repeat center center fixed; 
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+}
+
+.Content {
+padding: 8px;
+}
+
+.Content h3 {
+padding: 0px;
+margin: 0px;
+margin-bottom: 5px;
+font-weight: normal;
+}
+
+.Content p {
+margin: 0px;
+margin: 0px;
+}
+.errorMessage{
+color:'red';
+text-align:'center';
+font-size:'14px';
+padding-bottom:"5px";
+width: 100%;
+
+}
+.UserNameIcon {
+	background-image:url(../assets/img/images/login_user.png);
+		background-repeat:no-repeat;
+	width: 32px;
+	height: 32px;
+}
+
+.PasswordIcon {
+	background-image:url(../assets/img/images/login_pwd.png);
+	background-repeat:no-repeat;
+	width: 32px;
+	height: 32px;
+}
+
+#HomeTitle {
+background-color: #d73232;
+padding: 0px;
+color: #FFFFFF;
+padding-top: 15px;
+padding-left: 5px;
+padding-bottom: 5px;
+}
+
+#HomeTitle h3 {
+margin: 0px;
+font-size: 18px;
+padding: 8px;
+}
+
+.ActionBarMenu {
+ background-image:url(../assets/img/images/actionbar_menu_32.png);
+ background-repeat: no-repeat;
+ width: 32px;
+ height: 32px;
+ display: block;
+ float: right;
+ margin-bottom: 5px;
+}
+
+.FormRow {
+	padding: 0px;
+	margin: 0px;
+	width: 100%;
+}
+
+.FormRow li{
+ display: inline-block;
+ float: left;
+ padding: 0px;
+margin: 0px; 
+}
+
+.clear {
+ clear: both;
+}
+
+.FullWidth {
+	width: 95%;
+}
+
+.TextBox {
+	height: 32px;
+	border: 0 !important;  
+	background:   rgba(000,000,000, 0.0);
+	-webkit-appearance: none;  
+	-moz-appearance: none; 
+	width: 100%;
+	text-indent: 0.01px; 
+	text-overflow: ""; 
+	border-radius: 5px;
+	padding: 8px;
+	box-shadow: inset 0 0 3px rgba(000,000,000, 0.5);
+}
+
+.TextArea {
+	height: auto;
+	border: 0 !important;  
+	background:   rgba(000,000,000, 0.0);
+	-webkit-appearance: none;  
+	-moz-appearance: none; 
+	width: 100%;
+	text-indent: 0.01px; 
+	text-overflow: ""; 
+	border-radius: 5px;
+	padding: 8px;
+	box-shadow: inset 0 0 3px rgba(000,000,000, 0.5);
+}
+
+.TextBoxFloat {
+    float: left;
+	height: 32px;
+}
+
+/*.Button {
+	background-image: url(../assets/images/button_bk.jpg);
+ 	border-radius: 4px;
+    border: solid 1px #d0112e;
+	color: #FFFFFF;
+	padding: 8px;
+	width: 100%;
+}
+
+.Button:active {
+   background-image: url(../assets/images/button_bk_sel.jpg);
+}*/
+
+ .Button {
+    border: none;
+    border-radius: 5px;
+    color: white;
+   
+    font-weight: bold;
+    background-color: #22b167;
+    height: 35px;
+} 
+
+    .Button:hover {
+        background-color: #5d5c5b;
+        cursor: pointer;
+    }
+
+.GreenButton {
+	background-image: url(../assets/img/images/button_green_bk.jpg);
+	border-radius: 4px;
+    border: solid 1px #eeeeee;
+	color: #FFFFFF;
+	padding: 8px;
+	width: 100%;
+}
+
+.GreenButton:active {
+	background-image: url(../assets/img/images/button_green_bk_sel.jpg);
+	border-radius: 4px;
+    border: solid 1px #eeeeee;
+	color: #FFFFFF;
+	padding: 8px;
+	width: 100%;
+}
+
+.VerticalMiddle {
+	
+}
+
+.LoginCompanyName {
+	color: red;
+	font-size: 9px;
+	margin-top:10px;
+	display: block;
+}
+
+.FormContainer {
+    padding: 0px;
+    margin: 0px;
+    /*background-color:#bfbfbf;*/
+    height: 150px;
+    padding: 10px;
+    /*margin-top: 50%;*/
+}
+
+
+
+.FormContainer li {
+list-style: none;
+background-color:#bfbfbf;
+padding: 10px 0px;
+}
+
+.FormContainer li:first-child {
+list-style: none;
+background-color:#bfbfbf;
+padding: 0px;
+padding-top: 10px;
+}
+
+.FormContainer li:last-child {
+list-style: none;
+background-color:#bfbfbf;
+padding: 0px;
+padding-bottom: 10px;
+}
+
+.DashboardMenu {
+	padding: 0px;
+	margin-top: 50px;
+}
+
+.DashboardMenu li {
+	margin: 0px;
+	padding: 0px;
+	display: inline-block;
+	width: 48%;
+	text-align: center;
+	margin-bottom: 10px;
+}
+
+.icon-user {
+ background-image:url(../assets/img/images/login_user.png);
+ width: 36px;
+ height: 32px;
+}
+
+.DashboardMenu li:last-child {
+	width: 100%;
+}
+
+.DashboardMenu li span {
+	color: red;
+	font-size: 12px;
+ display: block;
+ margin: 5px 0px;
+}
+
+.ComboBox {
+	border: 0 !important;  
+	 -webkit-appearance: none;
+    -moz-appearance:    none;
+    appearance:         none;
+	background:  url(../assets/img/images/spinner_right_arrow.png) no-repeat 99.5% center;
+	width: 100%;
+	text-indent: 0.01px; 
+	text-overflow: ""; 
+	border-radius: 5px;
+	padding: 8px;
+	box-shadow: inset 0 0 3px rgba(000,000,000, 0.5);
+	
+}
+
+.ComboBox option {
+	list-style: none;
+}
+
+#searchTopLeft {
+	width: 88%;
+	float: left;
+	margin-top: 10px;
+	
+}
+
+#searchTopRight {
+	width: 10%;
+	float: right;
+	margin-top: 10px;
+}
+#searchResultTitle {
+	clear:both;
+}
+
+.HomeIcon {
+ 
+}
+
+#cboSearchAll {
+}
+#searchList {
+	width: 100%;
+	height: 73%;
+	border: 2px solid #bebebe;
+	clear:both;
+	padding: 0px;
+	margin: 0px;
+	border-top-left-radius: 5px;
+  	border-bottom-left-radius: 5px;
+  	border-top-right-radius: 5px;
+  	border-bottom-right-radius: 5px;
+	overflow: scroll;
+}
+
+.RounderCorner {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+#searchList li {
+   list-style: none;
+   display: block;
+   padding: 10px;
+   cursor: pointer;
+}
+
+#searchList li:hover {
+	background-color: #cccccc;
+}
+
+.searchList {
+	width: 100%;
+	border: 2px solid #bebebe;
+
+	clear:both;
+	padding: 0px;
+	margin: 0px;
+	border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+}
+
+.searchList li {
+   list-style: none;
+   display: block;
+   padding: 10px;
+   cursor: pointer;
+}
+
+.searchList li:hover {
+	background-color: #cccccc;
+}
+
+
+.WorkOrderForm {
+	margin: 0px;
+	padding: 0px;
+}
+
+.WorkOrderForm li{
+	list-style: none;
+	margin: 5px 0;
+}
+
+.Listing {
+    margin: 0px;
+    padding: 15px;
+ 
+}
+.Listing1 {
+    margin: 0px;
+  padding-left:15px;
+}
+
+.Listing1 li {
+    list-style: none;
+    margin: 5px 0;
+}
+
+    .Listing li {
+        list-style: none;
+        margin: 5px 0;
+    }
+
+.hrline {
+    border-bottom: solid 1px gainsboro;
+    padding-bottom: 5px;
+}
+.WorkOrderForm .ScaffSize {
+	margin: 0px;
+	padding: 0px;
+}
+
+.WorkOrderForm .ScaffSize li {
+display: inline-block;
+padding-right: 10px;
+}
+
+.TitleDash {
+padding-top: 15px;
+background-color: #dedede;
+padding: 5px;
+color: #FFFFFF;
+}
+
+.TitleDash h3 {
+margin: 0px;
+padding-top: 15px;
+font-size: 16px;
+color: #f90404;
+text-indent: 45px;
+text-align: center;
+}
+
+.TitleLogin {
+    padding-top: 1px;
+    background-color: #22b167;
+    height:50px;
+}
+
+.TitleLogin h3 {
+margin: 0px;
+font-size: 18px;
+padding-top: 13px;
+padding-left:10px;
+color: #fff;
+}
+
+.Title {
+padding-top: 15px;
+background-color: #22b167;
+color: #FFFFFF;
+}
+
+.Title h3 {
+margin: 0px;
+font-size: 18px;
+padding-top: 3px;
+}
+
+.HomeBack {
+    background: url(../assets/img/back_24.png) no-repeat 0% 10px;
+    text-indent: 24px;
+    text-decoration: none;
+    color: #FFFFFF;
+    display: block;
+    padding: 8px;
+}
+
+.HomeBack:hover {
+	opacity: 0.8;
+}
+.HomeBack.active {
+  background-color:#22b167;
+}
+
+.Title a:hover,.TitleLogin a:hover {
+ text-decoration: none;
+ color: #FFFFFF;
+}
+
+.Logout {
+background: url(../assets/img/images/logout.png)  no-repeat 5px 16px;
+width: 28px;
+height: 24px;
+float: left;
+text-indent: 32px;
+padding-top: 18px;
+color: #FF0000;
+font-size: 10px;
+text-decoration: none;
+}
+
+.Logout :hover {
+  color: #FFFFFF;
+  text-decoration: none;
+}
+
+#txtFromDate {
+float: left;
+width: 50%;
+}
+
+#txtToDate {
+width: 50%;
+}
+
+#workProgressImages {
+	margin: 0px;
+	padding: 0px;
+	
+	border: 2px solid #bebebe;
+	corner-radius: 5px;
+}
+
+#workProgressImages .row {
+	border: 1px solid #fff;
+	margin: 6px auto;
+}
+
+#workers {
+	margin: 0px;
+	padding: 4px;
+	
+	border: 2px solid #bebebe;
+	corner-radius: 5px;
+}
+
+
+#workers .TextBox {
+	display: inline-block;
+}
+
+#lorryArrangement {
+	margin: 0px;
+	padding: 4px;
+	
+	border: 2px solid #bebebe;
+	corner-radius: 5px;
+}
+
+#lorryArrangement .row .TextBox {
+	width: 30%;
+}
+
+#lorryArrangement  textarea {
+	width: 100%;
+}
+#scaffoldRegister {
+	margin: 0px;
+	padding: 0px;
+	
+	border: 2px solid #bebebe;
+	corner-radius: 5px;
+}
+#scaffoldRegister .row .TextBox {
+	width: 48%;
+	margin: 3px;
+}
+
+#driverTrackList {
+	margin: 0px;
+	padding: 0px;
+	
+	border: 2px solid #bebebe;
+	corner-radius: 5px;
+}
+
+#driverTrackList .TextBox {
+		margin: 2px;
+}
+
+#driverTrackList .driverTrackItem {
+		margin: 2px;
+}
+.menuText {
+	display: block; padding: 16px 0px; color: rgb(117, 117, 117); text-decoration: none;
+}
+
+
+.gridcolHeader {
+    padding: 1rem;  
+    color: #000;
+	text-align: left;
+	font-weight: bold;
+	
+}
+.center-div
+{
+  margin: 0 auto;
+  max-width: 700px;
+  height: 100px;
+  border-radius: 3px;
+}
