@@ -59,9 +59,24 @@ class DropdownMultiple extends Component{
       listOpen: !prevState.listOpen
     }))
   }
+  toggleSelected(id, key){
+    let temp = this.state[key];
+    temp[id].selected = !temp[id].selected
+    this.setState({
+      [key]: temp
+    })
+  }
+  selectItem(index, stateKey){
+    let {list} = this.props;
+    // list.forEach(item => item.selected = false);
+    list[index].selected = !list[index].selected;
+   
+     this.props.toggleItem(list, stateKey);
+  }
+
 
   render(){
-    const{list, toggleItem} = this.props
+    const{list, toggleItem, name, key, stateId} = this.props
     const{listOpen, headerTitle} = this.state
     return(
       <div className="dd-wrapper">
@@ -73,9 +88,9 @@ class DropdownMultiple extends Component{
             }
         </div>
        {listOpen && <ul className="dd-list" onClick={e => e.stopPropagation()}>
-         {list.map((item) => (
-           <li className="dd-list-item" key={item.title} onClick={() => toggleItem(item.id, item.key)}>
-             {item.title} {item.selected && <FontAwesome name="check"/>}
+         {list.map((item, index) => (
+           <li className="dd-list-item" key={item[key]} onClick={() => this.selectItem(index, item[key], stateId)}>
+             {item[name]} {item.selected && <FontAwesome name="check"/>}
            </li>
           ))}
         </ul>}

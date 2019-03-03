@@ -136,12 +136,13 @@ class Attedence extends React.Component {
           <input type="text" placeholder={"30"}/>
         </div>
     </div>
+    <br/>
     <div className="row">
       <div className="col-sm-6">
-        <Button bsStyle="secondary" id="draft" type="submit">Draft</Button>
+        <Button bsStyle="secondary" className="width50" id="draft" type="submit">Draft</Button>
       </div>
       <div className="col-sm-6">
-        <Button bsStyle="primary" id="submit" type="submit">Submit</Button>
+        <Button bsStyle="primary" id="submit" className="width50" type="submit">Submit</Button>
       </div>
     </div>
         

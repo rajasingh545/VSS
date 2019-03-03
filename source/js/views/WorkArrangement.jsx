@@ -1,158 +1,79 @@
 /* Module dependencies */
 import React from 'react';
-
+import { connect } from 'react-redux';
 import DropdownMultiple from '../common/DropdownMultiple';
 import Dropdown from '../common/Dropdown';
+import CustomButton from '../common/CustomButton';
+import baseHOC from "./baseHoc";
+import { listigDetails, requestDetails, clearListing,requestPostClear } from 'actions/WorkArrangement.actions';
 
-
-
+@connect(state => ({
+  loading: state.request.get('loadingListing'),
+listingDetails: state.request.get('listingDetails'),
+requestDet: state.request.get('requestDet'),
+}))
+@baseHOC
 class WorkArrangement extends React.Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      workers: [
-        {
-          id: 0,
-          title: 'New York',
-          selected: false,
-          key: 'workers'
-        },
-        {
-          id: 1,
-          title: 'Dublin',
-          selected: false,
-          key: 'workers'
-        },
-        {
-          id: 2,
-          title: 'Istanbul',
-          selected: false,
-          key: 'workers'
-        },
-        {
-          id: 3,
-          title: 'Dublin1',
-          selected: false,
-          key: 'workers'
-        },
-        {
-          id: 4,
-          title: 'Istanbul2',
-          selected: false,
-          key: 'workers'
-        }
-      ],
-      project: [
-        {
-          id: 0,
-          title: 'project1',
-          selected: false,
-          key: 'project'
-        },
-        {
-          id: 1,
-          title: 'project2',
-          selected: false,
-          key: 'project'
-        },
-        {
-          id: 2,
-          title: 'project3',
-          selected: false,
-          key: 'project'
-        }
-      ],
-      location: [
-        {
-          id: 0,
-          title: 'New York',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 1,
-          title: 'Dublin',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 2,
-          title: 'California',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 3,
-          title: 'Istanbul',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 4,
-          title: 'Izmir',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 5,
-          title: 'Oslo',
-          selected: false,
-          key: 'location'
-        },
-        {
-          id: 6,
-          title: 'Zurich',
-          selected: false,
-          key: 'location'
-        }
-      ]
+      workers: [],
+      project: [],
+      supervisors: []
     };
     this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
     this.toggleSelected = this.toggleSelected.bind(this);
   }
-  toggleSelected(id, key){
-    let temp = JSON.parse(JSON.stringify(this.state[key]))
-    temp[id].selected = !temp[id].selected
-    this.setState({
-      [key]: temp
-    })
-  }
-  resetThenSet(id, key){
-    let temp = JSON.parse(JSON.stringify(this.state[key]));
-    temp.forEach(item => item.selected = false);
-    temp[id].selected = true;
-    this.setState({
-      [key]: temp
-    });
+  componentWillMount(){
+    const { dispatch } = this.props;
+    this.state.userType = this.props.userType;
+    this.state.userId = this.props.userId;
+     dispatch(requestDetails(this.state));
+
   }
   componentWillReceiveProps(nextProps) {
-    console.log('--in componentWillReceiveProps(nextProps) {');
-    const count = nextProps.list.filter(function(a) { return a.selected; }).length;
-    console.log("sssssss",count)
-    if(count === 0){
-      return {headerTitle: nextProps.title}
+    console.log("next props", nextProps);
+
+    if(nextProps.requestDet){
+      this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisors});
+
     }
-    else if(count === 1){
-      return {headerTitle: `${count} ${nextProps.titleHelper}`}
-    }
-    else if(count > 1){
-      return {headerTitle: `${count} ${nextProps.titleHelper}s`}
-    }
+  
+  }
+  toggleSelected(id, list, stateKey){
+    this.setState({
+      [stateKey]: list
+    });
+  }
+  resetThenSet(key, list, stateKey){
+    // let temp = this.state[key];
+    // temp.forEach(item => item.selected = false);
+    // temp[id].selected = true;
+    this.setState({
+      [stateKey]: list
+    });
+    let valuekey= `value_${stateKey}`;
+    this.setState({valuekey:key});
   }
   
   /* Render */
   render() {
     const {headerTitle} = this.state;
+
     return (
     <div className="container work-arr-container">
-    
+    <br />
     <div className="row">
         <div className="col-sm-6"><label>Project</label></div>
           <div className="col-sm-6">
             <Dropdown
                   title="Select Project"
-                  list={this.state.project}
+                  name="projectName"
+                  key="projectId"
+                  stateId="projects"
+                  list={this.state.projects}
+                  
                   resetThenSet={this.resetThenSet}
             />
           </div>
@@ -162,8 +83,10 @@ class WorkArrangement extends React.Component {
         <div className="col-sm-6"><label>Base Supervisor</label></div>
           <div className="col-sm-6">
             <Dropdown
-                  title="Select Project"
-                  list={this.state.project}
+                  title="Select Supervisor"
+                  name="supervisorName"
+                  key="supervisorId"
+                  list={this.state.supervisors}
                   resetThenSet={this.resetThenSet}
             />
           </div>
@@ -173,8 +96,10 @@ class WorkArrangement extends React.Component {
         <div className="col-sm-6"><label>Additional Supervisor</label></div>
           <div className="col-sm-6">
             <Dropdown
-                  title="Select Project"
-                  list={this.state.project}
+                  title="Select Supervisor"
+                  name="supervisorName"
+                  key="supervisorId"
+                  list={this.state.supervisors}
                   resetThenSet={this.resetThenSet}
             />
           </div>
@@ -186,8 +111,11 @@ class WorkArrangement extends React.Component {
           <DropdownMultiple
               titleHelper="Workers"
               title="Select Workers"  
+              name="workerName"
+              key="workerId"
+              stateKey = "workers"
               headerTitle={headerTitle}
-              list={this.state.location}
+              list={this.state.workers}
               toggleItem={this.toggleSelected}
             />
           </div>
@@ -199,17 +127,17 @@ class WorkArrangement extends React.Component {
             <input type="text" />
           </div>
     </div>
-
+<br />
     <div className="row">
-      <div className="col-sm-12">
-      <div></div>
-      <button className="Button btn-block" id="draft" type="submit">Draft</button>
-      <button className="Button btn-block" id="preview" type="submit">Preview</button>
-      <button className="Button btn-block" id="submit" type="submit">Submit</button>
+      <div className="col-sm-3"><CustomButton bsStyle="secondary"  id="draft" type="submit">Draft</CustomButton> </div>
+      <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit">Preview</CustomButton></div>
+      <div className="col-sm-3"> <CustomButton bsStyle="primary"  id="submit" type="submit">Submit</CustomButton></div>
+     
+      
       </div>
     </div>
         
-    </div>
+   
     
     );
   }
