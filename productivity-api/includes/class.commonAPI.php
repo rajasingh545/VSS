@@ -15,7 +15,7 @@ class commonAPI
         $allDetails = array();
 		$allDetails["projects"] = $this->projectDetails($obj);
         $allDetails["workers"] = $this->workerDetails();
-        $allDetails["supervisors"] = $this->supervisorDetails();
+        // $allDetails["supervisors"] = $this->supervisorDetails();
         // $allDetails["category"] = $this->categoryDetails();
         // $allDetails["subCategory"] = $this->subCategoryDetails();
 		// $allDetails["users"] = $this->usersDetails();
@@ -105,25 +105,26 @@ class commonAPI
  
 		return $driverArr;
 	}
-    function supervisorDetails(){
+    function supervisorDetails($pid){
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("supervisorId","supervisorName");
-		$whereClause = "status='1'";
-		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["SUPERVISORS"],$selectFileds,$whereClause);
+		$selectFileds=array("userId","Name");
+		
+		$whereClause = "project=$pid and userStatus=1";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["USERS"],$selectFileds,$whereClause);
 		
 		$vehiclesArr = array();
 		if($res[1] > 0){
-			$vehiclesArr = $db->fetchArray($res[0], 1);          	
+			$vehiclesArr["supervisors"] = $db->fetchArray($res[0], 1);          	
 			
 		}
 		else{
-			$vehiclesArr=array(); 
+			$vehiclesArr["supervisors"]=array(); 
 		}
- 
-		return $vehiclesArr;
+		
+		return $this->common->arrayToJson($vehiclesArr);
 	}
     function categoryDetails(){
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import FontAwesome from 'react-fontawesome'
+import {Glyphicon}  from 'react-bootstrap';
 import './global.css'
 
 class DropdownMultiple extends Component{
@@ -66,31 +66,33 @@ class DropdownMultiple extends Component{
       [key]: temp
     })
   }
-  selectItem(index, stateKey){
+  selectItem(index, stateKey, keyName){
     let {list} = this.props;
     // list.forEach(item => item.selected = false);
     list[index].selected = !list[index].selected;
    
-     this.props.toggleItem(list, stateKey);
+    let selectedList = list.filter(item => item.selected === true);
+    let selectedids = selectedList.map(item => item[keyName]);
+     this.props.toggleItem(list, stateKey, selectedids);
   }
 
 
   render(){
-    const{list, toggleItem, name, key, stateId} = this.props
+    const{list, toggleItem, name, keyName, stateKey} = this.props
     const{listOpen, headerTitle} = this.state
     return(
       <div className="dd-wrapper">
         <div className="dd-header" onClick={() => this.toggleList()}>
             <div className="dd-header-title">{headerTitle}</div>
             {listOpen
-              ? <FontAwesome name="angle-up" size="2x"/>
-              : <FontAwesome name="angle-down" size="2x"/>
+              ? <a href="#"><Glyphicon  glyph="menu-up" /></a>
+              : <a href="#"><Glyphicon  glyph="menu-down"/></a>
             }
         </div>
        {listOpen && <ul className="dd-list" onClick={e => e.stopPropagation()}>
          {list.map((item, index) => (
-           <li className="dd-list-item" key={item[key]} onClick={() => this.selectItem(index, item[key], stateId)}>
-             {item[name]} {item.selected && <FontAwesome name="check"/>}
+           <li className="dd-list-item" key={item[keyName]} onClick={() => this.selectItem(index, stateKey, keyName)}>
+             {item[name]} {item.selected && <a href="#"><Glyphicon  glyph="ok-circle"/></a>}
            </li>
           ))}
         </ul>}

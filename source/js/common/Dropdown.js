@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import {Glyphicon}  from 'react-bootstrap'
+import {Glyphicon}  from 'react-bootstrap';
 import './global.css'
 
 class Dropdown extends Component{
@@ -33,7 +33,7 @@ class Dropdown extends Component{
     })
   }
 
-  selectItem(title, id, stateKey){
+  selectItem(title, id, stateKey, value){
     let {list} = this.props;
     list.forEach(item => item.selected = false);
     list[id].selected = true;
@@ -41,7 +41,7 @@ class Dropdown extends Component{
     this.setState({
       headerTitle: title,
       listOpen: false
-    }, this.props.resetThenSet(id, list, stateKey))
+    }, this.props.resetThenSet(value, list, stateKey))
   }
 
   toggleList(){
@@ -51,21 +51,22 @@ class Dropdown extends Component{
   }
 
   render(){
-    const{list, key, name, stateId} = this.props
+    const{list, keyName, name, stateId} = this.props
     const{listOpen, headerTitle} = this.state
+ 
     return(
       
       <div className="dd-wrapper">
         <div className="dd-header" onClick={() => this.toggleList()}>
           <div className="dd-header-title">{headerTitle}</div>
           {listOpen
-            ? <Glyphicon  glyph="glyphicon-arrow-up" />
-            : <Glyphicon  glyph="glyphicon-arrow-down"/>
+              ? <a href="#"><Glyphicon  glyph="menu-up" /></a>
+              : <a href="#"><Glyphicon  glyph="menu-down"/></a>
           }
         </div>
         {listOpen && <ul className="dd-list" onClick={e => e.stopPropagation()}>
           {list.map((item, index)=> (
-            <li className="dd-list-item" key={item[key]} onClick={() => this.selectItem(item[name], index, stateId)}>{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check"/>}</li>
+            <li className="dd-list-item" key={item[keyName]} onClick={() => this.selectItem(item[name], index, stateId, item[keyName])}>{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check"/>}</li>
           ))}
         </ul>}
       </div>

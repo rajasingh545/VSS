@@ -1,7 +1,7 @@
 <?php
 include_once "lib/init.php";
 
-include_once $ROOTPATH."/includes/class.request.php";
+include_once $ROOTPATH."/includes/class.workAttendance.php";
 
 // error_reporting(E_ALL);
 // ini_set("display_errors",1);
@@ -12,7 +12,7 @@ $requestObj = new REQUESTS();
 //  $obj = $_POST;
 //  pr($obj);exit;
  if($obj["requestCode"] === 1){ //create
-    $response = $requestObj->createRequest($obj);
+    // $response = $requestObj->createWorkArranments($obj);
  }
  elseif($obj["requestCode"] === 2){
      $requestStatus = $obj["requestStatus"];

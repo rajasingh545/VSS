@@ -11,6 +11,7 @@ body {
 
 div, label, input, select, option, ul, li, a, span, textarea {
 font-size: 13pt;
+font-weight: normal;
 }
 textarea {
 min-height: 50px;
@@ -87,7 +88,8 @@ height: 100%;
 
 .row {
     margin-right: 0px !important;
-    margin-left:0px;
+	margin-left:0px;
+	margin-bottom: 10px;
 }
 
 .WelomeBK {

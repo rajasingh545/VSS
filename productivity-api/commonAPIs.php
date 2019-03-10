@@ -10,7 +10,7 @@ $apiObj = new commonAPI();
 $requestCode = $obj["requestCode"];
 $projectId = $obj["projectId"];
 if($requestCode == 1){
-    $apis = $apiObj->requestDetails($projectId);
+    $apis = $apiObj->supervisorDetails($projectId);
 }
 else{
     $apis = $apiObj->commonAPIs($obj);

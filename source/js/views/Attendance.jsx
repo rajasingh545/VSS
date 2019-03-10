@@ -1,8 +1,10 @@
 /* Module dependencies */
 import React from 'react';
 import Dropdown from '../common/Dropdown';
-import {Button} from 'react-bootstrap';
-import input from '../common/inputBox';
+import CustomButton from '../common/CustomButton';
+import CustInput from '../common/CustInput';
+import TimeField from '../common/TimePicker';
+import {getCurrentDate, getCurrentTime} from '../common/utility';
 
 class Attedence extends React.Component {
 
@@ -51,31 +53,20 @@ class Attedence extends React.Component {
   /* Render */
   render() {
     const {headerTitle} = this.state;
+    let cDate = getCurrentDate();
+    let cTime = getCurrentTime();
+    console.log("==",cTime); 
     return (
     <div className="work-arr-container">
-    
+    <br/>
     <div className="row">
-        <div className="col-sm-6"><label>Attedence</label></div>
-        <div className="col-sm-6">
-        <label>
-        <span>
-            <input type="radio" value="option1" 
-                        checked={this.state.selectedOption === 'option1'} 
-                        onChange={this.handleOptionChange} />
-            IN
-        </span>
-        <span>
-            <input type="radio" value="option2" 
-                        checked={this.state.selectedOption === 'option2'} 
-                        onChange={this.handleOptionChange} />
-            OUT
-        </span>
-        </label>
-        </div>
+        <div className="col-sm-3"><label>Date</label></div>
+        
+        <div className="col-sm-3"> <CustInput type="text" value={cDate} readOnly/> </div>
 
     </div>
     <div className="row">
-        <div className="col-sm-6"><label>Site</label></div>
+        <div className="col-sm-3"><label>Site</label></div>
           <div className="col-sm-6">
             <Dropdown
                   title="Select Project"
@@ -86,63 +77,79 @@ class Attedence extends React.Component {
     </div>
   {/* map mutiple workers 8*/}
   <div className="companyWorksList">
-    <div className="row">
-        <div className="col-sm-12"><label>Company Workers</label></div>
-    </div>
-
+   
     <div className="row">
       <div className="col-xs-1">
-        <span>1</span>
+        <span>&nbsp;</span>
       </div>
-      <div className="col-xs-3">
+      <div className="col-xs-6">
+        <span><strong>Workers</strong></span>
+      </div>
+
+     <div className="col-sm-3">
+        <label>
+        <span>
+            &nbsp;<input type="radio" value="option1" 
+                        checked={this.state.selectedOption === 'option1'} 
+                        onChange={this.handleOptionChange} />
+            &nbsp;IN
+        </span>&nbsp;&nbsp;
+        <span>
+            <input type="radio" value="option2" 
+                        checked={this.state.selectedOption === 'option2'} 
+                        onChange={this.handleOptionChange} />
+            &nbsp;OUT
+        </span>
+        </label>
+        </div>
+    </div>
+    <div className="row">
+      <div className="col-xs-1">
+        <span><input type="checkbox" /></span>
+      </div>
+      <div className="col-xs-6">
         <span>wrname1</span>
       </div>
 
-      <div className="col-xs-2">
-        <input type="text" size="4"/>
+      <div className="col-xs-3" style={{textAlign:"center"}}>
+      <TimeField value = {cTime} className="width100" onChange={this.onTimeChange}/>
       </div>
-      <div className="col-xs-6">
-        <Dropdown
-              title="Select Project"
-              list={this.state.project}
-              resetThenSet={this.resetThenSet}
-        />
-      </div>
+      
     </div>
   </div>
     <div className="row">
         <div className="col-sm-6"><label>Remark</label></div>
           <div className="col-sm-6">
-            <input type="text" />
+            <CustInput type="text" />
           </div>
     </div>
-  {/* map mutiple site name with count of workers */}
+  {/* map mutiple site name with count of workers 
     <div className="row">
         <div className="col-xs-6"><label>Site Name1</label></div>
           <div className="col-xs-6">
-          <input type="text" placeholder={"10"}/>
+          <TimeField colon=":" className="width100" onChange={this.onTimeChange}/>
         </div>
        
     </div>
     <div className="row">
     <div className="col-xs-6"><label>Site Name2</label></div>
           <div className="col-xs-6">
-          <input type="text" placeholder={"20"}/>
+          <TimeField colon=":" onChange={this.onTimeChange}/>
         </div>
     </div>
     <div className="row">
     <div className="col-xs-6"><label>Site Name3</label></div>
           <div className="col-xs-6">
-          <input type="text" placeholder={"30"}/>
+          <TimeField colon=":" onChange={this.onTimeChange}/>
         </div>
-    </div>
+    </div>*/}
     <br/>
     <div className="row">
       <div className="col-sm-6">
-        <Button bsStyle="secondary" className="width50" id="draft" type="submit">Draft</Button>
+        <CustomButton bsStyle="secondary" className="width50" id="draft" type="submit">Draft</CustomButton>
       </div>
       <div className="col-sm-6">
-        <Button bsStyle="primary" id="submit" className="width50" type="submit">Submit</Button>
+        <CustomButton bsStyle="primary" id="submit" className="width50" type="submit">Submit</CustomButton>
       </div>
     </div>
         
