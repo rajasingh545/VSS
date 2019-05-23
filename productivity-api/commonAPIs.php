@@ -12,6 +12,12 @@ $projectId = $obj["projectId"];
 if($requestCode == 1){
     $apis = $apiObj->supervisorDetails($projectId);
 }
+else if($requestCode == 99){
+    $apis = $apiObj->availableWorkerDetails($obj);
+}
+else if($requestCode == 5){
+    $apis = $apiObj->getContracts($obj);
+}
 else{
     $apis = $apiObj->commonAPIs($obj);
 }

@@ -12,38 +12,34 @@ $requestObj = new REQUESTS();
 //  $obj = $_POST;
 //  pr($obj);exit;
  if($obj["requestCode"] === 1){ //create
-    // $response = $requestObj->createWorkArranments($obj);
+    $response = $requestObj->createWorkArranments($obj);
  }
  elseif($obj["requestCode"] === 2){
-     $requestStatus = $obj["requestStatus"];
-     $response = $requestObj->requestDetails($requestStatus, $obj);
+     
+     $response = $requestObj->getWorkArrangementList($obj);
  }
  elseif($obj["requestCode"] === 3){
-     $listingId = $obj["listingId"];
-     $doNumber = $obj["DOId"];
-     $response = $requestObj->getViewDetails($listingId, $doNumber);
+     $response = $requestObj->getWorkArrangementDetails($obj);
  }
  elseif($obj["requestCode"] === 4){
-     $listingId = $obj["listingId"];
-     $listingStatus = $obj["approveStatus"];
-     $remarks = $obj["approverComments"];
-     $response = $requestObj->updateRequestStatus($listingId, $listingStatus, $remarks, $obj);
+     
+     $response = $requestObj->updateWorkArranmentsStatus($obj);
  }
  elseif($obj["requestCode"] === 5){
 
-     $response = $requestObj->updateRequestDetails($obj);
+     $response = $requestObj->updateWorkArranments($obj);
  }
  elseif($obj["requestCode"] === 6){
     // echo "---".$obj["requestDetails"]["request"]["rawRequestType"];
-     $response = $requestObj->generateDO($obj);
+     $response = $requestObj->getProjectAttendance($obj);
  }
   elseif($obj["requestCode"] === 7){
 
-     $response = $requestObj->doApprove($obj);
+     $response = $requestObj->updateAttendance($obj);
  }
  elseif($obj["requestCode"] === 8){
 
-     $response = $requestObj->collectionUpdate($obj);
+     $response = $requestObj->getSubmittedAttendanceList($obj);
  }
  elseif($obj["requestCode"] === 9){
     $requestStatus = $obj["requestStatus"];
@@ -67,7 +63,15 @@ elseif($obj["requestCode"] === 13){
 
     $response = $requestObj->driverEdit($obj);
 }
- 
+elseif($obj["requestCode"] === 14){
+
+    $response = $requestObj->createWorkRequest($obj);
+}
+elseif($obj["requestCode"] === 15){
+
+    $response = $requestObj->getWorkRequestList($obj);
+}
+
 
 echo $response;
 

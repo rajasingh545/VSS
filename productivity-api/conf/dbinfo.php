@@ -15,15 +15,20 @@ $TABLEINFO["WORKERS"] = "p_workers";
 $TABLEINFO["SUPERVISORS"] = "p_supervisor";
 $TABLEINFO["ATTENDANCE"] = "p_workattendance";
 $TABLEINFO["WORKARRANGEMENTS"] = "p_workarrangement";
-$TABLEINFO["STATUS"] = "v_status";
-$TABLEINFO["REQUEST"] = "v_requests";
-$TABLEINFO["MATREQUEST"] = " v_materialrequests";
-$TABLEINFO["DOGENERATIONHISTORY"] = "v_dogenerationhistory";
+$TABLEINFO["TEAM"] = "p_workerteam";
+$TABLEINFO["CLIENTS"] = "p_clients";
+$TABLEINFO["CONTRACTS"] = "p_contracts";
+$TABLEINFO["SCAFFOLDWORKTYPE"] = "p_scaffoldworktype";
+$TABLEINFO["SCAFFOLDTYPE"] = " p_scaffoldtype";
+$TABLEINFO["WORKREQUEST"] = "p_workrequest";
+
+$TABLEINFO["WORKREQUESTITEMS"] = "p_workrequestitems";
+$TABLEINFO["WORKREQUESTSIZEBASED"] = "p_workrequestsizebased";
+$TABLEINFO["WORKREQUESTMANPOWER"] = "p_workrequestmanpower";
+
 $TABLEINFO["TRANSFERHISTORY"] = "v_transferhistory";
 $TABLEINFO["PROJECTREPORT"] = "v_projectreport";
-
 $TABLEINFO["MISATCHALERT"] = "v_misatchalert";
-
 $SERVERS['DBHOST_MASTER'] = "localhost";
 $SERVERS['DBHOST_SLAVE'] = "localhost";
 

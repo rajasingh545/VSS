@@ -14,11 +14,17 @@ class commonAPI
 		
         $allDetails = array();
 		$allDetails["projects"] = $this->projectDetails($obj);
-        $allDetails["workers"] = $this->workerDetails();
+		$allDetails["workers"] = $this->workerDetails();
+		$allDetails["team"] = $this->teamDetails($obj);
+		$allDetails["clients"] = $this->cleintDetails($obj);
+		$allDetails["scaffoldType"] = $this->scaffoldTypeDetails($obj);
+		$allDetails["scaffoldWorkType"] = $this->scaffoldWorkTypeDetails($obj);
+		
+		
         // $allDetails["supervisors"] = $this->supervisorDetails();
         // $allDetails["category"] = $this->categoryDetails();
         // $allDetails["subCategory"] = $this->subCategoryDetails();
-		// $allDetails["users"] = $this->usersDetails();
+		$allDetails["supervisorsList"] = $this->allSupervisorDetails();
 		// $allDetails["allprojects"] = $this->allProjectDetails();
 		// $allDetails["requestDetails"] = $this->requestDetails();
         
@@ -33,6 +39,48 @@ class commonAPI
 		$whereClause = "projectStatus='1'";	
 		
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["PROJECTS"],$selectFileds,$whereClause);
+		
+		$projectArr = array();
+		if($res[1] > 0){
+			$projectArr = $db->fetchArray($res[0], 1);          	
+			
+		}
+		else{
+			$projectArr = array(); 
+		}
+ 
+		return $projectArr;
+	}
+	function teamDetails($obj){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("teamid","teamName");		
+		$whereClause = "status='1'";	
+		
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["TEAM"],$selectFileds,$whereClause);
+		
+		$projectArr = array();
+		if($res[1] > 0){
+			$projectArr = $db->fetchArray($res[0], 1);          	
+			
+		}
+		else{
+			$projectArr = array(); 
+		}
+ 
+		return $projectArr;
+	}
+	function cleintDetails($obj){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("clientId","clientName");		
+		$whereClause = "status='1'";	
+		
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CLIENTS"],$selectFileds,$whereClause);
 		
 		$projectArr = array();
 		if($res[1] > 0){
@@ -90,20 +138,98 @@ class commonAPI
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("workerName","workerId");
+		$selectFileds=array("workerName","workerId", "teamId");
 		$whereClause = "status=1";
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKERS"],$selectFileds,$whereClause);
 		
-		$driverArr = array();
+		
+		$newWorkerArr = array();	
 		if($res[1] > 0){
-			$driverArr = $db->fetchArray($res[0], 1);          	
+			$driverArr = $db->fetchArray($res[0], 1); 
+					
+			foreach($driverArr as $key => $val){
+				$newWorkerArr[$key]["workerName"] = $val["workerName"];
+				$newWorkerArr[$key]["workerId"] = $val["workerId"]."-".$val["teamId"];
+				$newWorkerArr[$key]["workerIdActual"] = $val["workerId"];
+			}  
 			
 		}
 		else{
-			$driverArr=array(); 
+			$newWorkerArr=array(); 
 		}
  
-		return $driverArr;
+		return $newWorkerArr;
+	}
+	function availableWorkerDetails($postArr){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		$whereClauseat = "forDate='".date("Y-m-d")."'";
+		$selectFiledsat=array("workerId");
+		if($postArr["startDate"] != ""){
+			$whereClauseat = "forDate='".$postArr["startDate"]."'";
+		}
+		// echo $whereClauseat;
+		$resat=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$selectFiledsat,$whereClauseat);
+		if($resat[1] > 0){
+			$workerIds = $db->fetchArray($resat[0], 1);  
+			$assignedWorkers = array();
+			foreach($workerIds as $worker){
+				array_push($assignedWorkers, $worker["workerId"]);
+			}        	
+			
+		}
+		else{
+			$assignedWorkers =array();
+		}
+
+		$selectFileds=array("workerName","workerId","teamId");
+		if(count($assignedWorkers) > 0){
+			$whereClause = "status=1 and workerId NOT IN(".implode(",",$assignedWorkers).")";
+		}
+		else{
+			$whereClause = "status=1";
+		}
+		// echo $whereClause;
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKERS"],$selectFileds,$whereClause);
+		
+		$newWorkerArr = array();
+		if($res[1] > 0){
+			$driverArr = $db->fetchArray($res[0], 1);  
+			// pr($driverArr);
+			foreach($driverArr as $key => $val){
+				$newWorkerArr[$key]["workerName"] = $val["workerName"];
+				$newWorkerArr[$key]["workerId"] = $val["workerId"]."-".$val["teamId"];
+				$newWorkerArr[$key]["workerIdActual"] = $val["workerId"];
+			}  
+			// pr($newWorkerArr);
+		}
+		else{
+			$newWorkerArr=array(); 
+		}
+		$avalableWorker["availableWorkers"] = $newWorkerArr;
+		return $this->common->arrayToJson($avalableWorker);
+	}
+	function allSupervisorDetails(){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("userId","Name");
+		
+		$whereClause = "userStatus=1 and userType=5";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["USERS"],$selectFileds,$whereClause);
+		
+		$vehiclesArr = array();
+		if($res[1] > 0){
+			$vehiclesArr = $db->fetchArray($res[0], 1);          	
+			
+		}
+		else{
+			$vehiclesArr=array(); 
+		}
+		
+		return $vehiclesArr;
 	}
     function supervisorDetails($pid){
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
@@ -234,6 +360,71 @@ class commonAPI
 		}
  
 		return $usersArr;
+	}
+	function scaffoldTypeDetails(){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("id","scaffoldName");
+		$whereClause = "status='1'";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["SCAFFOLDTYPE"],$selectFileds,$whereClause);
+		
+		$usersArr = array();
+		if($res[1] > 0){
+			$usersArr = $db->fetchArray($res[0], 1);
+		}
+		else{
+			$usersArr=array(); 
+		}
+ 
+		return $usersArr;
+	}
+	function scaffoldWorkTypeDetails(){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("id","scaffoldName");
+		$whereClause = "status='1'";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["SCAFFOLDWORKTYPE"],$selectFileds,$whereClause);
+		
+		$usersArr = array();
+		if($res[1] > 0){
+			$usersArr = $db->fetchArray($res[0], 1);
+		}
+		else{
+			$usersArr=array(); 
+		}
+ 
+		return $usersArr;
+	}
+
+	function getContracts($postArr){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("id","description","item","location","length","height","width");
+		$whereClause = "projectId=".$postArr["value_projects"]." and clientId=".$postArr["value_clients"];
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CONTRACTS"],$selectFileds,$whereClause);
+		
+		$usersArr = array();
+		if($res[1] > 0){
+			$i=0;
+			$usersArr2 = $db->fetchArray($res[0], 1);
+			foreach($usersArr2 as $item){
+
+				$usersArr["contracts"][$i] = $item;
+				$usersArr["contracts"][$i]["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH";
+				$i++;
+			}
+		}
+		else{
+			$usersArr["contracts"] = array(); 
+		}
+ 
+		return $this->common->arrayToJson($usersArr);
 	}
     
 }
