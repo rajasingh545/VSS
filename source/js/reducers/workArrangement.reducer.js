@@ -4,9 +4,13 @@ import {
   REQUESTDET_START,
   REQUESTDET_ERROR,
   REQUESTDET_SUCCESS,
-  REQUESTPOST_SUCCESS
+  REQUESTPOST_SUCCESS,
+  LISTINGDETAILS_SUCCESS,
+  LISTING_START,
+  CLEAR_LISTING,
+  WORKREQUESTPOST_SUCCESS
   
-} from 'actions/request.actions';
+} from 'actions/workArrangement.actions';
 
 
 
@@ -39,12 +43,40 @@ const actionsMap = {
       requestDet: action.data,
     }));
   },
+  [LISTING_START]: (state) => {
+    return state.merge(Map({
+      loadingListing: true,
+      error: null,
+      listingDetails: null,
+    }));
+  },
+  [LISTINGDETAILS_SUCCESS]: (state, action) => {
+    // console.log("action", state, action);
+    return state.merge(Map({
+      loadingListing: false,
+      listingDetails: action.data,
+    }));
+  },
+  [CLEAR_LISTING]: (state, action) => {
    
-  [REPORTPOST_SUCCESS]: (state, action) => {
+    return state.merge(Map({
+      loading: false,
+      requestPost: [],
+    }));
+  },
+   
+  [REQUESTPOST_SUCCESS]: (state, action) => {
     // console.log("action==", state, action);
     return state.merge(Map({
       loading: false,
-      reportData: action.data,
+      requestPost: action.data,
+    }));
+  },
+  [WORKREQUESTPOST_SUCCESS]: (state, action) => {
+    console.log("action==",  action);
+    return state.merge(Map({
+      loadingListing: false,
+      workRequestData: action.data,
     }));
   }
   

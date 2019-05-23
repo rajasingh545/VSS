@@ -124,8 +124,8 @@ p {
   background-color: #ffcc01;
 }
 .dd-list-item:hover {
-  color: #fff;
-  background-color: #ffcc01;
+  color: #000;
+  background-color: #ddd;
 }
 .dd-wrapper-single {
   -webkit-user-select: none;

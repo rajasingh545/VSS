@@ -4,21 +4,22 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Dropdown from '../common/Dropdown';
 import CustomButton from '../common/CustomButton';
-import WorkRequestPreview from "../common/workRequestPreview";
 import CustInput from '../common/CustInput';
+import WorkRequestPreview from "../common/workRequestPreview";
 import baseHOC from "./baseHoc";
 import TimeField from '../common/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
-import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
+import { requestDetails,  workRequestPost} from 'actions/workArrangement.actions';
+import { getDetailsWithMatchedKey2} from '../common/utility';
 import {Modal} from 'react-bootstrap';
 @connect(state => ({
     loading: state.request.get('loadingListing'),
     listingDetails: state.request.get('listingDetails'),
-    workRequestPost: state.request.get('workRequestPost'),
+    workRequestData: state.request.get('workRequestData'),
     requestDet: state.request.get('requestDet'),
   }))
   @baseHOC
-class WorkRequest extends React.Component {
+class WorkRequestEdit extends React.Component {
 
   constructor(props) {
     super(props);
@@ -27,36 +28,15 @@ class WorkRequest extends React.Component {
     clients:[],
     projectTitle : "Select Project",
     clientTitle : "Select Client",
-    locationTitle : "Select Location",
-    itemtitle:"Select Item",
-    scaffoldTypetitle : "Select Type",
-    scaffoldWorkTypetitle : "Select Work Type",
-    scaffoldSubcategorytitle : "Select Category",
-    
+    scaffoldtypetitle : "Select Type",
+    scaffoldworktypetitle : "Select Work Type",
     contracts : [],
     filteredArr : [],
     scaffoldWorkType : [],
     scaffoldType:[],
     itemList:[],
     sizeList:[],
-    manpowerList:[],
-    reasons:[{
-        id:"1",
-        value:"Tower (ELP-3x3x10)"
-    },
-    {
-        id:"2",
-        value:"Material Shifting Hours"
-    },
-    {
-        id:"3",
-        value:"Total No. Of working Hours"
-    },
-    {
-        id:"4",
-        value:"Perimeter (ELP-10x1x15)"
-    }
-    ]
+    manpowerList:[]
    };
    this.itemList = [];
    this.sizeList = [];
@@ -67,7 +47,11 @@ class WorkRequest extends React.Component {
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
      dispatch(requestDetails(this.state));
-    
+     if(this.props.match.params && this.props.match.params.id){
+        this.state.listingId = this.props.match.params.id;     
+        this.state.requestCode = 16;
+        dispatch(workRequestPost(this.state));
+       }
   }
   componentWillReceiveProps(nextProps){
     if(nextProps.requestDet && nextProps.requestDet.projects){
@@ -80,11 +64,106 @@ class WorkRequest extends React.Component {
     if(nextProps.requestDet && nextProps.requestDet.contracts){
         this.setState({contracts:nextProps.requestDet.contracts});
         // this.setState()
-        if(nextProps.requestDet.contracts.length == 0){
-            toast.error("No original contracts available for this project and client", { autoClose: 3000 });     
+        this.state.contracts = nextProps.requestDet.contracts;
+
+        if(this.props.workRequestData && this.props.workRequestData.requestDetails){
+
+            let requestDet = this.props.workRequestData.requestDetails;
+            let requestItemsArr = this.props.workRequestData.requestItems;
+            let requestItems = requestItemsArr[requestItemsArr.length-1];
+            let itemTitle = "Select Item";
+             let locationTitle = "Select Title";
+            //  console.log("thisprops", requestDet, requestItems, this.state.contracts);
+            if(requestDet.contractType == 1){
+                itemTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, "id", "item");
+                locationTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, "id", "location");
+                }
+
+                this.setState({
+                    locationTitle : locationTitle,
+                    itemTitle : itemTitle,
+                    text_item:itemTitle,
+                    text_location:locationTitle
+                });
+
         }
+    }else if(nextProps.workRequestData && nextProps.workRequestData.requestDetails){
+       
+        let requestDet = nextProps.workRequestData.requestDetails;
+        let requestItemsArr = nextProps.workRequestData.requestItems;
+        let requestManlistArr = (nextProps.workRequestData.requestManList) ? nextProps.workRequestData.requestManList : [];
+        let requestSizeListArr = (nextProps.workRequestData.requestSizeList) ? nextProps.workRequestData.requestSizeList : [];
+        let requestItems = requestItemsArr;
+        let requestManlist = requestManlistArr;
+        let requestSizeList = requestSizeListArr;
+        let scaffoldTitle = "Select Type";
+        let scaffoldworkTitle ="Select Work Type";
+        console.log("requestItemsArr", requestItemsArr)
+        if(requestItemsArr){           
+            requestItems = requestItemsArr[requestItemsArr.length-1];
+           
+            
+            if(requestItems.workBased == 2){
+                requestManlist = requestManlistArr[requestManlistArr.length-1]
+            }
+            if(requestItems.workBased == 1){
+                requestSizeList = requestSizeListArr[requestSizeListArr.length-1];
+                
+                scaffoldTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
+       scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");        
+            }
+        }
+       
+      
+        let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
+        let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
+        
+        
+        this.setState({
+            projectTitle:proTitle,
+            clientTitle:clientname,           
+            cType:requestDet.contractType,
+            value_projects:requestDet.projectId,
+            value_clients:requestDet.clientId,
+            text_projects:proTitle,
+            text_clients:clientname,
+            requestBy:requestDet.requestedBy,
+            value_item: requestItems.itemId,
+            sizeType: requestItems.sizeType,
+            workBased: requestItems.workBased,
+            value_scaffoldWorkType : requestSizeList.scaffoldWorkType,
+            value_scaffoldType : requestSizeList.scaffoldType,
+            L:requestSizeList.length,
+            H:requestSizeList.height,
+            W:requestSizeList.width,
+            set:requestSizeList.setcount,
+            safety:requestManlist.safety,
+            supervisor:requestManlist.supervisor,
+            erectors:requestManlist.erectors,
+            gworkers:requestManlist.generalWorker,
+            inTime : requestManlist.timeIn,
+            outTime: requestManlist.timeOut,
+            scaffoldRegister: requestDet.scaffoldRegister,
+            remarks:requestDet.remarks,
+            scaffoldtypetitle : scaffoldTitle,
+        scaffoldworktypetitle : scaffoldworkTitle,
+        text_scaffoldWorkType : scaffoldworkTitle,
+            text_scaffoldType : scaffoldTitle,
+        });
+        if(requestDet.contractType == 1){
+            this.state.value_projects = requestDet.projectId;
+            this.state.value_clients = requestDet.clientId;
+            this.state.cType = requestDet.contractType;
+           
+            this.requestItems();
+        }
+
+        this.state.itemList = requestItemsArr;
+        this.state.manpowerList = requestManlistArr;
+        this.state.sizeList = requestSizeListArr;
     }
 }
+
 onFormChange = (e) =>{
       
     if(e){
@@ -92,8 +171,8 @@ onFormChange = (e) =>{
       this.setState({[e.target.name]: e.target.value});
     }
 }
-callform = (key, list, stateKey, title) =>{
-    this.resetThenSet(key, list, stateKey, title);
+callform = (key, list, stateKey) =>{
+    this.resetThenSet(key, list, stateKey);
 }
 onItemChange = (key, list, stateKey, title) =>{
 
@@ -102,19 +181,17 @@ onItemChange = (key, list, stateKey, title) =>{
     });
     let LocTitle = "";
     let itemTitle = "";
-    let desc ="";
     list.map((item)=>{
 
         if(item.id == key){
             LocTitle = item.location;
             itemTitle = item.item;
-            desc = item.desc;
         }
 
     })
     this.resetThenSet(key, list, "location", LocTitle);
     this.resetThenSet(key, list, "item", itemTitle);
-    this.setState({itemtitle:this.state.text_item, locationTitle:this.state.text_location, desc:desc});
+    this.setState({itemTitle:this.state.text_item, locationTitle:this.state.text_location});
    
 }
 
@@ -129,7 +206,6 @@ resetThenSet(key, list, stateKey, title){
     
     let valuekey= `value_${stateKey}`;
     let textKey = `text_${stateKey}`;
-    let titleKey = `${stateKey}title`;
     //  console.log("inside==", valuekey, key.toString())
     this.setState({
       [valuekey]:key.toString(),
@@ -137,20 +213,20 @@ resetThenSet(key, list, stateKey, title){
     });
     this.state[valuekey] = key.toString();
     this.state[textKey] = title;
-
-    this.state[titleKey] = title;
   }
-  onChangeItem = (key, list, stateKey, title)=>{
-    this.resetThenSet(key, list, stateKey, title);
+  onChangeItem = (key, list, stateKey)=>{
+    this.resetThenSet(key, list, stateKey);
     this.requestItems();
   }
   requestItems = ()=>{
     const { dispatch } = this.props;
-   
+    
        if(this.state.value_projects && this.state.value_clients && this.state.cType == 1){        
         this.state.requestCode = 5;
         dispatch(requestDetails(this.state));
       }
+
+      
    
   }
 
@@ -196,67 +272,55 @@ resetThenSet(key, list, stateKey, title){
     if(formValidation == true){
 
         if(this.state.cType == 1){
+            this.itemList.push({
+                value_item: this.state.value_item,
+                sizeType: this.state.sizeType,
+                workBased: this.state.workBased,
+                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                value_scaffoldType : this.state.value_scaffoldType,
+                L:this.state.L,
+                H:this.state.H,
+                W:this.state.W,
+                Set:this.state.Set,
+                safety:this.state.safety,
+                supervisor:this.state.supervisor,
+                erectors:this.state.erectors,
+                gworkers:this.state.gworkers,
+                inTime : this.state.inTime,
+                outTime: this.state.outTime
 
-            const found = this.itemList.some(el => el.value_item === this.state.value_item);
-            if (!found){
-                this.itemList.push({
-                    value_item: this.state.value_item,
-                    sizeType: this.state.sizeType,
-                    workBased: this.state.workBased,
+            });
+            this.state.itemList = this.itemList;
+        } else if(this.state.cType == 2){
+            if(this.state.workBased == 1){ //size
+                this.sizeList.push({
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
-                    Set:this.state.Set,
+                    Set:this.state.Set
+                });
+                this.state.sizeList = this.sizeList;
+            }
+            if(this.state.workBased == 2){ //manpower
+                this.manpowerList.push({
                     safety:this.state.safety,
                     supervisor:this.state.supervisor,
                     erectors:this.state.erectors,
                     gworkers:this.state.gworkers,
                     inTime : this.state.inTime,
                     outTime: this.state.outTime
-
                 });
-                this.state.itemList = this.itemList;
-            }
-        } else if(this.state.cType == 2){
-            if(this.state.workBased == 1){ //size
-                const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
-                if (!found){
-                    this.sizeList.push({
-                        value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                        value_scaffoldType : this.state.value_scaffoldType,
-                        L:this.state.L,
-                        H:this.state.H,
-                        W:this.state.W,
-                        Set:this.state.Set
-                    });
-                    this.state.sizeList = this.sizeList;
-                }
-            }
-            if(this.state.workBased == 2){ //manpower
-
-                const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
-            
-                 if (!found){
-                    this.manpowerList.push({
-                        safety:this.state.safety,
-                        supervisor:this.state.supervisor,
-                        erectors:this.state.erectors,
-                        gworkers:this.state.gworkers,
-                        inTime : this.state.inTime,
-                        outTime: this.state.outTime
-                    });
-                    this.state.manpowerList = this.manpowerList;
-                }
+                this.state.manpowerList = this.manpowerList;
             }
         }
       
-      this.state.requestCode = 14;
+      this.state.requestCode = 17;
       this.state.status = status;
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-      toast.success("Work Request Created Successfully", { autoClose: 3000 });    
+      toast.success("Work Request Updated Successfully", { autoClose: 3000 });    
       
         setTimeout(()=>{
             this.props.history.push('/WorkRequestList');
@@ -284,35 +348,28 @@ resetThenSet(key, list, stateKey, title){
 
   itemAddition = () =>{
     if(this.validateForm() == true){
-        const found = this.itemList.some(el => el.value_item === this.state.value_item);
-        if (!found){
-            let list = {
-                value_item: this.state.value_item,
-                text_item: this.state.text_item,
-                sizeType: this.state.sizeType,
-                workBased: this.state.workBased,
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                Set:this.state.Set,
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
-            }
 
-            this.itemList.push(list);
+        let list = {
+            value_item: this.state.value_item,
+            sizeType: this.state.sizeType,
+            workBased: this.state.workBased,
+            value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+            value_scaffoldType : this.state.value_scaffoldType,
+            L:this.state.L,
+            H:this.state.H,
+            W:this.state.W,
+            Set:this.state.Set,
+            safety:this.state.safety,
+            supervisor:this.state.supervisor,
+            erectors:this.state.erectors,
+            gworkers:this.state.gworkers,
+            inTime : this.state.inTime,
+            outTime: this.state.outTime
         }
 
+        this.itemList.push(list);
+
         this.setState({
-            itemtitle: "Select Item",
-            locationTitle: "Select Location",
             value_item: "",
             sizeType: "",
             workBased: "",
@@ -329,57 +386,45 @@ resetThenSet(key, list, stateKey, title){
             inTime : "",
             outTime: ""
         })
-        toast.success("Item added successfully", { autoClose: 3000 }); 
+        toast.success("Item sdded successfully", { autoClose: 3000 }); 
     }
   }
   sizeAddition = () =>{
         
     if(this.validateSizeForm() == true){
-
-        const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
-        if (!found){
-            let sizeList = {
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,               
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                Set:this.state.Set
-            }
-            this.sizeList.push(sizeList);
-        }
+      let sizeList = {
+        value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+        value_scaffoldType : this.state.value_scaffoldType,
+        L:this.state.L,
+        H:this.state.H,
+        W:this.state.W,
+        Set:this.state.Set
+      }
+      this.sizeList.push(sizeList);
       toast.success("Size list added successfully", { autoClose: 3000 }); 
       this.setState({
         value_scaffoldWorkType : "",
         value_scaffoldType : "",
-        scaffoldWorkTypetitle:"Select Work Type",
-        scaffoldTypetitle:"select Type",
-        scaffoldSubcategorytitle:"Select Category",
         L:"",
         H:"",
         W:"",
-        set:""
+        Set:""
 
     });
     }
   }
   manpowerAddition = () =>{
     if(this.validateManpowerForm() == true){
-
-        const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
-            
-        if (!found){
-            let manpowerList = {
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
-            }
-            this.manpowerList.push(manpowerList);
-            this.state.manpowerList = this.manpowerList;
+        let manpowerList = {
+            safety:this.state.safety,
+            supervisor:this.state.supervisor,
+            erectors:this.state.erectors,
+            gworkers:this.state.gworkers,
+            inTime : this.state.inTime,
+            outTime: this.state.outTime
         }
+        this.manpowerList.push(manpowerList);
+        this.state.manpowerList = this.manpowerList;
         toast.success("Manpower list added successfully", { autoClose: 3000 }); 
 
         this.setState({
@@ -440,6 +485,11 @@ resetThenSet(key, list, stateKey, title){
         return false;
     }
     return true;
+  }
+
+  goBack = (e) =>{
+    e.preventDefault();
+    this.props.history.goBack();
   }
 
   setPreview = ()=>{
@@ -515,8 +565,6 @@ resetThenSet(key, list, stateKey, title){
   /* Render */
   render() {
     const {headerTitle} = this.state;
-    // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
-    
     return (
     <div className="container work-arr-container">
     <ToastContainer autoClose={8000} />
@@ -603,8 +651,8 @@ resetThenSet(key, list, stateKey, title){
         <div className="row">
             <div className="col-xs-6">
             <label>Items</label>
-                <Dropdown
-                    title={this.state.itemtitle}
+            <Dropdown
+                     title={this.state.itemTitle}
                     name="item"
                     keyName="id"
                     stateId="item"
@@ -615,7 +663,7 @@ resetThenSet(key, list, stateKey, title){
             </div>
             <div className="col-xs-6">
             <label>Locations</label>
-                <Dropdown
+            <Dropdown
                     title={this.state.locationTitle}
                     name="location"
                     keyName="id"
@@ -626,19 +674,15 @@ resetThenSet(key, list, stateKey, title){
             </div>
         </div>
         <div className="row">
-            <div className="col-xs-12 red"> {this.state.desc}</div>
-           
-        </div>
-        <div className="row">
             <div className="col-xs-1"><label><input  type="radio"  name="sizeType" value="1"  onChange={this.onChangeSizeType} checked={this.state.sizeType == "1"}/></label></div>
-            <span className="col-xs-6">
+            <span className="col-xs-3">
                 Full Size
             </span>
         </div>
         
         <div className="row">
             <div className="col-xs-1"><label><input  type="radio"  name="sizeType" value="2"  onChange={this.onChangeSizeType} checked={this.state.sizeType == "2"}/></label></div>
-            <span className="col-xs-6">
+            <span className="col-xs-3">
                 Partial Size
             </span>
         </div>
@@ -698,17 +742,16 @@ resetThenSet(key, list, stateKey, title){
         <div className="col-xs-6"><label>Type of Scaffolding Works</label></div>
           <div className="col-xs-6">
             <Dropdown
-                  title={this.state.scaffoldWorkTypetitle}
+                  title={this.state.scaffoldworktypetitle}
                   name="scaffoldName"
                   keyName="id"
                   stateId="scaffoldWorkType"
                   list={this.state.scaffoldWorkType}
                   resetThenSet={this.callform}
-                  key="1"
             />
           </div>
     </div>
-
+    
     {/*<div className="row">
         <div className="col-xs-6"><label>Ref# WR</label></div>
           <div className="col-xs-6">
@@ -725,32 +768,26 @@ resetThenSet(key, list, stateKey, title){
             <div className="row">
                 <div className="col-xs-6"><label>Scaffold Type</label></div>
                 <div className="col-xs-6">
-               
                     <Dropdown
-                        title={this.state.scaffoldTypetitle}
+                        title={this.state.scaffoldtypetitle}
                         name="scaffoldName"
                         keyName="id"
                         stateId="scaffoldType"
                         list={this.state.scaffoldType}
                         resetThenSet={this.callform}
-                        key="2"
                     />
                 </div>
             </div>
-            <div className="row">
+            {/*<div className="row">
                 <div className="col-xs-6"><label>Scaffold Sub Category</label></div>
                 <div className="col-xs-6">
                     <Dropdown
-                        title={this.state.scaffoldSubcategorytitle}
-                        name="value"
-                        keyName="id"
-                        stateId="scaffoldSubcategory"
+                        title="Select Project"
                         list={this.state.reasons}
-                        resetThenSet={this.callform}
-                        key="3"
+                        resetThenSet={this.resetThenSet}
                     />
                 </div>
-</div>
+</div>*/}
 
             <div className="row">
                 <div className="col-sm-12"><label>Size</label></div>
@@ -781,13 +818,13 @@ resetThenSet(key, list, stateKey, title){
         <br></br>
       
         <div className="row">
-            <div className="col-xs-3"><label>Safety</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="safety" value={this.state.safety} onChange={this.onFormChange}/></div>
-            <div className="col-xs-3"><label>Supervisor</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="supervisor" value={this.state.supervisor} onChange={this.onFormChange}/></div>
+            <div className="col-xs-3"><label>Safety</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="safety" value={this.state.safety} onChange={this.onFormChange}/></div>
+            <div className="col-xs-3"><label>Supervisor</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="supervisor" value={this.state.supervisor} onChange={this.onFormChange}/></div>
         </div>
 
         <div className="row">
-            <div className="col-xs-3"><label>Erectors</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="erectors" value={this.state.erectors} onChange={this.onFormChange}/></div>
-            <div className="col-xs-3"><label>General Workers</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="gworkers" value={this.state.gworkers} onChange={this.onFormChange}/></div>
+            <div className="col-xs-3"><label>Erectors</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="erectors" value={this.state.erectors} onChange={this.onFormChange}/></div>
+            <div className="col-xs-3"><label>General Workers</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="gworkers" value={this.state.gworkers} onChange={this.onFormChange}/></div>
         </div>
 
         <div className="row">
@@ -795,17 +832,17 @@ resetThenSet(key, list, stateKey, title){
         </div>
         <div className="row">
             <div className="col-xs-3">Time IN</div>
-            <div className="col-xs-3"><TimeField  name="inTime" className="width100" onChange={this.onTimeChange}/></div>
+            <div className="col-xs-3"><TimeField  name="inTime" value={this.state.inTime} className="width100" onChange={this.onTimeChange}/></div>
         </div>
         <div className="row">
             <div className="col-xs-3">Time OUT</div>
-            <div className="col-xs-3"><TimeField  name="outTime" className="width100" onChange={this.onTimeChange}/></div>
+            <div className="col-xs-3"><TimeField  name="outTime" value={this.state.outTime} className="width100" onChange={this.onTimeChange}/></div>
         </div>
     </div>
 }
 <div className="row">
             <div className="col-xs-3">Scaffold Register</div>
-            <div className="col-xs-6"> <input type="checkbox" name="register" /></div>
+            <div className="col-xs-6"> <input type="checkbox" name="register" checked={this.state.scaffoldRegister == 1}/></div>
         </div>
 
 <div className="row">
@@ -814,15 +851,14 @@ resetThenSet(key, list, stateKey, title){
         </div>
     <div className="row">
       <div className="col-12">
-      <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={()=>this.submitRequest(2)}>Draft</CustomButton> </div>
+      <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={this.goBack}>Back</CustomButton> </div>
       <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Submit</CustomButton> </div>
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Update</CustomButton> </div>
       </div>
     </div>
+        
 
-
-
-    <Modal show={this.state.show} onHide={this.handleClose}>
+        <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title><strong>Preview</strong></Modal.Title>
           </Modal.Header>
@@ -834,7 +870,6 @@ resetThenSet(key, list, stateKey, title){
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>Close</CustomButton>
           </Modal.Footer>
         </Modal>
-        
     </div>
     
     );
@@ -843,4 +878,4 @@ resetThenSet(key, list, stateKey, title){
 
 
 
-export default WorkRequest;
+export default WorkRequestEdit;

@@ -7,11 +7,24 @@ class Dropdown extends Component{
     super(props)
     this.state = {
       listOpen: false,
-      headerTitle: this.props.title
+      headerTitle: this.props.title,
+      list :this.props.list
     }
     this.close = this.close.bind(this)
   }
 
+  componentWillReceiveProps(nextProps){
+    if(nextProps.list != this.props.list || nextProps.title != this.props.title){
+      
+      this.setState({list:nextProps.list, headerTitle: nextProps.title});
+    }
+    if(nextProps.value == ""){      
+      this.setState({headerTitle: this.props.title});
+    }
+    if(nextProps.reset === true){
+      this.reset();
+    }
+  }
   componentDidUpdate(){
     const { listOpen } = this.state
     setTimeout(() => {
@@ -23,10 +36,16 @@ class Dropdown extends Component{
       }
     }, 0)
   }
+ 
   componentWillUnmount(){
     window.removeEventListener('click', this.close)
   }
-
+  
+  reset(){
+    this.setState({
+      headerTitle: this.props.title
+    })
+  }
   close(timeOut){
     this.setState({
       listOpen: false
@@ -41,7 +60,7 @@ class Dropdown extends Component{
     this.setState({
       headerTitle: title,
       listOpen: false
-    }, this.props.resetThenSet(value, list, stateKey))
+    }, this.props.resetThenSet(value, list, stateKey, title))
   }
 
   toggleList(){
@@ -51,14 +70,14 @@ class Dropdown extends Component{
   }
 
   render(){
-    const{list, keyName, name, stateId} = this.props
-    const{listOpen, headerTitle} = this.state
+    const{keyName, name, stateId} = this.props
+    const{list, listOpen, headerTitle} = this.state
  
     return(
       
       <div className="dd-wrapper">
         <div className="dd-header" onClick={() => this.toggleList()}>
-          <div className="dd-header-title">{headerTitle}</div>
+          <div className="dd-header-title ellipsis">{headerTitle}</div>
           {listOpen
               ? <a href="#"><Glyphicon  glyph="menu-up" /></a>
               : <a href="#"><Glyphicon  glyph="menu-down"/></a>
@@ -66,7 +85,7 @@ class Dropdown extends Component{
         </div>
         {listOpen && <ul className="dd-list" onClick={e => e.stopPropagation()}>
           {list.map((item, index)=> (
-            <li className="dd-list-item" key={item[keyName]} onClick={() => this.selectItem(item[name], index, stateId, item[keyName])}>{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check"/>}</li>
+            <li  style={{textAlign:"left"}} className="dd-list-item ellipsis" key={item[keyName]} onClick={() => this.selectItem(item[name], index, stateId, item[keyName])}>{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check"/>}</li>
           ))}
         </ul>}
       </div>

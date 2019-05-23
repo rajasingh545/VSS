@@ -167,7 +167,7 @@ export default class TimeField extends React.Component {
     this.setState({value: validatedTime}, () => {
       inputEl.selectionStart = validatedCursorPosition;
       inputEl.selectionEnd = validatedCursorPosition;
-      callback(validatedTime);
+      callback(inputEl, inputEl);
     });
 
     event.persist();

@@ -10,6 +10,7 @@ class DropdownMultiple extends Component{
       headerTitle: this.props.title,
       timeOut: null
     }
+    this.initialList = this.props.list;
     this.close = this.close.bind(this)
   }
 
@@ -18,8 +19,15 @@ class DropdownMultiple extends Component{
     this.countUpdate(props, count);
   }
   componentWillReceiveProps(nextProps){
+    if(nextProps.list != this.props.list){
+      this.setState({list:nextProps.list});
+    }
     const count = nextProps.list.filter(function(a) { return a.selected; }).length;
     this.countUpdate(nextProps, count);
+
+    if(nextProps.reset === true){
+      this.reset();
+    }
   }
   countUpdate(props, count){
     if(count === 0){
@@ -29,7 +37,7 @@ class DropdownMultiple extends Component{
       this.setState({headerTitle: `${count} ${props.titleHelper}`});
     }
     else if(count > 1){
-      this.setState({headerTitle: `${count} ${props.titleHelper}s`});
+      this.setState({headerTitle: `${count} ${props.titleHelper}`});
     }
   }
   componentDidUpdate(){
@@ -47,7 +55,9 @@ class DropdownMultiple extends Component{
   componentWillUnmount(){
     window.removeEventListener('click', this.close)
   }
-
+  reset = () =>{
+    this.setState({headerTitle: this.props.title, list : this.initialList});
+  }
   close(timeOut){
     this.setState({
       listOpen: false

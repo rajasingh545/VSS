@@ -107,8 +107,17 @@ export default class Header extends Component {
     else if(page.match(/Attendance/gi)){
       title = "Attendance";
     }
-    else if(page.match(/WorkArrangement/gi)){
+    else if(page.match(/AttendanceList/gi)){
+      title = "Attendance List";
+    }
+    else if(page.match(/WorkArrangmentList/gi)){
+      title = "Work Arrangement List";
+    }
+    else if(page.match(/WorkArrangment/gi)){
       title = "Work Arrangement";
+    }
+    else if(page.match(/WorkRequestList/gi)){
+      title = "Work Request List";
     }
     else if(page.match(/WorkRequest/gi)){
       title = "Work Request";
@@ -214,12 +223,25 @@ export default class Header extends Component {
         <div className="menuText">Welcome {username}</div>
         <div style={styles2.divider} />
         <a href="javascript:void(0);" onClick={this.goBack} style={styles2.sidebarLink}><Glyphicon glyph="home"/> Home</a>
-        
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Attendance</a>   
-        
+        {userType == 1 && 
+        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Arrangement</a> 
+        }
+        {userType == 1 && 
+        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Arrangement List</a> 
+        }
+        {(userType == 1 || userType == 5 ) &&
+        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Attendance</a> 
+        }  
+         {(userType == 1 ) &&
+        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Attendance List</a> 
+        }  
+        {userType == 1 && 
         <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequest')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Request</a>   
-          
-         <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Arrangement</a> 
+        }
+          {userType == 1 && 
+        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequestList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Request List</a>   
+        }
+         
         <a href="javascript:void(0);" onClick={this.logout} style={styles2.sidebarLink}><Glyphicon glyph="log-out"/> Logout</a>
         <div style={styles2.divider} />
          

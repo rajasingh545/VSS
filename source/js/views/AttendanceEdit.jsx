@@ -18,7 +18,7 @@ import moment from "moment";
   requestDet: state.request.get('requestDet'),
 }))
 @baseHOC
-class Attedence extends React.Component {
+class AttedenceEdit extends React.Component {
 
   constructor(props) {
     super(props);
@@ -37,14 +37,23 @@ class Attedence extends React.Component {
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.reasonsList = getReasons();
 
-  // console.log("ths reasons", this.reasonsList);
+  
   }
   componentWillMount(){
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
      dispatch(requestDetails(this.state));
-     
+     //get details of listing
+     if(this.props.match.params && this.props.match.params.id && this.props.match.params.pid){
+      this.state.listingId = this.props.match.params.id;     
+       this.state.requestType = 1;
+    //    this.state.projectTitle = getDetailsWithMatchedKey2(this.props.match.params.pid, this.props.requestDet.projects, "projectId", "projectName");
+      this.getWorkers(this.props.match.params.pid);
+     }
+     else{
+      this.state.requestType = 0;
+     }
     
   }
   componentWillReceiveProps(nextProps) {
@@ -56,37 +65,32 @@ class Attedence extends React.Component {
       }
       if(this.props.userType == 5){
         let projectId = this.props.project;
-        console.log("projectid", projectId, nextProps.requestDet.projects);
-        let projectName = getDetailsWithMatchedKey2(projectId, nextProps.requestDet.projects, "projectId", "projectName");
+        // console.log("projectid", projectId, nextProps.requestDet.projects);
+        let projectName = getDetailsWithMatchedKey2(projectId, nextProps.requestDet.projects, "projectId", "projectName")
         this.setState({projects: [{projectId, projectName}]});
         this.state.projects = [{projectId, projectName}];
        
       }
-       
       this.state.workers =nextProps.requestDet.workers; 
       this.state.team = nextProps.requestDet.team;
-     
+          
     }
     
     if(nextProps.listingDetails){
       
       this.setState({workersList: nextProps.listingDetails});
       if(nextProps.listingDetails[0]){
-       this.state.remarks = nextProps.listingDetails[0].remarks;
-      }
+        this.state.remarks = nextProps.listingDetails[0].remarks;
+       }
     }
   
   }
   getWorkers = (key, list, stateKey) =>{
     const { dispatch } = this.props;
-    if(key){
-      this.state.requestCode = 6;
-      this.state.projectId = key;
-      this.selectedIds = [];
-      let projectName = getDetailsWithMatchedKey2(key, this.props.requestDet.projects, "projectId", "projectName");
-      this.state.projectTitle = projectName;
-      dispatch(listigDetails(this.state));
-    }
+    this.state.requestCode = 6;
+    this.state.projectId = key;
+    this.selectedIds = [];
+     dispatch(listigDetails(this.state));
     //  this.resetThenSet(key, stateKey);
   }
   
@@ -106,7 +110,7 @@ class Attedence extends React.Component {
   onSubmit = (type) =>{
     const {dispatch} = this.props;
     let finalValuesArr = [];
-    // console.log("===", this.selectedIds);
+    console.log("===", this.selectedIds);
     if(this.selectedIds.length == 0){
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
@@ -152,7 +156,7 @@ class Attedence extends React.Component {
 
     }
     
-   this.setState({workersList:[], projectTitle:"Select Project", showSubButton:false});
+//    this.setState({workersList:[], projectTitle:"Select Project", showSubButton:false});
   //  toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
@@ -190,7 +194,6 @@ class Attedence extends React.Component {
     if(workers.length > 0){
       // console.log
       this.teamArr= [];
-
       // this.selectedIds = [];
       return workers.map((worker, ind)=>{
         let workerName= getDetailsWithMatchedKey2(worker.workerId, this.state.workers, "workerIdActual", "workerName");
@@ -199,7 +202,7 @@ class Attedence extends React.Component {
         let reasonId = "reason_"+worker.workerId;
         this.WAId = worker.workArrangementId;
         let workerTeam= worker.workerTeam
-       
+        
         let title = "Select.."
         if(worker.reason != 0){
           // console.log("inside==",worker,worker.reason, title);
@@ -264,7 +267,7 @@ class Attedence extends React.Component {
       return(
         <div>
         <div className="col-xs-3">
-         <span><strong>Total Pax {teamName}</strong>:</span>
+         <span><strong>{teamName}</strong>:</span>
         
         </div>
         <div className="col-xs-3" >
@@ -289,11 +292,10 @@ class Attedence extends React.Component {
         });
       }
       this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
-      this.getWorkers(this.state.projectId)
+      
 }
 setRemarks = (e) => {
-  // this.state.remarks = e.target.value;
-  this.setState({remarks:e.target.value});
+    this.setState({remarks:e.target.value});
 }
   /* Render */
   render() {
@@ -304,11 +306,15 @@ setRemarks = (e) => {
     if(this.props.userType == 5){
       readonly = true;
     }
+   let projectTitle = "";
+    if(this.props.match.params.pid && this.props.requestDet){
+        projectTitle = getDetailsWithMatchedKey2(this.props.match.params.pid, this.props.requestDet.projects, "projectId", "projectName");
+    }
     return (
     <div className="work-arr-container">
     <br/>
     <ToastContainer autoClose={8000} />
-    <div className="row">
+    {/*<div className="row">
         <div className="col-sm-3"><label>Date</label></div>
         
         <div className="col-sm-3"> <DatePicker
@@ -323,11 +329,11 @@ setRemarks = (e) => {
                       readOnly={readonly}
                   /></div>
 
-    </div>
+    </div>*/}
     <div className="row">
         <div className="col-sm-3"><label>Site</label></div>
           <div className="col-sm-6">
-          <Dropdown
+         {/*<Dropdown
                   title={this.state.projectTitle}
                   name="projectName"
                   keyName="projectId"
@@ -335,7 +341,8 @@ setRemarks = (e) => {
                   list={this.state.projects}
                   value={this.state.value_projects}
                   resetThenSet={this.getWorkers}
-            />
+         />*/}
+<strong>{projectTitle}</strong>
           </div>
     </div>
   {/* map mutiple workers 8*/}
@@ -393,7 +400,7 @@ setRemarks = (e) => {
     <div className="row">
         <div className="col-sm-3"><label>Remark</label></div>
           <div className="col-sm-6">
-          <CustInput type="textarea" onChange={this.setRemarks} name="remarks" value={this.state.remarks} />
+            <CustInput type="textarea" onChange={this.setRemarks} name="remarks" value={this.state.remarks} />
           </div>
     </div>
   {/* map mutiple site name with count of workers 
@@ -423,7 +430,7 @@ setRemarks = (e) => {
         <CustomButton bsStyle="secondary" className="width50" onClick={()=>this.onSubmit(2)} id="draft" type="submit">Draft</CustomButton>
       </div>
       <div className="col-sm-3">
-        <CustomButton bsStyle="primary" id="submit" onClick={()=>this.onSubmit(1)} className="width50" type="submit">Submit</CustomButton>
+        <CustomButton bsStyle="primary" id="submit" onClick={()=>this.onSubmit(1)} className="width50" type="submit">Update</CustomButton>
       </div>
     </div>
     }
@@ -436,4 +443,4 @@ setRemarks = (e) => {
 
 
 
-export default Attedence;
+export default AttedenceEdit;

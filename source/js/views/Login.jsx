@@ -27,13 +27,14 @@ export default class Login extends Component {
     }
 
 componentWillReceiveProps(nextProps){
-        // console.log("props", nextProps);
+        console.log("props", nextProps);
         let {userId} = nextProps;
         
         if(userId && userId.response === "success"){ 
             sessionStorage.setItem("userId", userId.userId);
             sessionStorage.setItem("userType", userId.userType);
-            sessionStorage.setItem("userName", userId.userName);              
+            sessionStorage.setItem("userName", userId.userName);   
+            sessionStorage.setItem("project", userId.project);           
             this.props.history.push('/Home');
              
         }

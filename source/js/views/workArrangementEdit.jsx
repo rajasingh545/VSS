@@ -7,7 +7,7 @@ import CustomButton from '../common/CustomButton';
 import CustInput from '../common/CustInput';
 import PreviewTemplate from '../common/PreviewTemplate';
 import baseHOC from "./baseHoc";
-import { requestDetails, requestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
+import { requestDetails, requestPost, listigDetails } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
 import {getPreviewContent, getDetailsWithMatchedKey2} from '../common/utility';
 import { ToastContainer, toast } from 'react-toastify';
@@ -16,12 +16,11 @@ import moment from "moment";
 
 @connect(state => ({
   loading: state.request.get('loadingListing'),
-  listingDetails: state.request.get('listingDetails'),
-  requestPost: state.request.get('requestPost'),
-  requestDet: state.request.get('requestDet'),
+listingDetails: state.request.get('listingDetails'),
+requestDet: state.request.get('requestDet'),
 }))
 @baseHOC
-class WorkArrangement extends React.Component {
+class WorkArrangementEdit extends React.Component {
 
   constructor(props) {
     super(props);
@@ -34,13 +33,7 @@ class WorkArrangement extends React.Component {
       modalMsg :"",
       projectTitle : "Select Project",
       supervisorTitle : "Select Supervisor",
-      addsupervisorTitle : "Select Supervisor",
-      startDate1: moment(),
-      startDate:moment().format("YYYY-MM-DD"),
-      addsupervisorResetFlag : false,
-      projectResetFlag: false,
-      supervisorResetFlag : false,
-      workerResetFlag:false
+      addsupervisorTitle : "Select Supervisor"
     };
     this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
     this.toggleSelected = this.toggleSelected.bind(this);
@@ -59,80 +52,58 @@ class WorkArrangement extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     // console.log("next props", nextProps);
-    
+    let {listingDetails} = nextProps;
     if(nextProps.requestDet){
       if(nextProps.requestDet.supervisors){
         this.setState({supervisors:nextProps.requestDet.supervisors});
         this.setState({value_supervisors:"", value_supervisors2:""});
       }
-      else if(nextProps.requestDet.availableWorkers){
-       
-        this.setState({workers:nextProps.requestDet.availableWorkers});
-        
-      }
       else{        
-        
         // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors= nextProps.requestDet.supervisorsList;
-        // this.state.workers = nextProps.requestDet.workers;
+        this.state.workers = nextProps.requestDet.workers;
       }
-    } 
-    
-    if(nextProps.requestPost && nextProps.requestPost.responsecode === 2){ 
-      toast.error("Work Arrangement already created for the project", { autoClose: 3000 });      
-      this.clearStore(); 
-      return false;
     }
-    else if(nextProps.requestPost && nextProps.requestPost.responsecode === 1){
-      toast.success("Work Arrangement Created Successfully", { autoClose: 3000 });  
-      this.resetForm(); 
-      this.clearStore();
-    }
-   
-    // console.log("==out ", nextProps.requestPost);
     
+    if(listingDetails && this.state.projects && this.state.supervisors){
+      
+      this.setState({value_projects:listingDetails.projectId});
+      this.setState({projectId:listingDetails.projectId});
+      let proTitle = getDetailsWithMatchedKey2(listingDetails.projectId, this.state.projects, "projectId", "projectName");
+      this.state.projectTitle=proTitle;
+      let superTitle = getDetailsWithMatchedKey2(listingDetails.baseSupervsor, this.state.supervisors, "userId", "Name");
+      this.state.supervisorTitle=superTitle;
+      this.setState({value_supervisors:listingDetails.baseSupervsor});
+      let addsuperTitle = getDetailsWithMatchedKey2(listingDetails.addSupervsor, this.state.supervisors, "userId", "Name");
+      this.state.addsupervisorTitle=addsuperTitle;
+      this.setState({value_supervisors2:listingDetails.addSupervsor});
+      this.setState({remarks:listingDetails.remarks});
+      let selectedWorkerIds=[];
+      let selectedWorkerNames=[];
+      let dateSelected = moment(listingDetails.createdOn,"YYYY-MM-DD");
+      let actualDate = dateSelected.format("YYYY/MM/DD");
+      this.setState({startDate1:dateSelected, startDate : actualDate});
+      let workerListArr = this.state.workers.map((val) => {
+        let selected = false;  
+        
+        if(listingDetails.workers && listingDetails.workers.includes(val.workerIdActual.toString())){
+             selected = true;
+             selectedWorkerIds.push(val.workerId);
+        }
+        return {
+          ...val,
+          selected
+        }
+      });
+     
+      this.setState({workers:workerListArr, workerIds: selectedWorkerIds, workerName: selectedWorkerNames});
+
+      // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
+    }
   
   }
-  componentDidMount(){
-    this.getAvailableWorker();
-  }
-
-  resetForm = () =>{
-    
-    this.setState({
-      show:false,
-      addsupervisorResetFlag : true,
-      projectResetFlag: true,
-      supervisorResetFlag : true,
-      workerResetFlag:true,
-      startDate1: moment(),
-      startDate:moment().format("YYYY-MM-DD"),
-      projectId:'',
-      value_supervisors: '',
-      workerIds:[],
-      remarks:''
-
-    });
-    //in order to make selection of form again
-    setTimeout(
-      function() {
-        this.state.addsupervisorResetFlag = false;
-        this.state.projectResetFlag= false;
-        this.state.supervisorResetFlag = false;
-        this.state.workerResetFlag=false;
-      }
-      .bind(this),
-      3000
-    );
-
-    
-  }
-  clearStore = () =>{
-    const { dispatch } = this.props;
-    dispatch(clearListing([]));
-  }
-
+  
 
   getSupervisor = (key, list, stateKey) =>{
     const { dispatch } = this.props;
@@ -140,12 +111,6 @@ class WorkArrangement extends React.Component {
     this.state.projectId = key;
      dispatch(requestDetails(this.state));
      this.resetThenSet(key, list, stateKey);
-  }
-  getAvailableWorker = () =>{
-    const { dispatch } = this.props;
-    this.state.requestCode = 99;
-     dispatch(requestDetails(this.state));
-     
   }
   toggleSelected(list, stateKey, selectedIds){
     this.setState({
@@ -168,7 +133,7 @@ class WorkArrangement extends React.Component {
     
     let valuekey= `value_${stateKey}`;
    
-     
+     console.log("====",  valuekey, key);
     this.setState({
       [valuekey]:key.toString()
     });
@@ -179,11 +144,7 @@ class WorkArrangement extends React.Component {
     this.setState({remarks});
   }
   validateForm = () =>{
-    
-    if(!this.state.startDate || this.state.startDate == ""){
-      toast.error("Date is required", { autoClose: 3000 });       
-      return false;
-    }
+    console.log("state==", this.state);
     if(!this.state.projectId || this.state.projectId == ""){
       toast.error("Project is required", { autoClose: 3000 });       
       return false;
@@ -192,10 +153,10 @@ class WorkArrangement extends React.Component {
       toast.error("Base supervisor is required", { autoClose: 3000 });       
       return false;
     }
-    // if(!this.state.value_supervisors2 || this.state.value_supervisors2 ==""){
-    //   toast.error("Additional supervisor is required", { autoClose: 3000 });       
-    //   return false;
-    // }
+    if(!this.state.value_supervisors2 || this.state.value_supervisors2 ==""){
+      toast.error("Additional supervisor is required", { autoClose: 3000 });       
+      return false;
+    }
     if(!this.state.workerIds || this.state.workerIds.length == 0){
       toast.error("Workers is required", { autoClose: 3000 });       
       return false;
@@ -212,11 +173,11 @@ class WorkArrangement extends React.Component {
     let formValidation = this.validateForm();
     // console.log("validatiing form===", formValidation);
     if(formValidation == true){
-      this.state.requestCode = (status == 3)?2:1;
+      this.state.requestCode = 5;
       this.state.status = status;
       dispatch(requestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-        
+      toast.success("Work Arrangement updated Successfully", { autoClose: 3000 });  
     }
   }
   handleClose = () =>{
@@ -224,15 +185,19 @@ class WorkArrangement extends React.Component {
     //this.setState({show:false, value_projects:"", value_supervisors:"", value_supervisors2:""});
   }
   setPreview = ()=>{
-    // if(this.validateForm() == true){
+    if(this.validateForm() == true){
       let detailArr = getPreviewContent(this.state, this.state);
       let cont = <PreviewTemplate detailsArr = {detailArr} />;
       
       this.setState({show:true, modalTitle:"Preview", modalMsg:cont});
-    // }
+    }
+  }
+  goBack = (e) =>{
+    e.preventDefault();
+    this.props.history.goBack();
   }
   onStartDateChange = (e) =>{
-    
+    // console.log("===",e);
     if(e != null){
         this.setState({
           startDate: e.format("YYYY/MM/DD"),
@@ -244,27 +209,17 @@ class WorkArrangement extends React.Component {
           startDate1: ""
         });
       }
-      console.log("date==", e.format("YYYY/MM/DD"));
-      this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
-      this.getAvailableWorker();
 }
-goBack = (e) =>{
-  e.preventDefault();
-  this.props.history.push('/Home');
-}
-  
   
   /* Render */
   render() {
     const {headerTitle, listingId} = this.state;
-    const {loading} = this.props;
 
-    //  console.log("loading", loading)
+      console.log("render", this.state.projectTitle);
     return (
     <div className="container work-arr-container">
     <br />
     <ToastContainer autoClose={8000} />
-   
     <div className="row">
         <div className="col-sm-6"><label>Date</label></div>
           <div className="col-sm-6">
@@ -272,12 +227,12 @@ goBack = (e) =>{
                     selected={this.state.startDate1}
                   
                     className=" form-control"
-                    isClearable={false}
+                    isClearable={true}
                     onChange={this.onStartDateChange}
                     name="startDate"
                     dateFormat="DD-MM-YYYY"
                     locale="UTC"
-                    autoComplete="off"
+                    
                 />
           </div>
     </div>
@@ -289,7 +244,6 @@ goBack = (e) =>{
                   name="projectName"
                   keyName="projectId"
                   stateId="projects"
-                  reset={this.state.projectResetFlag}
                   list={this.state.projects}
                   value={this.state.value_projects}
                   resetThenSet={this.getSupervisor}
@@ -305,7 +259,6 @@ goBack = (e) =>{
                   name="Name"
                   keyName="userId"
                   stateId="supervisors"
-                  reset={this.state.supervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.resetThenSet}
             />
@@ -320,7 +273,6 @@ goBack = (e) =>{
                   name="Name"
                   keyName="userId"
                   stateId="supervisors2"
-                  reset={this.state.addsupervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.resetThenSet}
             />
@@ -335,7 +287,6 @@ goBack = (e) =>{
               title="Select Workers"  
               name="workerName"
               keyName="workerId"
-              reset={this.state.workerResetFlag}
               stateKey = "workers"
               headerTitle={headerTitle}
               list={this.state.workers}
@@ -352,10 +303,14 @@ goBack = (e) =>{
     </div>
 <br />
     <div className="row">
-    <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={this.goBack}>Back</CustomButton> </div>
+   
+      <div className="col-sm-3"><CustomButton bsStyle="secondary"  id="draft" type="submit" onClick={this.goBack}>Back</CustomButton> </div>
+   
       <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(2)}>Draft</CustomButton> </div>
       
+      {listingId &&
+      <div className="col-sm-3"> <CustomButton bsStyle="primary"  id="submit" type="submit" onClick={()=>this.submitRequest(3)}>Update</CustomButton></div>
+      }
      
       
       </div>
@@ -387,4 +342,4 @@ goBack = (e) =>{
 
 
 /* Export Home*/
-export default WorkArrangement;
+export default WorkArrangementEdit;
