@@ -9,7 +9,7 @@ import React, { Component } from 'react';
       }
      
      setItemList = (itemList)=>{
-       
+        console.log("itemList",itemList);
         return itemList.map((item)=>{
 
             return(
@@ -42,7 +42,7 @@ import React, { Component } from 'react';
                             <div className="col-xs-3">W: <span className="strong">{item.W}</span></div>
                             <div className="col-xs-3">H: <span className="strong">{item.H}</span></div>
                         
-                            <div className="col-xs-3">Set <span className="strong">{item.Set}</span></div>
+                            <div className="col-xs-3">Set <span className="strong">{item.set}</span></div>
                         </div>
 
                     </div>
@@ -116,6 +116,7 @@ import React, { Component } from 'react';
         });
      }
      setManPowerList =(itemList) =>{
+        
         return itemList.map((item)=>{
 
             return(

@@ -92,6 +92,14 @@ onFormChange = (e) =>{
       this.setState({[e.target.name]: e.target.value});
     }
 }
+onCheckBoxChecked = (e)=>{
+    if(e.target.checked == true){
+        this.setState({[e.target.name]:1});
+    }
+    else{
+        this.setState({[e.target.name]:0});
+    }
+}
 callform = (key, list, stateKey, title) =>{
     this.resetThenSet(key, list, stateKey, title);
 }
@@ -171,6 +179,8 @@ resetThenSet(key, list, stateKey, title){
             L:this.state.filteredArr[0].length,
             W:this.state.filteredArr[0].width,
             H:this.state.filteredArr[0].height,
+            set:this.state.filteredArr[0].setCount
+            
         });
     }
     else{
@@ -208,7 +218,7 @@ resetThenSet(key, list, stateKey, title){
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
-                    Set:this.state.Set,
+                    set:this.state.set,
                     safety:this.state.safety,
                     supervisor:this.state.supervisor,
                     erectors:this.state.erectors,
@@ -229,7 +239,7 @@ resetThenSet(key, list, stateKey, title){
                         L:this.state.L,
                         H:this.state.H,
                         W:this.state.W,
-                        Set:this.state.Set
+                        set:this.state.set
                     });
                     this.state.sizeList = this.sizeList;
                 }
@@ -254,14 +264,27 @@ resetThenSet(key, list, stateKey, title){
       
       this.state.requestCode = 14;
       this.state.status = status;
+     
+      if(this.state.workBased == 1){
+        if(this.validateSizeForm() == false){
+            return false;
+        }
+      }
+      if(this.state.workBased == 2){
+        if(this.validateManpowerForm() == false){
+            return false;
+        }
+      }
+    
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success("Work Request Created Successfully", { autoClose: 3000 });    
       
-        setTimeout(()=>{
-            this.props.history.push('/WorkRequestList');
-        }, 3000)
-    }
+            setTimeout(()=>{
+                this.props.history.push('/WorkRequestList');
+            }, 3000);
+        }
+    
   }
   validateForm = () =>{
     
@@ -285,29 +308,32 @@ resetThenSet(key, list, stateKey, title){
   itemAddition = () =>{
     if(this.validateForm() == true){
         const found = this.itemList.some(el => el.value_item === this.state.value_item);
-        if (!found){
-            let list = {
-                value_item: this.state.value_item,
-                text_item: this.state.text_item,
-                sizeType: this.state.sizeType,
-                workBased: this.state.workBased,
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                Set:this.state.Set,
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
-            }
+        if(this.state.value_item != ""){
+            if (!found){
+                let list = {
+                    value_item: this.state.value_item,
+                    text_item: this.state.text_item,
+                    sizeType: this.state.sizeType,
+                    workBased: this.state.workBased,
+                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                    text_scaffoldWorkType : this.state.text_scaffoldWorkType,
+                    value_scaffoldType : this.state.value_scaffoldType,
+                    text_scaffoldType : this.state.text_scaffoldType,
+                    L:this.state.L,
+                    H:this.state.H,
+                    W:this.state.W,
+                    Set:this.state.Set,
+                    safety:this.state.safety,
+                    supervisor:this.state.supervisor,
+                    erectors:this.state.erectors,
+                    gworkers:this.state.gworkers,
+                    inTime : this.state.inTime,
+                    outTime: this.state.outTime
+                }
+            
 
-            this.itemList.push(list);
+                this.itemList.push(list);
+            }
         }
 
         this.setState({
@@ -328,7 +354,9 @@ resetThenSet(key, list, stateKey, title){
             gworkers:"",
             inTime : "",
             outTime: ""
-        })
+        });
+        this.setState({itemtitle: "Select Items"});
+        this.state.itemtitle =  "Select Items";
         toast.success("Item added successfully", { autoClose: 3000 }); 
     }
   }
@@ -337,16 +365,18 @@ resetThenSet(key, list, stateKey, title){
     if(this.validateSizeForm() == true){
 
         const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
-        if (!found){
-            let sizeList = {
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,               
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                Set:this.state.Set
+        if(this.state.value_scaffoldWorkType != ""){
+            if (!found){
+                let sizeList = {
+                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                    value_scaffoldType : this.state.value_scaffoldType,               
+                    L:this.state.L,
+                    H:this.state.H,
+                    W:this.state.W,
+                    Set:this.state.Set
+                }
+                this.sizeList.push(sizeList);
             }
-            this.sizeList.push(sizeList);
         }
       toast.success("Size list added successfully", { autoClose: 3000 }); 
       this.setState({
@@ -367,18 +397,19 @@ resetThenSet(key, list, stateKey, title){
     if(this.validateManpowerForm() == true){
 
         const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
-            
-        if (!found){
-            let manpowerList = {
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
+        if(this.state.safety != ""){
+            if (!found){
+                let manpowerList = {
+                    safety:this.state.safety,
+                    supervisor:this.state.supervisor,
+                    erectors:this.state.erectors,
+                    gworkers:this.state.gworkers,
+                    inTime : this.state.inTime,
+                    outTime: this.state.outTime
+                }
+                this.manpowerList.push(manpowerList);
+                this.state.manpowerList = this.manpowerList;
             }
-            this.manpowerList.push(manpowerList);
-            this.state.manpowerList = this.manpowerList;
         }
         toast.success("Manpower list added successfully", { autoClose: 3000 }); 
 
@@ -435,7 +466,7 @@ resetThenSet(key, list, stateKey, title){
         toast.error("Width cant be empty", { autoClose: 3000 });       
         return false;
     }
-    if(typeof this.state.Set == "undefined" || this.state.Set == "" || this.state.Set == 0){
+    if(typeof this.state.set == "undefined" || this.state.set == "" || this.state.set == 0){
         toast.error("Set cant be empty", { autoClose: 3000 });       
         return false;
     }
@@ -446,36 +477,13 @@ resetThenSet(key, list, stateKey, title){
 
     if(this.state.cType == 1){
         const found = this.itemList.some(el => el.value_item === this.state.value_item);
-        if (!found){
-            this.itemList.push({
-                value_item: this.state.value_item,
-                text_item: this.state.text_item,
-                sizeType: this.state.sizeType,
-                workBased: this.state.workBased,
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                Set:this.state.Set,
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
-
-            });
-            this.state.itemList = this.itemList;
-        }
-    } else if(this.state.cType == 2){
-        if(this.state.workBased == 1){ //size
-
-            const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
+        if(this.state.value_item != ""){
             if (!found){
-                this.sizeList.push({
+                this.itemList.push({
+                    value_item: this.state.value_item,
+                    text_item: this.state.text_item,
+                    sizeType: this.state.sizeType,
+                    workBased: this.state.workBased,
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
@@ -483,26 +491,54 @@ resetThenSet(key, list, stateKey, title){
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
-                    Set:this.state.Set
-                });
-                this.state.sizeList = this.sizeList;
-            }
-        }
-        if(this.state.workBased == 2){ //manpower
-
-            const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
-            
-            if (!found){
-                this.manpowerList.push({
+                    set:this.state.set,
                     safety:this.state.safety,
                     supervisor:this.state.supervisor,
                     erectors:this.state.erectors,
                     gworkers:this.state.gworkers,
                     inTime : this.state.inTime,
                     outTime: this.state.outTime
+
                 });
-                this.state.manpowerList = this.manpowerList;
-             }
+                this.state.itemList = this.itemList;
+            }
+        }
+    } else if(this.state.cType == 2){
+        if(this.state.workBased == 1){ //size
+
+            const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
+            if(this.state.value_scaffoldWorkType != ""){
+                if (!found){
+                    this.sizeList.push({
+                        value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                        text_scaffoldWorkType : this.state.text_scaffoldWorkType,
+                        value_scaffoldType : this.state.value_scaffoldType,
+                        text_scaffoldType : this.state.text_scaffoldType,
+                        L:this.state.L,
+                        H:this.state.H,
+                        W:this.state.W,
+                        set:this.state.set
+                    });
+                    this.state.sizeList = this.sizeList;
+                }
+            }
+        }
+        if(this.state.workBased == 2){ //manpower
+
+            const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
+            if(this.state.safety != ""){
+                if (!found){
+                    this.manpowerList.push({
+                        safety:this.state.safety,
+                        supervisor:this.state.supervisor,
+                        erectors:this.state.erectors,
+                        gworkers:this.state.gworkers,
+                        inTime : this.state.inTime,
+                        outTime: this.state.outTime
+                    });
+                    this.state.manpowerList = this.manpowerList;
+                }
+            }
         }
     }
 
@@ -516,7 +552,7 @@ resetThenSet(key, list, stateKey, title){
   render() {
     const {headerTitle} = this.state;
     // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
-    
+    console.log("====", this.state.itemtitle);
     return (
     <div className="container work-arr-container">
     <ToastContainer autoClose={8000} />
@@ -756,11 +792,11 @@ resetThenSet(key, list, stateKey, title){
                 <div className="col-sm-12"><label>Size</label></div>
             </div>
             <div className="row">
-                <div className="col-xs-3"> <CustInput  size="4" type="text" name="L" value={this.state.L} onChange={this.onFormChange} /> L</div>
-                <div className="col-xs-3"><CustInput size="4" type="text" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
-                <div className="col-xs-3"><CustInput size="4" type="text" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
+                <div className="col-xs-3"> <CustInput  size="4" type="number" name="L" value={this.state.L} onChange={this.onFormChange} /> L</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
             
-                <div className="col-xs-3"><CustInput size="4" type="text" name="Set" value={this.state.set} onChange={this.onFormChange} />Set</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="set" value={this.state.set} onChange={this.onFormChange} />Set</div>
             </div>
         </div>
     </div>
@@ -805,7 +841,7 @@ resetThenSet(key, list, stateKey, title){
 }
 <div className="row">
             <div className="col-xs-3">Scaffold Register</div>
-            <div className="col-xs-6"> <input type="checkbox" name="register" /></div>
+            <div className="col-xs-6"> <input type="checkbox" name="scaffoldRegister" onClick={this.onCheckBoxChecked} checked={this.state.scaffoldRegister == 1} /></div>
         </div>
 
 <div className="row">

@@ -73,6 +73,7 @@
     "moment": "^2.22.2",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
+    "react-accessible-accordion": "^3.0.0",
     "react-bootstrap": "^0.32.1",
     "react-datepicker": "^1.7.0",
     "react-dom": "^16.2.0",

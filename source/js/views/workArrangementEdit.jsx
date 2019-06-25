@@ -33,8 +33,10 @@ class WorkArrangementEdit extends React.Component {
       modalMsg :"",
       projectTitle : "Select Project",
       supervisorTitle : "Select Supervisor",
-      addsupervisorTitle : "Select Supervisor"
+      addsupervisorTitle : "Select Supervisor",
+      partialWorkers:[]
     };
+    this.partialWorkers = [];
     this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
     this.toggleSelected = this.toggleSelected.bind(this);
   }
@@ -63,6 +65,9 @@ class WorkArrangementEdit extends React.Component {
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors= nextProps.requestDet.supervisorsList;
         this.state.workers = nextProps.requestDet.workers;
+       
+
+       
       }
     }
     
@@ -84,20 +89,25 @@ class WorkArrangementEdit extends React.Component {
       let dateSelected = moment(listingDetails.createdOn,"YYYY-MM-DD");
       let actualDate = dateSelected.format("YYYY/MM/DD");
       this.setState({startDate1:dateSelected, startDate : actualDate});
+      let selectedItems=[];
       let workerListArr = this.state.workers.map((val) => {
         let selected = false;  
-        
+        this.state.partialWorkerIds = listingDetails.partialWorkers;
         if(listingDetails.workers && listingDetails.workers.includes(val.workerIdActual.toString())){
              selected = true;
              selectedWorkerIds.push(val.workerId);
+             selectedItems.push(val);
+             if(this.state.partialWorkerIds && this.state.partialWorkerIds.includes(val.workerIdActual.toString())){
+              this.partialWorkers.push(val.workerId);
+             }
         }
         return {
           ...val,
           selected
         }
       });
-     
-      this.setState({workers:workerListArr, workerIds: selectedWorkerIds, workerName: selectedWorkerNames});
+    console.log("log1", this.partialWorkers);
+      this.setState({workers:workerListArr, workerIds: selectedWorkerIds, workerName: selectedWorkerNames, selectedItems, partialWorkers:this.partialWorkers});
 
       // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
     }
@@ -112,15 +122,27 @@ class WorkArrangementEdit extends React.Component {
      dispatch(requestDetails(this.state));
      this.resetThenSet(key, list, stateKey);
   }
+  // toggleSelected(list, stateKey, selectedIds){
+  //   this.setState({
+  //     [stateKey]: list
+  //   });
+  //   let nameArr = list.filter(function(obj) {
+  //     return obj.selected;
+  //   }).map(function(obj) { return obj.workerName; });
+    
+  //   this.setState({workerIds:selectedIds, workerName:nameArr});
+  // }
   toggleSelected(list, stateKey, selectedIds){
     this.setState({
       [stateKey]: list
     });
-    let nameArr = list.filter(function(obj) {
+    let selectedItems = list.filter(function(obj) {
       return obj.selected;
-    }).map(function(obj) { return obj.workerName; });
+    });
+    // console.log(selectedItems);
+    let nameArr= selectedItems.map(function(obj) { return obj.workerName; });
     
-    this.setState({workerIds:selectedIds, workerName:nameArr});
+    this.setState({workerIds:selectedIds, workerName:nameArr, selectedItems});
   }
   resetThenSet(key, list, stateKey){
     // let temp = this.state[key];
@@ -144,7 +166,7 @@ class WorkArrangementEdit extends React.Component {
     this.setState({remarks});
   }
   validateForm = () =>{
-    console.log("state==", this.state);
+  
     if(!this.state.projectId || this.state.projectId == ""){
       toast.error("Project is required", { autoClose: 3000 });       
       return false;
@@ -210,7 +232,35 @@ class WorkArrangementEdit extends React.Component {
         });
       }
 }
+displayPartialWorkers = (workers)=>{
+
+  let self = this;
+// console.log("log", workers);
+  return workers.map((name)=>{
+    let flag = false;
+    if(this.state.partialWorkers && this.state.partialWorkers.includes(name.workerId.toString())){
+      flag = true;
+    }
+    console.log("fl", flag, name.workerIdActual, this.state.partialWorkers);
+    return(
+      <div> <input value={name.workerId} type="checkbox" checked={flag} onClick={this.selectPartialWorkers}/>&nbsp;{name.workerName}</div>
+    )
+  });
+}
+selectPartialWorkers = (e)=>{
+  e.stopPropagation();
   
+  // console.log("==",e.target)
+  if(e.target.checked == true){
+    this.partialWorkers.push(e.target.value);
+  }
+  else{
+    var index = this.partialWorkers.indexOf(e.target.value);
+    if (index !== -1){ this.partialWorkers.splice(index, 1);}
+  }
+  
+  this.setState({partialWorkers:this.partialWorkers});
+}
   /* Render */
   render() {
     const {headerTitle, listingId} = this.state;
@@ -292,6 +342,19 @@ class WorkArrangementEdit extends React.Component {
               list={this.state.workers}
               toggleItem={this.toggleSelected}
             />
+          </div>
+    </div>
+    <div className="row">
+        <div className="col-sm-6"><label>Partial Workers</label></div>
+          <div className="col-sm-6">
+         
+
+          {this.state.selectedItems &&
+          <div>
+              {this.displayPartialWorkers(this.state.selectedItems)}
+            </div>
+          
+          }
           </div>
     </div>
 

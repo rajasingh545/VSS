@@ -60,7 +60,7 @@ class Dropdown extends Component{
     this.setState({
       headerTitle: title,
       listOpen: false
-    }, this.props.resetThenSet(value, list, stateKey, title))
+    }, this.props.resetThenSet(value, list, stateKey, title, list[id]))
   }
 
   toggleList(){

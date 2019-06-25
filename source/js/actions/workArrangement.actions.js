@@ -76,6 +76,19 @@ export function listigDetails(obj){
   }
 
 }
+export function fileuploads(obj){
+
+  
+
+  
+    return fetch(API.WORKREQUEST_URI, {
+      method: 'post',
+      mode:'cors',
+      body: obj,
+    }).then(response =>response.json())
+        .then(json => dispatch(workRequestPostSuccess(json)));
+  
+}
 
 export function requestDetails(obj){
   return function (dispatch) {

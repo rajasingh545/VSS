@@ -3,9 +3,9 @@ import { withRouter } from "react-router-dom";
 import {DOMAIN_NAME} from "../../config/api-config";
 import Sidebar from 'react-sidebar';
 import {Button, Glyphicon, Navbar, Nav, NavItem, MenuItem} from "react-bootstrap";
-/*
-https://github.com/balloob/react-sidebar
-*/
+import Accordion from '../../common/Accordion';
+
+
 const defaultStyles = {
   root: {
     position: 'absolute',
@@ -122,6 +122,13 @@ export default class Header extends Component {
     else if(page.match(/WorkRequest/gi)){
       title = "Work Request";
     }
+    else if(page.match(/DailyWorkTrackList/gi)){
+      title = "Daily Work Progress List";
+    }
+    else if(page.match(/DailyWorkTrack/gi)){
+      title = "Daily Work Progress";
+    }
+   
      else if(page.match(/View/gi)){
       title = "Details";
     }
@@ -199,14 +206,14 @@ export default class Header extends Component {
         },
         sidebarLink: {
           display: 'block',
-          padding: '16px 0px',
-          color: '#757575',
+          padding: '6px 0px',
           textDecoration: 'none',
+          color: '#757575',
         },
         divider: {
           margin: '8px 0',
           height: 1,
-          backgroundColor: '#757575',
+          
         },
         content: {
           padding: '16px',
@@ -218,30 +225,49 @@ export default class Header extends Component {
        let userType = sessionStorage.getItem("userType");      
     return(
     <div style={styles2.content}>
-        
+         
         <div style={{width:"100%",textAlign:"right",cursor:"pointer"}} onClick={this.menuButtonClick}><Glyphicon glyph="remove"/> </div>
-        <div className="menuText">Welcome {username}</div>
+        <div style={styles2.sidebarLink}>Welcome <strong>{username}</strong></div>
         <div style={styles2.divider} />
         <a href="javascript:void(0);" onClick={this.goBack} style={styles2.sidebarLink}><Glyphicon glyph="home"/> Home</a>
-        {userType == 1 && 
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Arrangement</a> 
-        }
-        {userType == 1 && 
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Arrangement List</a> 
-        }
-        {(userType == 1 || userType == 5 ) &&
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Attendance</a> 
-        }  
-         {(userType == 1 ) &&
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Attendance List</a> 
-        }  
-        {userType == 1 && 
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequest')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Request</a>   
-        }
+       
+          <Accordion allowMultipleOpen>
           {userType == 1 && 
-        <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequestList')} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Work Request List</a>   
-        }
-         
+            <div label='Work Arrangements'>
+            
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}>Create Work Arrangement</a>   
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}> Work Arrangement List</a> 
+                 
+            </div>
+          }
+            <div label='Attendance'>
+            {(userType == 1 || userType == 5 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}> Create Attendance</a> 
+              }  
+              {(userType == 1 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
+              } 
+            </div>
+            {userType == 1 && 
+              <div label='Work Request'>
+               
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequest')} style={styles2.sidebarLink}> Create Work Request</a>   
+               
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequestList')} style={styles2.sidebarLink}> Work Request List</a>   
+              
+              </div>
+            }
+            {userType == 1 && 
+              <div label='Daily Work Track'>
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrack')} style={styles2.sidebarLink}>Create DWTR</a>   
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrackList')} style={styles2.sidebarLink}>DWTR List</a>   
+              
+              </div>
+            }
+        </Accordion>
+        
         <a href="javascript:void(0);" onClick={this.logout} style={styles2.sidebarLink}><Glyphicon glyph="log-out"/> Logout</a>
         <div style={styles2.divider} />
          

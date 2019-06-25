@@ -16,6 +16,9 @@ import WorkArrangmentList from 'views/WorkArrangementList';
 import WorkRequestList from 'views/WorkRequestList';
 import WorkRequest from 'views/WorkRequest';
 import WorkRequestEdit from 'views/WorkRequestEdit';
+import DailyWorkTrack from 'views/DailyWorkTrack';
+import DailyWorkTrackList from 'views/DailyWorkTrackList';
+import DailyWorkTrackEdit from 'views/DailyWorkTrackEdit';
 class App extends Component {
   constructor(props) {
     super(props);
@@ -46,9 +49,13 @@ class App extends Component {
             <Route exact path="/WorkRequest" component={ WorkRequest } />
             <Route exact path="/WorkRequest/:id" component={ WorkRequestEdit } />
             <Route exact path="/WorkRequestList" component={ WorkRequestList } />
-            <Route exact path="/WorkArrangment" component={ WorkArrangment } />
+            <Route exact path="/WorkArrangment" component={ WorkArrangment } />            
             <Route exact path="/WorkArrangment/:id" component={ WorkArrangmentEdit } />
             <Route exact path="/WorkArrangmentList" component={ WorkArrangmentList } />
+            <Route exact path="/DailyWorkTrack" component={ DailyWorkTrack } />
+            <Route exact path="/DailyWorkTrackList" component={ DailyWorkTrackList } />
+            <Route exact path="/DailyWorkTrack/:id" component={ DailyWorkTrackEdit } />
+            
             
             <Route path='*' component={ NotFound } />
             

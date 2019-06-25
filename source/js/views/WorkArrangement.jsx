@@ -40,8 +40,10 @@ class WorkArrangement extends React.Component {
       addsupervisorResetFlag : false,
       projectResetFlag: false,
       supervisorResetFlag : false,
-      workerResetFlag:false
+      workerResetFlag:false,
+      partialWorkers:[]
     };
+    this.partialWorkers = [];
     this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
     this.toggleSelected = this.toggleSelected.bind(this);
   }
@@ -111,6 +113,7 @@ class WorkArrangement extends React.Component {
       projectId:'',
       value_supervisors: '',
       workerIds:[],
+      selectedItems : [],
       remarks:''
 
     });
@@ -151,11 +154,13 @@ class WorkArrangement extends React.Component {
     this.setState({
       [stateKey]: list
     });
-    let nameArr = list.filter(function(obj) {
+    let selectedItems = list.filter(function(obj) {
       return obj.selected;
-    }).map(function(obj) { return obj.workerName; });
+    });
+    // console.log(selectedItems);
+    let nameArr= selectedItems.map(function(obj) { return obj.workerName; });
     
-    this.setState({workerIds:selectedIds, workerName:nameArr});
+    this.setState({workerIds:selectedIds, workerName:nameArr, selectedItems});
   }
   resetThenSet(key, list, stateKey){
     // let temp = this.state[key];
@@ -252,7 +257,32 @@ goBack = (e) =>{
   e.preventDefault();
   this.props.history.push('/Home');
 }
+displayPartialWorkers = (workers)=>{
+
+  let self = this;
+// console.log("log", workers);
+  return workers.map((name)=>{
+    
+    return(
+      <div> <input value={name.workerId} type="checkbox" onClick={this.selectPartialWorkers}/>&nbsp;{name.workerName}</div>
+    )
+  });
+}
+
+selectPartialWorkers = (e)=>{
+  e.stopPropagation();
   
+  // console.log("==",e.target)
+  if(e.target.checked == true){
+    this.partialWorkers.push(e.target.value);
+  }
+  else{
+    var index = this.partialWorkers.indexOf(e.target.value);
+    if (index !== -1){ this.partialWorkers.splice(index, 1);}
+  }
+  
+  this.setState({partialWorkers:this.partialWorkers});
+}
   
   /* Render */
   render() {
@@ -341,6 +371,19 @@ goBack = (e) =>{
               list={this.state.workers}
               toggleItem={this.toggleSelected}
             />
+          </div>
+    </div>
+    <div className="row">
+        <div className="col-sm-6"><label>Partial Workers</label></div>
+          <div className="col-sm-6">
+         
+
+          {this.state.selectedItems &&
+          <div>
+              {this.displayPartialWorkers(this.state.selectedItems)}
+            </div>
+          
+          }
           </div>
     </div>
 

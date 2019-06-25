@@ -171,6 +171,14 @@ onFormChange = (e) =>{
       this.setState({[e.target.name]: e.target.value});
     }
 }
+onCheckBoxChecked = (e)=>{
+    if(e.target.checked == true){
+        this.setState({[e.target.name]:1});
+    }
+    else{
+        this.setState({[e.target.name]:0});
+    }
+}
 callform = (key, list, stateKey) =>{
     this.resetThenSet(key, list, stateKey);
 }
@@ -281,7 +289,7 @@ resetThenSet(key, list, stateKey, title){
                 L:this.state.L,
                 H:this.state.H,
                 W:this.state.W,
-                Set:this.state.Set,
+                set:this.state.set,
                 safety:this.state.safety,
                 supervisor:this.state.supervisor,
                 erectors:this.state.erectors,
@@ -299,7 +307,7 @@ resetThenSet(key, list, stateKey, title){
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
-                    Set:this.state.Set
+                    set:this.state.set
                 });
                 this.state.sizeList = this.sizeList;
             }
@@ -358,7 +366,7 @@ resetThenSet(key, list, stateKey, title){
             L:this.state.L,
             H:this.state.H,
             W:this.state.W,
-            Set:this.state.Set,
+            set:this.state.set,
             safety:this.state.safety,
             supervisor:this.state.supervisor,
             erectors:this.state.erectors,
@@ -378,7 +386,7 @@ resetThenSet(key, list, stateKey, title){
             L:"",
             H:"",
             W:"",
-            Set:"",
+            set:"",
             safety:"",
             supervisor:"",
             erectors:"",
@@ -398,7 +406,7 @@ resetThenSet(key, list, stateKey, title){
         L:this.state.L,
         H:this.state.H,
         W:this.state.W,
-        Set:this.state.Set
+        set:this.state.set
       }
       this.sizeList.push(sizeList);
       toast.success("Size list added successfully", { autoClose: 3000 }); 
@@ -408,7 +416,7 @@ resetThenSet(key, list, stateKey, title){
         L:"",
         H:"",
         W:"",
-        Set:""
+        set:""
 
     });
     }
@@ -480,7 +488,7 @@ resetThenSet(key, list, stateKey, title){
         toast.error("Width cant be empty", { autoClose: 3000 });       
         return false;
     }
-    if(typeof this.state.Set == "undefined" || this.state.Set == "" || this.state.Set == 0){
+    if(typeof this.state.set == "undefined" || this.state.set == "" || this.state.set == 0){
         toast.error("Set cant be empty", { autoClose: 3000 });       
         return false;
     }
@@ -509,7 +517,7 @@ resetThenSet(key, list, stateKey, title){
                 L:this.state.L,
                 H:this.state.H,
                 W:this.state.W,
-                Set:this.state.Set,
+                set:this.state.set,
                 safety:this.state.safety,
                 supervisor:this.state.supervisor,
                 erectors:this.state.erectors,
@@ -533,7 +541,7 @@ resetThenSet(key, list, stateKey, title){
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
-                    Set:this.state.Set
+                    set:this.state.set
                 });
                 this.state.sizeList = this.sizeList;
             }
@@ -797,7 +805,7 @@ resetThenSet(key, list, stateKey, title){
                 <div className="col-xs-3"><CustInput size="4" type="text" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
                 <div className="col-xs-3"><CustInput size="4" type="text" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
             
-                <div className="col-xs-3"><CustInput size="4" type="text" name="Set" value={this.state.set} onChange={this.onFormChange} />Set</div>
+                <div className="col-xs-3"><CustInput size="4" type="text" name="set" value={this.state.set} onChange={this.onFormChange} />Set</div>
             </div>
         </div>
     </div>
@@ -842,7 +850,7 @@ resetThenSet(key, list, stateKey, title){
 }
 <div className="row">
             <div className="col-xs-3">Scaffold Register</div>
-            <div className="col-xs-6"> <input type="checkbox" name="register" checked={this.state.scaffoldRegister == 1}/></div>
+            <div className="col-xs-6"> <input type="checkbox" name="scaffoldRegister" checked={this.state.scaffoldRegister == 1} onClick={this.onCheckBoxChecked}/></div>
         </div>
 
 <div className="row">
