@@ -128,6 +128,9 @@ export default class Header extends Component {
     else if(page.match(/DailyWorkTrack/gi)){
       title = "Daily Work Progress";
     }
+    else if(page.match(/Report/gi)){
+      title = "Report";
+    }
    
      else if(page.match(/View/gi)){
       title = "Details";
@@ -257,12 +260,21 @@ export default class Header extends Component {
               
               </div>
             }
-            {userType == 1 && 
+            {(userType == 1 || userType == 5) && 
               <div label='Daily Work Track'>
                 
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrack')} style={styles2.sidebarLink}>Create DWTR</a>   
                 
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrackList')} style={styles2.sidebarLink}>DWTR List</a>   
+              
+              </div>
+            }
+            {userType == 1 && 
+              <div label='Productivity Report'>
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Supervisor')} style={styles2.sidebarLink}>For Supervisor</a>   
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Sites')} style={styles2.sidebarLink}>For Site & Supervisor</a>   
               
               </div>
             }

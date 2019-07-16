@@ -28,6 +28,7 @@ class DailyWorkTrack extends React.Component {
     clients:[],
     team:[],
     projectTitle : "Select Project",
+    basesupervisorTitle : "Select Supervisor",
     clientTitle : "Select Client",
     divisionTitle : "Select Sub Division",
     statusTitle : "Select Status",
@@ -81,7 +82,8 @@ class DailyWorkTrack extends React.Component {
     message: '',
     uploads : [],
     uniqueId:Date.now(),
-    desc:""
+    desc:"",
+    requestByName:""
    };
   
    this.teamList = [];
@@ -178,8 +180,10 @@ callform = (key, list, stateKey, title) =>{
     this.resetThenSet(key, list, stateKey, title);
 }
 displayDesc = (key, list, stateKey, title, selectedArr) =>{
-   
+  
     this.setState({desc:selectedArr.desc});
+    
+    this.setState({requestByName:selectedArr.requestBy});
      this.setState({workType:selectedArr.type});
     this.resetThenSet(key, list, stateKey, title);
 }
@@ -297,10 +301,10 @@ resetThenSet(key, list, stateKey, title){
       return false;
     }
     
-    if(!this.state.requestBy || this.state.requestBy == ""){
-      toast.error("Requested by is required", { autoClose: 3000 });       
-      return false;
-    }
+    // if(!this.state.requestBy || this.state.requestBy == ""){
+    //   toast.error("Requested by is required", { autoClose: 3000 });       
+    //   return false;
+    // }
     return true;
   }
 
@@ -545,10 +549,24 @@ resetThenSet(key, list, stateKey, title){
             </label>
         </div>
     </div>
-     <div className="row">
+    { /*<div className="row">
         <div className="col-xs-6"><label>Work Request By</label></div>
           <div className="col-xs-6">
           <CustInput type="text" name="requestBy" value={this.state.requestBy} onChange={this.onFormChange} />
+          </div>
+    </div>*/}
+    <div className="row">
+        <div className="col-sm-6"><label>Base Supervisor</label></div>
+          <div className="col-sm-6">
+            <Dropdown
+                  title={this.state.basesupervisorTitle}
+                  name="Name"
+                  keyName="userId"
+                  stateId="basesupervisors"
+                  reset={this.state.supervisorResetFlag}
+                  list={this.state.supervisors}
+                  resetThenSet={this.callform}
+            />
           </div>
     </div>
     <div className="row">
@@ -614,6 +632,13 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-12 red"> {this.state.desc}</div>
            
         </div>
+        {this.state.requestByName != "" &&
+        <div className="row">
+            <div className="col-xs-3 ">Work Request By :</div>
+            <div className="col-xs-6 "> {this.state.requestByName}</div>
+        </div>
+        }
+       
         {this.state.workType == 1 && 
         <div>
         <div className="row">
@@ -797,10 +822,6 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-6"><label>No.of Workers</label></div><div className="col-xs-6"><CustInput type="number" size="4" name="mWorkerCount" value={this.state.mWorkerCount} onChange={this.onFormChange}/></div>
             
         </div>
-
-        
-
-       
         <div className="row">
             <div className="col-xs-3">Time IN</div>
             <div className="col-xs-3"><TimeField  value={this.state.minTime} name="minTime" className="width100" onChange={this.onTimeChange}/></div>

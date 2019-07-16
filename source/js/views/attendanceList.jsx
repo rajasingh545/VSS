@@ -30,6 +30,7 @@ export default class AttendanceList extends React.Component {
         projectId:"",
        
         startDate1: moment(),
+        startDate: moment().format("YYYY/MM/DD"),
         show:false,
         modalCont : '',
         requestTypeTitle : "Select Status"
@@ -134,7 +135,7 @@ export default class AttendanceList extends React.Component {
           startDate1: ""
         });
       }
-      console.log("date", e.format("YYYY/MM/DD"));
+      this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
       this.handleRequestType(e.format("YYYY/MM/DD"));
 }
 setPreview =() =>{

@@ -98,7 +98,7 @@ class WorkRequestEdit extends React.Component {
         let requestSizeList = requestSizeListArr;
         let scaffoldTitle = "Select Type";
         let scaffoldworkTitle ="Select Work Type";
-        console.log("requestItemsArr", requestItemsArr)
+        
         if(requestItemsArr){           
             requestItems = requestItemsArr[requestItemsArr.length-1];
            
@@ -113,16 +113,14 @@ class WorkRequestEdit extends React.Component {
        scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");        
             }
         }
-       
-      
         let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
         let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
-        
         
         this.setState({
             projectTitle:proTitle,
             clientTitle:clientname,           
             cType:requestDet.contractType,
+            description : requestDet.description,
             value_projects:requestDet.projectId,
             value_clients:requestDet.clientId,
             text_projects:proTitle,
@@ -133,6 +131,8 @@ class WorkRequestEdit extends React.Component {
             workBased: requestItems.workBased,
             value_scaffoldWorkType : requestSizeList.scaffoldWorkType,
             value_scaffoldType : requestSizeList.scaffoldType,
+            text_scaffoldType : this.state.text_scaffoldType,
+            value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
             L:requestSizeList.length,
             H:requestSizeList.height,
             W:requestSizeList.width,
@@ -157,13 +157,118 @@ class WorkRequestEdit extends React.Component {
            
             this.requestItems();
         }
-
-        this.state.itemList = requestItemsArr;
-        this.state.manpowerList = requestManlistArr;
-        this.state.sizeList = requestSizeListArr;
+        if(requestDet.contractType == 1){
+            setTimeout(()=>{
+                let itemList = this.getOrginalContDataPopulate(requestItemsArr, requestManlistArr, requestSizeListArr);
+                this.state.itemList = itemList;
+                this.itemList=itemList;
+            }, 1000);
+           
+          
+        }
+        if(requestDet.contractType ==2 ){
+            let sizeList = this.getSizeDataPopulated(requestSizeListArr);
+            let manpowerList = this.getManPowerPopulated(requestManlistArr);
+            this.state.sizeList = sizeList; 
+            this.state.manpowerList = manpowerList;          
+            this.manpowerList = manpowerList;
+            this.sizeList = sizeList;
+        }
     }
 }
 
+getOrginalContDataPopulate = (requestItemsArr,requestManlistArr,requestSizeListArr) =>{
+
+    // console.log("in pop===", this.state.contracts);
+    let returnArr = [];
+    let i =0;
+    requestItemsArr.map((items) =>{
+        let sizeItem = (requestSizeListArr[i])?requestSizeListArr[i]:[];
+        let materialItem = (requestManlistArr[i])?requestManlistArr[i]:[];
+        
+        let scaffoldTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
+        let scaffoldworkTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
+        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(sizeItem.scaffoldSubCategory, this.state.scaffoldWorkType, "id", "scaffoldName");   
+        let itemTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "item");
+        let locationTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "location");
+    let obj ={        
+        value_item: items.itemId,
+        text_item:itemTitle,
+        text_location :locationTitle,
+        sizeType: items.sizeType,
+        workBased: items.workBased,
+        text_scaffoldWorkType : scaffoldworkTitle,
+        text_scaffoldType : scaffoldTitle,
+        text_scaffoldSubcategory : scaffoldworkSubCategory,
+        L:sizeItem.length,
+        H:sizeItem.height,
+        W:sizeItem.width,
+        set:sizeItem.setcount,
+        safety:materialItem.safety,
+        supervisor:materialItem.supervisor,
+        erectors:materialItem.erectors,
+        gworkers:materialItem.generalWorker,
+        inTime : materialItem.timeIn,
+        outTime: materialItem.timeOut         
+
+      }
+      returnArr.push(obj);
+      i++;
+    });
+
+    return returnArr;
+
+}
+getSizeDataPopulated = (requestSizeListArr) =>{
+    let returnArr = [];
+    let i =0;
+    requestSizeListArr.map((items) =>{
+        console.log("==",items);
+        let scaffoldTitle = getDetailsWithMatchedKey2(items.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
+        let scaffoldworkTitle = getDetailsWithMatchedKey2(items.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
+        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(items.scaffoldSubCategory, this.state.scaffoldWorkType, "id", "scaffoldName");   
+       
+    let obj ={        
+        value_scaffoldWorkType : items.scaffoldWorkType,
+        text_scaffoldWorkType : scaffoldworkTitle,
+        text_scaffoldType : scaffoldTitle,
+        value_scaffoldType : items.scaffoldType,
+        text_scaffoldSubcategory : scaffoldworkSubCategory,
+        L:items.length,
+        H:items.height,
+        W:items.width,
+        set:items.setcount
+
+      }
+      returnArr.push(obj);
+      i++;
+    });
+
+    return returnArr;
+}
+
+getManPowerPopulated = (requestManlistArr) =>{
+    let returnArr = [];
+    let i =0;
+    requestManlistArr.map((items) =>{
+        console.log("==",items);
+        
+       
+    let obj ={        
+        safety:items.safety,
+        supervisor:items.supervisor,
+        erectors:items.erectors,
+        gworkers:items.generalWorker,
+        inTime : items.timeIn,
+        outTime: items.timeOut
+
+      }
+      returnArr.push(obj);
+      i++;
+    });
+
+    return returnArr;
+}
 onFormChange = (e) =>{
       
     if(e){
@@ -234,8 +339,6 @@ resetThenSet(key, list, stateKey, title){
         dispatch(requestDetails(this.state));
       }
 
-      
-   
   }
 
   onctypeChange = (e) =>{

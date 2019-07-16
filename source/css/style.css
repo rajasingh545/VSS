@@ -720,3 +720,13 @@ width: 50%;
     overflow: hidden !important;
     text-overflow: ellipsis;
 }
+
+.search { 
+	position: relative; 
+	margin: 0 auto ;
+	text-align: center;
+  }
+  .search input { 
+	text-indent: 30px;
+	 font-family:  FontAwesome, sans-serif;
+  }

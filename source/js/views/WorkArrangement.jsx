@@ -90,6 +90,9 @@ class WorkArrangement extends React.Component {
       toast.success("Work Arrangement Created Successfully", { autoClose: 3000 });  
       this.resetForm(); 
       this.clearStore();
+      setTimeout(()=>{
+        this.props.history.push('/WorkArrangmentList');
+    }, 3000);
     }
    
     // console.log("==out ", nextProps.requestPost);
@@ -99,7 +102,7 @@ class WorkArrangement extends React.Component {
   componentDidMount(){
     this.getAvailableWorker();
   }
-
+  
   resetForm = () =>{
     
     this.setState({

@@ -5,6 +5,8 @@ import React, { Component } from 'react';
 import * as CONFIG from "../config/api-config";
 import { getDetailsWithMatchedKey2} from '../common/utility';
 
+import CustomButton from '../common/CustomButton';
+
 class DailyWorkTrackPreview extends Component{
    constructor(props){
        super(props)
@@ -161,15 +163,22 @@ class DailyWorkTrackPreview extends Component{
 
        });
     }
-  
+    edit = () =>{
+        const {listingId} = this.props.curState;
+        this.props.history.push('/DailyWorkTrack/'+listingId);
+    }
    render(){
 
-       const {curState} = this.props;
+       const {curState, userType} = this.props;
       let imgURL = CONFIG.CONTEXT;
        return(
        <div>
+           <br />
            <div className="container work-arr-container">
-   
+           {userType == 1 &&
+            <div className="col-sm-6"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.edit(1)}>Edit</CustomButton> </div>
+           }
+   <br /><br />
            <div className="row">
                <div className="col-sm-6"><label>Project:</label></div>
                <div className="col-sm-6 strong">{curState.text_projects}</div>
@@ -182,13 +191,14 @@ class DailyWorkTrackPreview extends Component{
            <div className="col-sm-6"><label>Type:</label></div>
            <div className="col-sm-6 strong">{(curState.cType == 1)? "Work Request":"Others"}</div>
            </div>
+           
            <div className="row">
-           <div className="col-sm-6"><label>Requested By:</label></div>
-           <div className="col-sm-6 strong">{curState.requestBy}</div>
+           <div className="col-sm-6"><label>Base Supervisor:</label></div>
+           <div className="col-sm-6 strong">{curState.text_basesupervisor}</div>
            </div>
            <div className="row">
            <div className="col-sm-6"><label>Field Supervisor:</label></div>
-           <div className="col-sm-6 strong">{curState.text_supervisors}</div>
+           <div className="col-sm-6 strong">{curState.text_supervisor}</div>
            </div>
            {curState.cType == 1 &&
            <div className="row">
@@ -213,19 +223,19 @@ class DailyWorkTrackPreview extends Component{
             {curState.photo_1 != "" &&
             <div className="row">
             <div className="col-sm-6"><label>Photo 1</label></div>
-            <div className="col-sm-6 strong"><img src={imgURL+"/"+curState.photo_1} height="100px" width="200px" /></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_1} target="_blank"><img src={imgURL+"/"+curState.photo_1} height="100px" width="200px" /></a></div>
            </div>
             }
              {curState.photo_2 != "" &&
            <div className="row"> 
             <div className="col-sm-6"><label>Photo 2</label></div>
-            <div className="col-sm-6 strong"><img src={imgURL+"/"+curState.photo_2} height="100px" width="200px" /></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_2} target="_blank"><img src={imgURL+"/"+curState.photo_2}  height="100px" width="200px" /></a></div>
            </div>
              }
               {curState.photo_3 != "" &&
            <div className="row">
             <div className="col-sm-6"><label>Photo 3</label></div>
-            <div className="col-sm-6 strong"><img src={imgURL+"/"+curState.photo_3} height="100px" width="200px" /></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_3} target="_blank"><img src={imgURL+"/"+curState.photo_3} height="100px" width="200px" /></a></div>
            </div>
               }
            <div className="row">
@@ -235,7 +245,7 @@ class DailyWorkTrackPreview extends Component{
            {curState.matPhotos != "" &&
            <div className="row">
             <div className="col-sm-6"><label>Photos</label></div>
-            <div className="col-sm-6 strong"><img src={imgURL+"/"+curState.matPhotos} height="100px" width="200px" /></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.matPhotos} target="_blank"><img src={imgURL+"/"+curState.matPhotos} height="100px" width="200px" /></a></div>
            </div>
            }
            <div className="row">
@@ -249,7 +259,7 @@ class DailyWorkTrackPreview extends Component{
            {curState.safetyPhoto != "" &&
            <div className="row">
             <div className="col-sm-6"><label>Photos</label></div>
-            <div className="col-sm-6 strong"><img src={imgURL+"/"+curState.safetyPhoto} height="100px" width="200px" /></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.safetyPhoto} target="_blank"><img src={imgURL+"/"+curState.safetyPhoto} height="100px" width="200px" /></a></div>
            </div>
            }
            <div className="row">

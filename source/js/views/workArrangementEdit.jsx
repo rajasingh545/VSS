@@ -7,7 +7,7 @@ import CustomButton from '../common/CustomButton';
 import CustInput from '../common/CustInput';
 import PreviewTemplate from '../common/PreviewTemplate';
 import baseHOC from "./baseHoc";
-import { requestDetails, requestPost, listigDetails } from 'actions/workArrangement.actions';
+import { requestDetails, requestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
 import {getPreviewContent, getDetailsWithMatchedKey2} from '../common/utility';
 import { ToastContainer, toast } from 'react-toastify';
@@ -113,7 +113,10 @@ class WorkArrangementEdit extends React.Component {
     }
   
   }
-  
+  componentWillUnmount(){
+    const { dispatch } = this.props;
+    dispatch(clearListing([]));
+  }
 
   getSupervisor = (key, list, stateKey) =>{
     const { dispatch } = this.props;

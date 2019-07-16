@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import moment from "moment";
 import {Modal} from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
+import InputSearch from "../common/InputSearch";
 
 @connect(state => ({
 loading: state.request.get('loadingListing'),
@@ -39,6 +40,7 @@ export default class DailyWorkTrackList extends React.Component {
     };
     
     this.selectedIds = [];
+    this.initialItems = [];
     }
   componentWillMount(){
     const { dispatch } = this.props;
@@ -56,6 +58,11 @@ export default class DailyWorkTrackList extends React.Component {
     const { requestDet } = nextProps;
     this.setState({listingDetails : nextProps.listingDetails});
     this.setState({requestDet : requestDet});
+
+    if(nextProps.workRequestData){
+      // this.initialItems = nextProps.workRequestData;
+      this.setState({workRequestData: nextProps.workRequestData})
+    }
     
   }
   componentWillUnmount(){
@@ -81,7 +88,7 @@ export default class DailyWorkTrackList extends React.Component {
   
   }
   redirectView = (requestId) =>{        
-      this.props.history.push('/DailyWorkTrack/'+requestId);
+      this.props.history.push('/DWTRPreview/'+requestId);
                   
   }
   
@@ -91,7 +98,7 @@ export default class DailyWorkTrackList extends React.Component {
     let {workRequestData, requestDet} = this.props;
     let response = "";
     let requestDetails = {};
-
+    this.initialItems = [];
     if(workRequestData && workRequestData.length > 0){
         response = listings.map((data, index) =>{
             let projectName = "";
@@ -104,11 +111,15 @@ export default class DailyWorkTrackList extends React.Component {
         if(this.state.requestType == 1){
           checkBox=false;
         }
-         
+        this.initialItems.push({
+          ...data,
+          projectName,
+          clientname
+        });
           let elmId="elm_"+requestDetails.workArrangementId;
         return (
                 <div  className="row Listing1 hrline hoverColor" style={{cursor:"pointer"}} key={data.workRequestId} onClick={()=>this.redirectView(data.worktrackId)}>
-                         <strong>{projectName} :</strong>  {clientname} Requested By : {data.requestedBy}
+                         <strong>{projectName} :</strong>  {clientname} 
                 </div>
             );
         });
@@ -200,6 +211,9 @@ handleSubmit = () =>{
   }, 2000)
   
 }
+FilterDataCallBackfun =(result) =>{
+  this.setState({workRequestData:result});
+  }
   render() {
     const {
       userType, requestDet, workRequestData
@@ -256,12 +270,20 @@ let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
                
             </div>
 
-            <div className="padding15" id="divRequestListing">
+            <div   id="divRequestListing">
             {loading == true &&
                 <div className="center-div"><img src={loadingurl} /></div>
             }
-                {workRequestData && loading == false && 
-                this.Listings(workRequestData)
+                {this.state.workRequestData && loading == false && 
+                <div className="row">
+                <div className="col-xs-8">
+                  <InputSearch 
+                    initialItems= {this.initialItems} 
+                    FilterData={this.FilterDataCallBackfun}
+                    />
+                {this.Listings(this.state.workRequestData)}
+                </div>
+                </div>
                 }
             </div>
             <div>

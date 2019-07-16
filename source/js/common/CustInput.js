@@ -5,6 +5,9 @@ import {FormControl} from 'react-bootstrap';
      if(props.type === "textarea"){
         additionalProps = {componentClass:"textarea"}
      }
+     if(props.type === "number"){
+        additionalProps = {min:"0"}
+     }
      const onKeyPressFn = (e)=>{
        
         if(props.type === "number"){
@@ -13,6 +16,7 @@ import {FormControl} from 'react-bootstrap';
             if(val < 0){
                 return false;
             }
+            
         }
         if(typeof props.onChange == "function"){
             props.onChange(e);

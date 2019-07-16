@@ -104,7 +104,7 @@ import React, { Component } from 'react';
                             <div className="col-xs-3"> L: <span className="strong">{item.L}</span></div>
                             <div className="col-xs-3">W: <span className="strong">{item.W}</span></div>
                             <div className="col-xs-3">H: <span className="strong">{item.H}</span></div>                       
-                            <div className="col-xs-3">Set <span className="strong">{item.Set}</span></div>
+                            <div className="col-xs-3">Set <span className="strong">{item.set}</span></div>
                         </div>
 
                     </div>
@@ -158,6 +158,8 @@ import React, { Component } from 'react';
     render(){
 
         const {curState} = this.props;
+
+       
         return(
         <div>
             <div className="container work-arr-container">
@@ -179,6 +181,11 @@ import React, { Component } from 'react';
             <div className="col-sm-6"><label>Contract Type:</label></div>
             <div className="col-sm-6 strong">{(curState.cType == 1)? "Orginal Contarct":"Variation Works"}</div>
             </div>
+            <div className="row">
+            <div className="col-sm-6"><label>Description:</label></div>
+            <div className="col-sm-6 strong">{curState.description}</div>
+            </div>
+
             {curState.cType == 1 && 
                     this.setItemList(curState.itemList)
             }
@@ -199,6 +206,19 @@ import React, { Component } from 'react';
 
                     </div>
             }
+            <div className="row">
+                <div className="col-sm-6"><label>Scaffold Register</label></div>
+                {curState.scaffoldRegister == 1 ?
+                <div className="col-sm-6 strong"> Checked  </div>
+                :
+                <div className="col-sm-6 strong"> Not Checked  </div>
+                }
+            </div>
+            <div className="row">
+                <div className="col-sm-6"><label>Remarks</label></div>
+                <div className="col-sm-6 strong">{curState.Remarks}</div>
+            </div>
+
             </div>
 
         </div>

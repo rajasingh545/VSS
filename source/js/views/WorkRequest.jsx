@@ -11,6 +11,7 @@ import TimeField from '../common/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
+
 @connect(state => ({
     loading: state.request.get('loadingListing'),
     listingDetails: state.request.get('listingDetails'),
@@ -32,6 +33,7 @@ class WorkRequest extends React.Component {
     scaffoldTypetitle : "Select Type",
     scaffoldWorkTypetitle : "Select Work Type",
     scaffoldSubcategorytitle : "Select Category",
+
     
     contracts : [],
     filteredArr : [],
@@ -40,23 +42,7 @@ class WorkRequest extends React.Component {
     itemList:[],
     sizeList:[],
     manpowerList:[],
-    reasons:[{
-        id:"1",
-        value:"Tower (ELP-3x3x10)"
-    },
-    {
-        id:"2",
-        value:"Material Shifting Hours"
-    },
-    {
-        id:"3",
-        value:"Total No. Of working Hours"
-    },
-    {
-        id:"4",
-        value:"Perimeter (ELP-10x1x15)"
-    }
-    ]
+    
    };
    this.itemList = [];
    this.sizeList = [];
@@ -75,6 +61,7 @@ class WorkRequest extends React.Component {
         this.state.clients = nextProps.requestDet.clients;
         this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
         this.state.scaffoldType = nextProps.requestDet.scaffoldType;
+        this.state.subCategoryStore = nextProps.requestDet.subCategory;
         
     }
     if(nextProps.requestDet && nextProps.requestDet.contracts){
@@ -101,6 +88,12 @@ onCheckBoxChecked = (e)=>{
     }
 }
 callform = (key, list, stateKey, title) =>{
+    this.resetThenSet(key, list, stateKey, title);
+}
+populateSubCat = (key, list, stateKey, title) =>{
+    
+    this.setState({subCategory:this.state.subCategoryStore[key], scaffoldSubcategorytitle: "Select Category"});
+
     this.resetThenSet(key, list, stateKey, title);
 }
 onItemChange = (key, list, stateKey, title) =>{
@@ -215,6 +208,7 @@ resetThenSet(key, list, stateKey, title){
                     workBased: this.state.workBased,
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
+                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -236,6 +230,7 @@ resetThenSet(key, list, stateKey, title){
                     this.sizeList.push({
                         value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                         value_scaffoldType : this.state.value_scaffoldType,
+                        value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
                         L:this.state.L,
                         H:this.state.H,
                         W:this.state.W,
@@ -319,6 +314,7 @@ resetThenSet(key, list, stateKey, title){
                     text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     text_scaffoldType : this.state.text_scaffoldType,
+                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -355,8 +351,7 @@ resetThenSet(key, list, stateKey, title){
             inTime : "",
             outTime: ""
         });
-        this.setState({itemtitle: "Select Items"});
-        this.state.itemtitle =  "Select Items";
+        
         toast.success("Item added successfully", { autoClose: 3000 }); 
     }
   }
@@ -369,7 +364,8 @@ resetThenSet(key, list, stateKey, title){
             if (!found){
                 let sizeList = {
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                    value_scaffoldType : this.state.value_scaffoldType,               
+                    value_scaffoldType : this.state.value_scaffoldType, 
+                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,              
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -488,6 +484,7 @@ resetThenSet(key, list, stateKey, title){
                     text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     text_scaffoldType : this.state.text_scaffoldType,
+                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -514,6 +511,7 @@ resetThenSet(key, list, stateKey, title){
                         text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                         value_scaffoldType : this.state.value_scaffoldType,
                         text_scaffoldType : this.state.text_scaffoldType,
+                        value_scaffoldSubcategory: this.state.value_scaffoldSubcategory,
                         L:this.state.L,
                         H:this.state.H,
                         W:this.state.W,
@@ -550,9 +548,9 @@ resetThenSet(key, list, stateKey, title){
   }
   /* Render */
   render() {
-    const {headerTitle} = this.state;
+    const {headerTitle, itemtitle} = this.state;
     // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
-    console.log("====", this.state.itemtitle);
+    
     return (
     <div className="container work-arr-container">
     <ToastContainer autoClose={8000} />
@@ -640,11 +638,10 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-6">
             <label>Items</label>
                 <Dropdown
-                    title={this.state.itemtitle}
+                    title={itemtitle}
                     name="item"
                     keyName="id"
                     stateId="item"
-                    value={this.state.value_item}
                     list={this.state.contracts}
                     resetThenSet={this.onItemChange}
                 />
@@ -745,16 +742,7 @@ resetThenSet(key, list, stateKey, title){
           </div>
     </div>
 
-    {/*<div className="row">
-        <div className="col-xs-6"><label>Ref# WR</label></div>
-          <div className="col-xs-6">
-            <Dropdown
-                  title="Select Project"
-                  list={this.state.reasons}
-                  resetThenSet={this.resetThenSet}
-            />
-          </div>
-</div>*/}
+   
 
         <div className="sizeSelection">
         
@@ -768,7 +756,7 @@ resetThenSet(key, list, stateKey, title){
                         keyName="id"
                         stateId="scaffoldType"
                         list={this.state.scaffoldType}
-                        resetThenSet={this.callform}
+                        resetThenSet={this.populateSubCat}
                         key="2"
                     />
                 </div>
@@ -778,10 +766,10 @@ resetThenSet(key, list, stateKey, title){
                 <div className="col-xs-6">
                     <Dropdown
                         title={this.state.scaffoldSubcategorytitle}
-                        name="value"
-                        keyName="id"
+                        name="scaffoldSubCatName"
+                        keyName="scaffoldSubCateId"
                         stateId="scaffoldSubcategory"
-                        list={this.state.reasons}
+                        list={this.state.subCategory}
                         resetThenSet={this.callform}
                         key="3"
                     />

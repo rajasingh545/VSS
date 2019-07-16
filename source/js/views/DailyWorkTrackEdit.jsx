@@ -98,7 +98,7 @@ class DailyWorkTrackEdit extends React.Component {
     if(nextProps.requestDet && nextProps.requestDet.supervisors){
         this.setState({supervisors:nextProps.requestDet.supervisors});
         this.setState({value_supervisors:"", text_supervisors:"Select Supervisor"});
-
+        this.setState({value_basesupervisors:"", text_basesupervisors:"Select Supervisor"});
     }
     if(nextProps.requestDet && nextProps.requestDet.projects){
         this.state.projects = nextProps.requestDet.projects;
@@ -166,6 +166,7 @@ class DailyWorkTrackEdit extends React.Component {
         let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
         let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
         let supervisorName = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.supervisors, "userId", "Name");
+        let baseSupervisor = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.baseSupervisor, "userId", "Name");
         let statusTitle =  getDetailsWithMatchedKey2(requestItems.status, this.state.workStatus, "id", "value");
         let teamTitle =  getDetailsWithMatchedKey2(requestSizeList.teamId, this.state.team, "teamid", "teamName");
         let materialTitle =  getDetailsWithMatchedKey2(requestMatlist.material, this.state.materials, "id", "value");
@@ -184,6 +185,8 @@ class DailyWorkTrackEdit extends React.Component {
             value_wrno:requestDet.workRequestId,
             supervisorTitle : supervisorName,
             text_supervisor : supervisorName,
+            text_basesupervisor : baseSupervisor,
+            basesupervisorTitle : baseSupervisor,
             text_wrno:requestDet.workRequestId,
             L:requestItems.length,
             H:requestItems.height,
@@ -371,7 +374,9 @@ callform = (key, list, stateKey, title) =>{
     this.resetThenSet(key, list, stateKey, title);
 }
 displayDesc = (key, list, stateKey, title, selectedArr) =>{
-   
+   this.setState({desc:selectedArr.desc});
+    
+    this.setState({requestByName:selectedArr.requestBy});
      this.setState({workType:selectedArr.type});
     this.resetThenSet(key, list, stateKey, title);
 }
@@ -738,6 +743,20 @@ resetThenSet(key, list, stateKey, title){
           </div>
     </div>
     <div className="row">
+        <div className="col-sm-6"><label>Base Supervisor</label></div>
+          <div className="col-sm-6">
+            <Dropdown
+                  title={this.state.basesupervisorTitle}
+                  name="Name"
+                  keyName="userId"
+                  stateId="basesupervisors"
+                  reset={this.state.supervisorResetFlag}
+                  list={this.state.supervisors}
+                  resetThenSet={this.callform}
+            />
+          </div>
+    </div>
+    <div className="row">
         <div className="col-sm-6"><label>Field Supervisor</label></div>
           <div className="col-sm-6">
             <Dropdown
@@ -796,6 +815,12 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-12 red"> {this.state.desc}</div>
            
         </div>
+        {this.state.requestByName != "" &&
+        <div className="row">
+            <div className="col-xs-3 ">Work Request By :</div>
+            <div className="col-xs-6 "> {this.state.requestByName}</div>
+        </div>
+        }
         {this.state.workType == 1 && 
         <div>
         <div className="row">
@@ -1004,10 +1029,7 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={this.state.remarks} onChange={this.onFormChange} /></div>
         </div>
 
-<div className="row">
-            <div className="col-xs-3">Remarks</div>
-            <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={this.state.remarks} onChange={this.onFormChange} /></div>
-        </div>
+
 
 
         <div className="workBasedOn">

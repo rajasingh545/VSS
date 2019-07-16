@@ -84,9 +84,12 @@ class Dropdown extends Component{
           }
         </div>
         {listOpen && <ul className="dd-list" onClick={e => e.stopPropagation()}>
-          {list.map((item, index)=> (
+        
+        {list.length > 0 &&
+          list.map((item, index)=> (
             <li  style={{textAlign:"left"}} className="dd-list-item ellipsis" key={item[keyName]} onClick={() => this.selectItem(item[name], index, stateId, item[keyName])}>{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check"/>}</li>
-          ))}
+          ))
+        }
         </ul>}
       </div>
     )

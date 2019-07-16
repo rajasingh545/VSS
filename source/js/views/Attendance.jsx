@@ -28,6 +28,7 @@ class Attedence extends React.Component {
       showSubButton : false,
       team:[],
       startDate1: moment(),
+      startDate: moment().format("YYYY/MM/DD"),
     };
     this.selectedIds = [];
     this.timeValuesArr = [];
@@ -57,9 +58,15 @@ class Attedence extends React.Component {
       if(this.props.userType == 5){
         let projectId = this.props.project;
         console.log("projectid", projectId, nextProps.requestDet.projects);
-        let projectName = getDetailsWithMatchedKey2(projectId, nextProps.requestDet.projects, "projectId", "projectName");
-        this.setState({projects: [{projectId, projectName}]});
-        this.state.projects = [{projectId, projectName}];
+        let projectsArr = projectId.split(",");
+        let porjectsMapArr = [];
+        projectsArr.map((pid) =>{
+          let projectName = getDetailsWithMatchedKey2(pid, nextProps.requestDet.projects, "projectId", "projectName");
+          porjectsMapArr.push({projectId:pid, projectName});
+        })
+        
+        this.setState({projects: porjectsMapArr});
+        this.state.projects = porjectsMapArr;
        
       }
        
@@ -78,6 +85,7 @@ class Attedence extends React.Component {
   
   }
   getWorkers = (key, list, stateKey) =>{
+    console.log("key", key)
     const { dispatch } = this.props;
     if(key){
       this.state.requestCode = 6;
@@ -193,6 +201,8 @@ class Attedence extends React.Component {
 
       // this.selectedIds = [];
       return workers.map((worker, ind)=>{
+        let rec = 0;
+      if((this.state.selectedOption == 1 && worker.status != 1) || (this.state.selectedOption == 2 && worker.statusOut != 1)){
         let workerName= getDetailsWithMatchedKey2(worker.workerId, this.state.workers, "workerIdActual", "workerName");
         let InName= "in_"+worker.workerId;
         let OutName= "out_"+worker.workerId;
@@ -214,7 +224,7 @@ class Attedence extends React.Component {
           this.teamArr[workerTeam] = 1;
         }
         // console.log("==jeeva",workerTeam, this.teamArr, this.teamArr[worker.workerTeam])
-
+        rec++; 
         return(
           <div className="row" key={ind}>
           <div className="col-xs-1" style={{width:"10px"}}>
@@ -223,14 +233,17 @@ class Attedence extends React.Component {
           <div className="col-xs-3 ellipsis">
             <span>{workerName}</span>
           </div>
-
+          {this.state.selectedOption == 1 &&
           <div className="col-xs-2" style={{textAlign:"center"}}>
           <TimeField value={worker.inTime} name={InName} className="width100" onChange={this.onTimeChange}/>
           </div>
+          }
+          {this.state.selectedOption == 2 &&
           <div className="col-xs-2" style={{textAlign:"center"}}>
           <TimeField value={worker.outTime} name={OutName} className="width100" onChange={this.onTimeChange}/>
           </div>
-          <div className="col-xs-3" style={{textAlign:"center"}}>
+          }
+          <div className="col-xs-6" style={{textAlign:"center"}}>
           <Dropdown
                   title={title}
                   name="reason"
@@ -243,7 +256,10 @@ class Attedence extends React.Component {
           </div>
         </div>
         )
+        }
+      
       });
+         
     }
     else{
       return(<div className="row">
@@ -341,6 +357,35 @@ setRemarks = (e) => {
   {/* map mutiple workers 8*/}
   <div className="companyWorksList">
    
+  <div className="row">
+      <div className="col-xs-1" style={{width:"10px"}}>
+        <span>&nbsp;</span>
+      </div>
+      <div className="col-xs-3 ">
+        <span>&nbsp;</span>
+      </div>
+
+     <div className="col-xs-2">
+      
+        <span>
+          &nbsp;<input type="radio" value="1" 
+                        checked={this.state.selectedOption === '1'} 
+    onChange={this.handleOptionChange} />
+            &nbsp;IN
+        </span>
+        </div>
+        <div className="col-xs-2">
+        <span>
+             <input type="radio" value="2" 
+                        checked={this.state.selectedOption === '2'} 
+                        onChange={this.handleOptionChange} />
+            &nbsp;OUT
+        </span>
+       
+        </div>
+       
+    </div>
+
     <div className="row">
       <div className="col-xs-1" style={{width:"10px"}}>
         <span>&nbsp;</span>
@@ -348,28 +393,22 @@ setRemarks = (e) => {
       <div className="col-xs-3 ">
         <span><strong>Workers</strong></span>
       </div>
-
+{this.state.selectedOption == 1 &&
      <div className="col-xs-2">
-      
         <span>
-           {/* &nbsp;<input type="radio" value="option1" 
-                        checked={this.state.selectedOption === 'option1'} 
-    onChange={this.handleOptionChange} />*/}
             &nbsp;IN
-            
-        </span>
-        
-        </div>
-        <div className="col-xs-2">
+        </span>        
+      </div>
+}
+{this.state.selectedOption == 2 &&
+      <div className="col-xs-2">
         <span>
-             {/*<input type="radio" value="option2" 
-                        checked={this.state.selectedOption === 'option2'} 
-                        onChange={this.handleOptionChange} />*/}
             &nbsp;OUT
         </span>
        
         </div>
-        <div className="col-xs-3">
+}
+        <div className="col-xs-6">
         <span>
              {/*<input type="radio" value="option2" 
                         checked={this.state.selectedOption === 'option2'} 
