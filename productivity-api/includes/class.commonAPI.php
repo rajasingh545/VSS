@@ -23,7 +23,7 @@ class commonAPI
 		
         // $allDetails["supervisors"] = $this->supervisorDetails();
         // $allDetails["category"] = $this->categoryDetails();
-        // $allDetails["subCategory"] = $this->subCategoryDetails();
+        $allDetails["subCategory"] = $this->subCategoryDetails();
 		$allDetails["supervisorsList"] = $this->allSupervisorDetails();
 		// $allDetails["allprojects"] = $this->allProjectDetails();
 		// $allDetails["requestDetails"] = $this->requestDetails();
@@ -164,10 +164,10 @@ class commonAPI
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
-		$whereClauseat = "forDate='".date("Y-m-d")."'";
+		$whereClauseat = "forDate='".date("Y-m-d")."' and partial=0";
 		$selectFiledsat=array("workerId");
 		if($postArr["startDate"] != ""){
-			$whereClauseat = "forDate='".$postArr["startDate"]."'";
+			$whereClauseat = "forDate='".$postArr["startDate"]."' and partial=0";
 		}
 		// echo $whereClauseat;
 		$resat=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$selectFiledsat,$whereClauseat);
@@ -238,7 +238,7 @@ class commonAPI
 		
 		$selectFileds=array("userId","Name");
 		
-		$whereClause = "project=$pid and userStatus=1";
+		$whereClause = "project like '%$pid%' and userStatus=1";
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["USERS"],$selectFileds,$whereClause);
 		
 		$vehiclesArr = array();
@@ -324,17 +324,19 @@ class commonAPI
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("subCategoryId", "categoryId", "subCategoryName","price");
-		$whereClause = "subCategoryStatus='1'";
-		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["SUBCATEGORY"],$selectFileds,$whereClause);
+		$selectFileds=array("scaffoldTypeId", "scaffoldSubCateId", "scaffoldSubCatName");
+		$whereClause = "scaffoldTypeId!=0";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["SCAFFOLDSUBCATEGORY"],$selectFileds,$whereClause);
 		
 		$subCategoryArr = array();
 		if($res[1] > 0){
-			$resultArrArr = $db->fetchArray($res[0], 1);  
+			$resultArrArr = $db->fetchArray($res[0], 1)	;  
             foreach($resultArrArr as $key => $value){
-                $subCategoryArr[$key] = $value;
-            }       	
-			
+				if(count($subCategoryArr[$value["scaffoldTypeId"]]) > 0)
+					$subCategoryArr[$value["scaffoldTypeId"]]= array_merge($subCategoryArr[$value["scaffoldTypeId"]], array($key => $value));
+				else
+					$subCategoryArr[$value["scaffoldTypeId"]][]=$value;
+			} 
 		}
 		else{
 			$subCategoryArr=array(); 
@@ -405,7 +407,7 @@ class commonAPI
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("id","description","item","location","length","height","width");
+		$selectFileds=array("id","description","item","location","length","height","width","setCount");
 		$whereClause = "projectId=".$postArr["value_projects"]." and clientId=".$postArr["value_clients"];
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CONTRACTS"],$selectFileds,$whereClause);
 		
@@ -416,7 +418,7 @@ class commonAPI
 			foreach($usersArr2 as $item){
 
 				$usersArr["contracts"][$i] = $item;
-				$usersArr["contracts"][$i]["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH";
+				$usersArr["contracts"][$i]["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH, Set:".$item["setCount"];
 				$i++;
 			}
 		}
@@ -426,6 +428,87 @@ class commonAPI
  
 		return $this->common->arrayToJson($usersArr);
 	}
+	function getContractsDesc($id){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("id","description","item","location","length","height","width","setCount");
+		$whereClause = "id=".$id;
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CONTRACTS"],$selectFileds,$whereClause);
+		// pr($db);
+		$usersArr = array();
+		if($res[1] > 0){
+			
+			$item = $db->fetchArray($res[0]);
+
+			$usersArr["contractsname"] = $item["item"];
+			$usersArr["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH";
+		
+		}
+		else{
+			$usersArr = array(); 
+		}
+ 
+		return $usersArr;
+	}
+
+	function getWorkRequestList($postArr){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("workRequestId","requestedBy");		
+		$whereClause = "projectId=".$postArr["value_projects"]." and clientId=".$postArr["value_clients"];
+		
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUEST"],$selectFileds,$whereClause);
+		// pr($db);
+		$listArr = array();
+		$resultArrr["workRequests"] = array();
+		$resultArrr["items"] = array();
+		if($res[1] > 0){
+			$listArr = $db->fetchArray($res[0], 1);
+
+			$resultArrr["workRequests"] = $listArr;
+			foreach($listArr as $works){
+				$selectFileds2=array("id","ItemUniqueId","length","height","width","scaffoldType");		
+				$whereClause2 = "workRequestId=".$works["workRequestId"];
+				
+				$res2=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUESTSIZEBASED"],$selectFileds2,$whereClause2);
+				// pr($db);
+				$listArr = array();
+				if($res2[1] > 0){
+					$items = $db->fetchArray($res2[0], 1);
+					
+					foreach($items as $item){
+						$desc = "WR: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH";
+						$resultArrr["items"][$works["workRequestId"]][] = array("itemId"=>$item["id"], "itemName"=>$item["ItemUniqueId"],"type"=>"1","desc"=>$desc,"requestBy"=>$works["requestedBy"]);
+						// $itemDesc = $this->getContractsDesc($item["itemId"]);
+						// $resultArrr["items"][$works["workRequestId"]][] = array("itemId"=> $item["itemId"], "itemName"=> $itemDesc["contractsname"], "itemDesc"=>$itemDesc["desc"] );
+						// $resultArrr["items"][$works["workRequestId"]]["itemId"] = $item["itemId"];
+						// $resultArrr["items"][$works["workRequestId"]]["itemName"] = $itemDesc["contractsname"];
+						// $resultArrr["items"][$works["workRequestId"]]["itemDesc"] = $itemDesc["desc"];
+					}
+
+				}
+				$res3=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUESTSIZEBASED"],$selectFileds2,$whereClause2);
+
+				if($res2[1] > 0){
+					$items2 = $db->fetchArray($res2[0], 1);
+					
+					foreach($items2 as $item2){
+						
+						$resultArrr["items"][$works["workRequestId"]] = array("itemId"=>$item2["id"], "itemName"=>$item2["ItemUniqueId"], "type"=>"2");
+						
+					}
+
+				}
+			}
+		}
+		// pr($usersArr);
+ 
+		return $this->common->arrayToJson($resultArrr);
+    }
     
 }
 

@@ -18,6 +18,9 @@ else if($requestCode == 99){
 else if($requestCode == 5){
     $apis = $apiObj->getContracts($obj);
 }
+else if($requestCode == 6){
+    $apis = $apiObj->getWorkRequestList($obj);
+}
 else{
     $apis = $apiObj->commonAPIs($obj);
 }

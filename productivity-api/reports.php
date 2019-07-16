@@ -9,15 +9,16 @@ include_once $ROOTPATH."/includes/class.report.php";
 $requestObj = new REPORTS();
  $json = file_get_contents('php://input');
  $obj = json_decode($json, true);
- if($obj["requestCode"] === 2){ //categorywise report
-    $response = $requestObj->getCurrentBalance($obj["materialName"], $obj["subCategorySel"]);
- }
- if($obj["requestCode"] === 3){ //projectwise report
-    $response = $requestObj->getProjectReport($obj["projects"]);
- }
- if($obj["requestCode"] === 4){ //notification search
-    $response = $requestObj->notificationSearch($obj);
- }
+//  if($obj["requestCode"] === 1){ //categorywise report
+//     $response = $requestObj->supervisorReport($obj);
+//  }
+//  if($obj["requestCode"] === 3){ //projectwise report
+//     $response = $requestObj->getProjectReport($obj["projects"]);
+//  }
+//  if($obj["requestCode"] === 4){ //notification search
+//     $response = $requestObj->notificationSearch($obj);
+//  }
+$response = $requestObj->dwtrReport($obj);
 
 echo $response;
 

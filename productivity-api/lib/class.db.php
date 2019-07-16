@@ -94,8 +94,8 @@ class DB {
     public function execute_direct_query($db_link, $query, $returnType=1) 
     {          		
             $this->resetAll();
-            if($this->checkSQLInjection($query,$stopProcess))
-	    {
+        //     if($this->checkSQLInjection($query,$stopProcess))
+	//     {
                 if(!mysqli_ping($db_link))
                 {
                         $this->recordError("DB_CONNECTION_ERR");
@@ -125,7 +125,7 @@ class DB {
                                 return $this->affectedRows;
                 }
                     
-            }
+        //     }
 
     }
     

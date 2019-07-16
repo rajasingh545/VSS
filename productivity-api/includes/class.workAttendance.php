@@ -69,18 +69,23 @@ class REQUESTS
 			$projectArr = $db->fetchArray($res[0]);
 			
 				$whereClause2 = "workArrangementId=".$projectArr["workArrangementId"];
-				$selectFileds2 = array("workerId");
+				$selectFileds2 = array("workerId","partial");
 				$res2=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$selectFileds2,$whereClause2);
 				$listingDetails = array();
 				if($res2[1] > 0){
 					$workerids = $db->fetchArray($res2[0],1); 
-					$workeridFinal = array();;
+					$workeridFinal = array();
+					$partialWorkers = array();
 					foreach($workerids as $ids){
 						$workeridFinal[] = $ids["workerId"];
+						if($ids["partial"] == 1){
+							$partialWorkers[] = $ids["workerId"];
+						}
 					}
 
 				
 					$projectArr["workers"] = $workeridFinal;
+					$projectArr["partialWorkers"] = $partialWorkers;
 
 				}    
 			      	
@@ -141,6 +146,11 @@ class REQUESTS
 				$insertArr2["forDate"]=$postArr["startDate"];
 				$insertArr2["createdOn"]=date("Y-m-d H:i:s");
 				
+					if(in_array(trim($value), $postArr["partialWorkers"])){
+						$insertArr2["partial"]=1;     
+					}
+				
+				
 				$insid2 = $dbm->insert($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$insertArr2,1,2);
 				// pr($dbm);
 			}
@@ -181,12 +191,13 @@ class REQUESTS
 		if($res[1] > 0){
 			$details = $db->fetchArray($res[0]); 
 
-			$selectFileds2=array("workArrangementId","workerId","inTime","outTime","workerTeam", "reason");
+			$selectFileds2=array("workArrangementId","workerId","inTime","outTime","workerTeam", "reason", "status","statusOut");
 			$dbcon = $db->connect('M',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 			$whereClause2 ="workArrangementId= ".$details["workArrangementId"]." order by workerTeam";
-			if($postArr["userType"] == 5){ //exclude submitted list for supervisor
-				$whereClause2 ="status!= 1 and workArrangementId= ".$details["workArrangementId"]." order by workerTeam";
-			}
+			// $whereClause2 ="workArrangementId= ".$details["workArrangementId"]." AND ((partial = 0) OR (partial=1 AND statusOut = 1)) order by workerTeam";
+			// if($postArr["userType"] == 5){ //exclude submitted list for supervisor
+			// 	$whereClause2 ="workArrangementId= ".$details["workArrangementId"]." order by workerTeam";
+			// }
 
 			
 			$res2=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$selectFileds2,$whereClause2);
@@ -253,7 +264,16 @@ class REQUESTS
 				if($val["reason"] != "")
 					$updateArr["reason"] = $val["reason"];
 
-				$updateArr["status"] = $postArr["type"];
+				if($postArr["selectedOption"] == 1)
+					$updateArr["status"] = $postArr["type"];
+				if($postArr["selectedOption"] == 2)
+					$updateArr["statusOut"] = $postArr["type"];
+
+					if($postArr["userType"] == 1){
+						$updateArr["status"] = $postArr["type"];
+						$updateArr["statusOut"] = $postArr["type"];
+					}
+
 				$insid = $dbm->update($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$updateArr,$whereClause);
 
 			}
@@ -320,6 +340,9 @@ class REQUESTS
 				$insertArr2["workerTeam"]=$arr[1];       
 				$insertArr2["forDate"]=trim($postArr["startDate"]);
 				$insertArr2["createdOn"]=date("Y-m-d H:i:s");
+				if(in_array(trim($value), $postArr["partialWorkers"])){
+					$insertArr2["partial"]=1;     
+				}
 				
 				$insid2 = $dbm->insert($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$insertArr2,1,2);
 				// pr($dbm);

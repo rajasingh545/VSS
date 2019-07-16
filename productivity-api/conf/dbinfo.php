@@ -20,11 +20,16 @@ $TABLEINFO["CLIENTS"] = "p_clients";
 $TABLEINFO["CONTRACTS"] = "p_contracts";
 $TABLEINFO["SCAFFOLDWORKTYPE"] = "p_scaffoldworktype";
 $TABLEINFO["SCAFFOLDTYPE"] = " p_scaffoldtype";
+$TABLEINFO["SCAFFOLDSUBCATEGORY"] = " p_scaffoldsubcatergory";
 $TABLEINFO["WORKREQUEST"] = "p_workrequest";
-
 $TABLEINFO["WORKREQUESTITEMS"] = "p_workrequestitems";
 $TABLEINFO["WORKREQUESTSIZEBASED"] = "p_workrequestsizebased";
 $TABLEINFO["WORKREQUESTMANPOWER"] = "p_workrequestmanpower";
+
+$TABLEINFO["DAILYWORKTRACK"] = "p_dailyworktrack";
+$TABLEINFO["DAILYWORKTRACKSUBDIVISION"] = "p_dailyworktracksubdivision";
+$TABLEINFO["DAILYWORKTRACKTEAMS"] = "p_dailyworktrackteams";
+$TABLEINFO["DAILYWORKTRACKMATERIALS"] = "p_dailyworktrackmaterials";
 
 $TABLEINFO["TRANSFERHISTORY"] = "v_transferhistory";
 $TABLEINFO["PROJECTREPORT"] = "v_projectreport";
