@@ -32,7 +32,7 @@ return(
           <span className="input-group-text pink lighten-3" id="basic-text1"><i className="fas fa-search text-white"
               ariaHidden="true"></i></span>
         </div>
-        <input className="form-control my-0 py-1" type="text" placeholder="Search" ariaLabel="Search" onChange={this.filterList} />
+        <input className="form-control my-0 py-1" style={{zIndex:1}} type="text" placeholder="Search" ariaLabel="Search" onChange={this.filterList} />
       </div>
     
 )

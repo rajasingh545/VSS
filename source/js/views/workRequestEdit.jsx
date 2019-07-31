@@ -59,6 +59,7 @@ class WorkRequestEdit extends React.Component {
         this.state.clients = nextProps.requestDet.clients;
         this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
         this.state.scaffoldType = nextProps.requestDet.scaffoldType;
+        this.state.subCategoryStore = nextProps.requestDet.subCategory;
         
     }
     if(nextProps.requestDet && nextProps.requestDet.contracts){
@@ -98,6 +99,7 @@ class WorkRequestEdit extends React.Component {
         let requestSizeList = requestSizeListArr;
         let scaffoldTitle = "Select Type";
         let scaffoldworkTitle ="Select Work Type";
+        let scaffoldSubCategory ="Select Sub Category";
         
         if(requestItemsArr){           
             requestItems = requestItemsArr[requestItemsArr.length-1];
@@ -110,12 +112,20 @@ class WorkRequestEdit extends React.Component {
                 requestSizeList = requestSizeListArr[requestSizeListArr.length-1];
                 
                 scaffoldTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
-       scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");        
+       scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");
+                if(this.state.subCategoryStore){
+                    scaffoldSubCategory = getDetailsWithMatchedKey2(requestSizeList.scaffoldSubCategory, this.state.subCategoryStore[requestSizeList.scaffoldType], "scaffoldSubCateId", "scaffoldSubCatName");
+                    
+                }
             }
         }
         let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
         let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
-        
+        let subCate = ""
+        if(this.state.subCategoryStore){
+            subCate = this.state.subCategoryStore[requestSizeList.scaffoldType];
+        }
+
         this.setState({
             projectTitle:proTitle,
             clientTitle:clientname,           
@@ -133,6 +143,9 @@ class WorkRequestEdit extends React.Component {
             value_scaffoldType : requestSizeList.scaffoldType,
             text_scaffoldType : this.state.text_scaffoldType,
             value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+            text_scaffoldSubCategory : scaffoldSubCategory,
+            scaffoldSubcategorytitle : scaffoldSubCategory,
+            subCategory : subCate,
             L:requestSizeList.length,
             H:requestSizeList.height,
             W:requestSizeList.width,
@@ -188,7 +201,7 @@ getOrginalContDataPopulate = (requestItemsArr,requestManlistArr,requestSizeListA
         
         let scaffoldTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
         let scaffoldworkTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
-        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(sizeItem.scaffoldSubCategory, this.state.scaffoldWorkType, "id", "scaffoldName");   
+        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(sizeItem.scaffoldSubCategory, this.state.subCategoryStore[sizeItem.scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");   
         let itemTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "item");
         let locationTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "location");
     let obj ={        
@@ -223,10 +236,13 @@ getSizeDataPopulated = (requestSizeListArr) =>{
     let returnArr = [];
     let i =0;
     requestSizeListArr.map((items) =>{
-        console.log("==",items);
+        
         let scaffoldTitle = getDetailsWithMatchedKey2(items.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
         let scaffoldworkTitle = getDetailsWithMatchedKey2(items.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
-        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(items.scaffoldSubCategory, this.state.scaffoldWorkType, "id", "scaffoldName");   
+        let scaffoldworkSubCategory = "";
+        if(this.state.subCategoryStore){
+            scaffoldworkSubCategory = getDetailsWithMatchedKey2(items.scaffoldSubCategory, this.state.subCategoryStore[items.scaffoldType], "scaffoldSubCateId", "scaffoldSubCatName");
+        }   
        
     let obj ={        
         value_scaffoldWorkType : items.scaffoldWorkType,
@@ -251,9 +267,7 @@ getManPowerPopulated = (requestManlistArr) =>{
     let returnArr = [];
     let i =0;
     requestManlistArr.map((items) =>{
-        console.log("==",items);
-        
-       
+ 
     let obj ={        
         safety:items.safety,
         supervisor:items.supervisor,
@@ -374,6 +388,12 @@ resetThenSet(key, list, stateKey, title){
 
     this.setState({[el.name] : el.value});
   }
+  populateSubCat = (key, list, stateKey, title) =>{
+    
+     this.setState({subCategory:this.state.subCategoryStore[key], scaffoldSubcategorytitle: "Select Category"});
+
+        this.resetThenSet(key, list, stateKey, title);
+    }
 
   submitRequest = (status) =>{
     const { dispatch } = this.props;
@@ -676,6 +696,7 @@ resetThenSet(key, list, stateKey, title){
   /* Render */
   render() {
     const {headerTitle} = this.state;
+   
     return (
     <div className="container work-arr-container">
     <ToastContainer autoClose={8000} />
@@ -885,20 +906,24 @@ resetThenSet(key, list, stateKey, title){
                         keyName="id"
                         stateId="scaffoldType"
                         list={this.state.scaffoldType}
-                        resetThenSet={this.callform}
+                        resetThenSet={this.populateSubCat}
                     />
                 </div>
             </div>
-            {/*<div className="row">
+            <div className="row">
                 <div className="col-xs-6"><label>Scaffold Sub Category</label></div>
                 <div className="col-xs-6">
                     <Dropdown
-                        title="Select Project"
-                        list={this.state.reasons}
-                        resetThenSet={this.resetThenSet}
+                        title={this.state.scaffoldSubcategorytitle}
+                        name="scaffoldSubCatName"
+                        keyName="scaffoldSubCateId"
+                        stateId="scaffoldSubcategory"
+                        list={this.state.subCategory}
+                        resetThenSet={this.callform}
+                        key="3"
                     />
                 </div>
-</div>*/}
+</div>
 
             <div className="row">
                 <div className="col-sm-12"><label>Size</label></div>

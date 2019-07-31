@@ -16,7 +16,9 @@ import {FormControl} from 'react-bootstrap';
             if(val < 0){
                 return false;
             }
-            
+            if(!!(val % 1)){
+                return false;
+            }
         }
         if(typeof props.onChange == "function"){
             props.onChange(e);

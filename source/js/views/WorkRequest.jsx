@@ -42,6 +42,7 @@ class WorkRequest extends React.Component {
     itemList:[],
     sizeList:[],
     manpowerList:[],
+    clientsStore:[],
     
    };
    this.itemList = [];
@@ -62,7 +63,7 @@ class WorkRequest extends React.Component {
         this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
         this.state.scaffoldType = nextProps.requestDet.scaffoldType;
         this.state.subCategoryStore = nextProps.requestDet.subCategory;
-        
+        this.state.clientsProjectMapping = nextProps.requestDet.clientsProjectMapping;
     }
     if(nextProps.requestDet && nextProps.requestDet.contracts){
         this.setState({contracts:nextProps.requestDet.contracts});
@@ -141,6 +142,13 @@ resetThenSet(key, list, stateKey, title){
 
     this.state[titleKey] = title;
   }
+  onChangeProject = (key, list, stateKey, title)=>{
+    let clientsList = (this.state.clientsProjectMapping[key])? this.state.clients[key] : [];
+//   console.log("clientsList",clientsList,this.state.clients[key] )
+    // this.setState({clientsStore:[clientsList]});
+    this.resetThenSet(key, list, stateKey, title);
+    this.requestItems();
+  }
   onChangeItem = (key, list, stateKey, title)=>{
     this.resetThenSet(key, list, stateKey, title);
     this.requestItems();
@@ -172,7 +180,7 @@ resetThenSet(key, list, stateKey, title){
             L:this.state.filteredArr[0].length,
             W:this.state.filteredArr[0].width,
             H:this.state.filteredArr[0].height,
-            set:this.state.filteredArr[0].setCount
+            set:this.state.filteredArr[0].sets
             
         });
     }
@@ -273,7 +281,13 @@ resetThenSet(key, list, stateKey, title){
     
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-      toast.success("Work Request Created Successfully", { autoClose: 3000 });    
+     
+     if(status == 1){
+      toast.success("Work Request Created Successfully", { autoClose: 3000 });   
+     }
+     if(status == 2) {
+        toast.success("Work Request Drafted Successfully", { autoClose: 3000 });   
+     }
       
             setTimeout(()=>{
                 this.props.history.push('/WorkRequestList');
@@ -565,7 +579,7 @@ resetThenSet(key, list, stateKey, title){
                   stateId="projects"
                   list={this.state.projects}
                   value={this.state.value_projects}
-                  resetThenSet={this.onChangeItem}
+                  resetThenSet={this.onChangeProject}
             />
           </div>
     </div>

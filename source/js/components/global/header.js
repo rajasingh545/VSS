@@ -272,6 +272,7 @@ export default class Header extends Component {
             {userType == 1 && 
               <div label='Productivity Report'>
                 
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DWTRReport')} style={styles2.sidebarLink}>DWTR Report</a>   
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Supervisor')} style={styles2.sidebarLink}>For Supervisor</a>   
                 
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Sites')} style={styles2.sidebarLink}>For Site & Supervisor</a>   

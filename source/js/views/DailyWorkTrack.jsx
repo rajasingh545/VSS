@@ -290,8 +290,7 @@ resetThenSet(key, list, stateKey, title){
     }
   }
   validateForm = () =>{
-    
-    
+ 
     if(!this.state.value_projects){
       toast.error("Project is required", { autoClose: 3000 });       
       return false;
@@ -300,6 +299,22 @@ resetThenSet(key, list, stateKey, title){
       toast.error("Client is required", { autoClose: 3000 });       
       return false;
     }
+    if(!this.state.L){
+        toast.error("Length is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.W){
+        toast.error("Width is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.H){
+        toast.error("Height is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.set){
+        toast.error("Set is required", { autoClose: 3000 });       
+        return false;
+      }
     
     // if(!this.state.requestBy || this.state.requestBy == ""){
     //   toast.error("Requested by is required", { autoClose: 3000 });       
@@ -308,9 +323,16 @@ resetThenSet(key, list, stateKey, title){
     return true;
   }
 
-  itemAddition = (from=1) =>{
+  itemAddition = (from) =>{
+
+    if(from==1){
+        if(this.validateForm() == false){
+            return false;
+        }
+    
+    }
      
-    if(this.validateForm() == true){
+    
 
         //  this.teamAddition(from);
             // this.materialAddition(from);
@@ -377,11 +399,16 @@ resetThenSet(key, list, stateKey, title){
             
             toast.success("Work item added successfully", { autoClose: 3000 }); 
         }
-    }
+   
   }
-  teamAddition = (from=1) =>{
-        
-    if(this.validateTeamForm() == true){
+  teamAddition = (from) =>{
+    if(from==1){
+        if(this.validateTeamForm() == false){
+            return false;
+        }
+    
+    }
+   
 
         const found = this.teamList.some(el => el.value_team === this.state.value_team);
         if (!found){
@@ -418,9 +445,16 @@ resetThenSet(key, list, stateKey, title){
         }
         
       
-    }
+    
   }
-  materialAddition = (from=1) =>{
+  materialAddition = (from) =>{
+
+    if(from==1){
+        if(this.validateMaterialForm() == false){
+            return false;
+        }
+    
+    }
 
         const found = this.materialList.some(el => (el.value_materials === this.state.value_materials));
             
@@ -458,13 +492,27 @@ resetThenSet(key, list, stateKey, title){
   }
   
   validateTeamForm =()=>{
-   return true;
+   
     if((typeof this.state.value_team == "undefined" || this.state.value_team == "") && this.state.teamList.length == 0 ){
         toast.error("Please select team", { autoClose: 3000 });       
         return false;
     }
     if((typeof this.state.workerCount == "undefined" || this.state.value_scaffoldType == "") && this.state.teamList.length == 0){
         toast.error("Please enter worker count", { autoClose: 3000 });       
+        return false;
+    }
+   
+    return true;
+  }
+
+  validateMaterialForm =()=>{
+   
+    if((typeof this.state.value_materials == "undefined" || this.state.value_materials == "") && this.state.teamList.length == 0 ){
+        toast.error("Please select material", { autoClose: 3000 });       
+        return false;
+    }
+    if((typeof this.state.mWorkerCount == "undefined" || this.state.mWorkerCount == "") && this.state.teamList.length == 0){
+        toast.error("Please enter material worker count", { autoClose: 3000 });       
         return false;
     }
    
@@ -606,7 +654,7 @@ resetThenSet(key, list, stateKey, title){
             <label>WR #</label>
                 <Dropdown
                     title="Select WR #"
-                    name="workRequestId"
+                    name="workRequestStrId"
                     keyName="workRequestId"
                     stateId="wrno"
                     value={this.state.value_item}
@@ -804,7 +852,7 @@ resetThenSet(key, list, stateKey, title){
         <br />
        <div className="row"> 
         <div className="col-xs-6">
-            Materlial
+            Material
             </div>
              <div className="col-xs-6">
              <Dropdown

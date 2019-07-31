@@ -14,7 +14,7 @@ class DailyWorkTrackPreview extends Component{
      }
     
     setItemList = (itemList)=>{
-        console.log("item",itemList);
+        
        return itemList.map((item)=>{
        
            return(
@@ -203,7 +203,7 @@ class DailyWorkTrackPreview extends Component{
            {curState.cType == 1 &&
            <div className="row">
            <div className="col-sm-6"><label>WR #</label></div>
-           <div className="col-sm-6 strong">{curState.text_wrno}</div>
+           <div className="col-sm-6 strong">{curState.WRNOTitle}</div>
            </div>
           
             }

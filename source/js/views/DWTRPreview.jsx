@@ -132,7 +132,7 @@ class DWTRPreview extends React.Component {
             this.setState({
                 divisionTitle : subdivisionTitle,
                 value_wrno:requestDet.workRequestId,
-                WRNOTitle : itemTitle,
+                WRNOTitle :  requestDet.workRequestStrId,
                 text_item:itemTitle,
                 subItem:subitem,
                 text_location:subdivisionTitle,

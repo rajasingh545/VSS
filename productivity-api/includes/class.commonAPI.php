@@ -19,7 +19,7 @@ class commonAPI
 		$allDetails["clients"] = $this->cleintDetails($obj);
 		$allDetails["scaffoldType"] = $this->scaffoldTypeDetails($obj);
 		$allDetails["scaffoldWorkType"] = $this->scaffoldWorkTypeDetails($obj);
-		
+		$allDetails["clientsProjectMapping"] = $this->cleintProjectMapping($obj);
 		
         // $allDetails["supervisors"] = $this->supervisorDetails();
         // $allDetails["category"] = $this->categoryDetails();
@@ -77,20 +77,45 @@ class commonAPI
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("clientId","clientName");		
+		$selectFileds=array("clientId","clientName", "projects");		
 		$whereClause = "status='1'";	
 		
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CLIENTS"],$selectFileds,$whereClause);
-		
+		$finalArr = array();
 		$projectArr = array();
 		if($res[1] > 0){
-			$projectArr = $db->fetchArray($res[0], 1);          	
+			$projectArr = $db->fetchArray($res[0], 1);     
+			
 			
 		}
-		else{
-			$projectArr = array(); 
+		
+//  pr($finalArr);
+//  pr($projectArr);
+		return $projectArr;
+	}
+	function cleintProjectMapping($obj){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("clientId","clientName", "projects");		
+		$whereClause = "status='1'";	
+		
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CLIENTS"],$selectFileds,$whereClause);
+		$finalArr = array();
+		$projectArr = array();
+		if($res[1] > 0){
+			$projectArr = $db->fetchArray($res[0], 1);     
+			
+			foreach($projectArr as $pro){
+				$projectArr[$pro["projects"]] = $pro;
+				
+			}       	 
+			
 		}
- 
+		
+//  pr($finalArr);
+//  pr($projectArr);
 		return $projectArr;
 	}
 	function allProjectDetails($obj){
@@ -407,7 +432,7 @@ class commonAPI
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
-		$selectFileds=array("id","description","item","location","length","height","width","setCount");
+		$selectFileds=array("id","description","item","location","length","height","width","sets");
 		$whereClause = "projectId=".$postArr["value_projects"]." and clientId=".$postArr["value_clients"];
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["CONTRACTS"],$selectFileds,$whereClause);
 		
@@ -418,7 +443,7 @@ class commonAPI
 			foreach($usersArr2 as $item){
 
 				$usersArr["contracts"][$i] = $item;
-				$usersArr["contracts"][$i]["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH, Set:".$item["setCount"];
+				$usersArr["contracts"][$i]["desc"] = trim($item["description"])." at ".$item["location"].", Size: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH, Set:".$item["sets"];
 				$i++;
 			}
 		}
@@ -470,6 +495,13 @@ class commonAPI
 			$listArr = $db->fetchArray($res[0], 1);
 
 			$resultArrr["workRequests"] = $listArr;
+
+			foreach($listArr as $key => $val){
+				$invID = str_pad($val["workRequestId"], 4, '0', STR_PAD_LEFT);
+				$resultArrr["workRequests"][$key]["workRequestId"] = $val["workRequestId"];
+				$resultArrr["workRequests"][$key]["workRequestStrId"] = "WR".$invID;
+				$resultArrr["workRequests"][$key]["requestedBy"] = $val["requestedBy"];
+			}
 			foreach($listArr as $works){
 				$selectFileds2=array("id","ItemUniqueId","length","height","width","scaffoldType");		
 				$whereClause2 = "workRequestId=".$works["workRequestId"];

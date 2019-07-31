@@ -21,6 +21,7 @@ import DailyWorkTrackList from 'views/DailyWorkTrackList';
 import DailyWorkTrackEdit from 'views/DailyWorkTrackEdit';
 import DWTRPreview from 'views/DWTRPreview';
 import ReportSupervisor from "views/ReportSupervisor";
+import DWTRReport from "views/DWTRReport";
 import ReportSites from "views/ReportSites";
 class App extends Component {
   constructor(props) {
@@ -59,6 +60,7 @@ class App extends Component {
             <Route exact path="/DailyWorkTrackList" component={ DailyWorkTrackList } />
             <Route exact path="/DailyWorkTrack/:id" component={ DailyWorkTrackEdit } />
             <Route exact path="/DWTRPreview/:id" component={ DWTRPreview  } />
+            <Route exact path="/DWTRReport" component={ DWTRReport } />
             <Route exact path="/Report-Supervisor" component={ ReportSupervisor  } />
             <Route exact path="/Report-Sites" component={ ReportSites  } />
             <Route path='*' component={ NotFound } />

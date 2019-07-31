@@ -25,7 +25,7 @@ $TABLEINFO["WORKREQUEST"] = "p_workrequest";
 $TABLEINFO["WORKREQUESTITEMS"] = "p_workrequestitems";
 $TABLEINFO["WORKREQUESTSIZEBASED"] = "p_workrequestsizebased";
 $TABLEINFO["WORKREQUESTMANPOWER"] = "p_workrequestmanpower";
-
+$TABLEINFO["GRADE"] = "p_grade";
 $TABLEINFO["DAILYWORKTRACK"] = "p_dailyworktrack";
 $TABLEINFO["DAILYWORKTRACKSUBDIVISION"] = "p_dailyworktracksubdivision";
 $TABLEINFO["DAILYWORKTRACKTEAMS"] = "p_dailyworktrackteams";

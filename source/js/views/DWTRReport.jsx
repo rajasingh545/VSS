@@ -56,8 +56,6 @@ class DWTRReport extends React.Component {
         this.setState({supervisors:nextProps.requestDet.supervisorsList});
     }
 
-    console.log("results", nextProps);
-   
   }
  
   handleOptionChange(changeEvent) {
@@ -77,7 +75,7 @@ class DWTRReport extends React.Component {
           headerClassName:"gridcolHeader",
         })
       });
-      console.log("data",data)
+      
       this.setState({loading:false});
       this.setState({data,columns});
       this.setState({msg:""});
@@ -91,7 +89,7 @@ class DWTRReport extends React.Component {
   onSubmit = (type) =>{
     const {dispatch} = this.props;
     let url = API.REPORT_URI;
-    this.state.requestCode = 2;
+    this.state.requestCode = 1;
     let obj = this.state;
     this.setState({msg:""});
     this.setState({loading:true});
@@ -292,14 +290,14 @@ callform = (key, list, stateKey, title) =>{
     {this.state.loading == true &&
         <div className="center-div"><img src={loadingurl} /></div>
     }
-    {this.state.loading == false && columns.length &&
+    {this.state.loading == false && columns.length > 0 &&
    
         <div className="col-sm-12">
         <ReactTable
             data={data}
             columns={columns}
             showPagination={false}
-            defaultPageSize={40}
+            defaultPageSize={15}
         />
           </div>
         

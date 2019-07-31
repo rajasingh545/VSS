@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import moment from "moment";
 import {Modal} from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
+import InputSearch from "../common/InputSearch";
 
 @connect(state => ({
 loading: state.request.get('loadingListing'),
@@ -37,7 +38,7 @@ export default class WorkRequestList extends React.Component {
         modalCont : '',
         requestTypeTitle : "Select Status"
     };
-    
+    this.initialItems = [];
     this.selectedIds = [];
     }
   componentWillMount(){
@@ -57,6 +58,9 @@ export default class WorkRequestList extends React.Component {
     this.setState({listingDetails : nextProps.listingDetails});
     this.setState({requestDet : requestDet});
     
+    if(nextProps.workRequestData){
+      this.setState({workRequestData: nextProps.workRequestData})
+    }
   }
   componentWillUnmount(){
     const { dispatch } = this.props;
@@ -91,20 +95,26 @@ export default class WorkRequestList extends React.Component {
     let {workRequestData, requestDet} = this.props;
     let response = "";
     let requestDetails = {};
-
+    this.initialItems = [];
     if(workRequestData && workRequestData.length > 0){
         response = listings.map((data, index) =>{
             let projectName = "";
             let clientname = "";
         if(this.props.requestDet){
+// console.log("==",this.props.requestDet.clients[data.projectId])
+
          projectName = getDetailsWithMatchedKey2(data.projectId, this.props.requestDet.projects, "projectId", "projectName");
-         clientname = getDetailsWithMatchedKey2(data.clientId, this.props.requestDet.clients, "clientId", "clientName");
+         clientname = getDetailsWithMatchedKey2(data.clientId, [this.props.requestDet.clients], "clientId", "clientName");
         }
         let checkBox = true;
         if(this.state.requestType == 1){
           checkBox=false;
         }
-         
+        this.initialItems.push({
+          ...data,
+          projectName,
+          clientname
+        });
           let elmId="elm_"+requestDetails.workArrangementId;
         return (
                 <div  className="row Listing1 hrline hoverColor" style={{cursor:"pointer"}} key={data.workRequestId} onClick={()=>this.redirectView(data.workRequestId)}>
@@ -200,6 +210,10 @@ handleSubmit = () =>{
   }, 2000)
   
 }
+
+FilterDataCallBackfun =(result) =>{
+  this.setState({workRequestData:result});
+  }
   render() {
     const {
       userType, requestDet, workRequestData
@@ -260,8 +274,17 @@ let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
             {loading == true &&
                 <div className="center-div"><img src={loadingurl} /></div>
             }
+            
                 {workRequestData && loading == false && 
-                this.Listings(workRequestData)
+                <div>
+                  <div style={{zIndex:0}}>
+                  <InputSearch 
+                    initialItems= {this.initialItems} 
+                    FilterData={this.FilterDataCallBackfun}
+                    />
+                    </div>
+                {this.Listings(this.state.workRequestData)}
+                </div>
                 }
             </div>
             <div>

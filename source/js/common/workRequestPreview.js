@@ -38,6 +38,10 @@ import React, { Component } from 'react';
                             <div className="col-sm-6 strong">{item.text_scaffoldType}</div>
                         </div>
                         <div className="row">
+                            <div className="col-sm-6"><label>Scaffold Subcategory:</label></div>
+                            <div className="col-sm-6 strong">{item.text_scaffoldSubcategory}</div>
+                        </div>
+                        <div className="row">
                             <div className="col-xs-3"> L: <span className="strong">{item.L}</span></div>
                             <div className="col-xs-3">W: <span className="strong">{item.W}</span></div>
                             <div className="col-xs-3">H: <span className="strong">{item.H}</span></div>
@@ -99,6 +103,10 @@ import React, { Component } from 'react';
                         <div className="row">
                             <div className="col-sm-6"><label>Scaffold Type:</label></div>
                             <div className="col-sm-6 strong">{item.text_scaffoldType}</div>
+                        </div>
+                        <div className="row">
+                            <div className="col-sm-6"><label>Scaffold Subcategory:</label></div>
+                            <div className="col-sm-6 strong">{item.text_scaffoldSubcategory}</div>
                         </div>
                         <div className="row">
                             <div className="col-xs-3"> L: <span className="strong">{item.L}</span></div>
@@ -216,7 +224,7 @@ import React, { Component } from 'react';
             </div>
             <div className="row">
                 <div className="col-sm-6"><label>Remarks</label></div>
-                <div className="col-sm-6 strong">{curState.Remarks}</div>
+                <div className="col-sm-6 strong">{curState.remarks}</div>
             </div>
 
             </div>

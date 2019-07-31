@@ -132,7 +132,7 @@ class DailyWorkTrackEdit extends React.Component {
             this.setState({
                 divisionTitle : subdivisionTitle,
                 value_wrno:requestDet.workRequestId,
-                WRNOTitle : itemTitle,
+                WRNOTitle : requestDet.workRequestStrId,
                 text_item:itemTitle,
                 subItem:subitem,
                 text_location:subdivisionTitle,
@@ -789,7 +789,7 @@ resetThenSet(key, list, stateKey, title){
             <label>WR #</label>
                 <Dropdown
                     title={this.state.WRNOTitle}
-                    name="workRequestId"
+                    name="workRequestStrId"
                     keyName="workRequestId"
                     stateId="wrno"
                     value={this.state.value_item}

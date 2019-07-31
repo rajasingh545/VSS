@@ -45,7 +45,9 @@ class WORKREQUESTS
 			}else { 
 				
 				$returnval["response"] ="success";
-				$returnval["responsecode"] = 1; 
+                $returnval["responsecode"] = 1; 
+                $invID = str_pad($insid, 4, '0', STR_PAD_LEFT);
+                $returnval["id"] = $invID;
 				
 				
 				}
@@ -454,7 +456,13 @@ class WORKREQUESTS
         $requestArr = array();
         
 		if($res[1] > 0){
-            $requestArr["requestDetails"] = $db->fetchArray($res[0]);
+            $listArr = $db->fetchArray($res[0]);
+           
+           
+				$invID = str_pad($listArr["workRequestId"], 4, '0', STR_PAD_LEFT);
+                $listArr["workRequestStrId"] = "WR".$invID;
+				$requestArr["requestDetails"]= $listArr;
+			
             
             $selectFiledsitem=array("id","workTrackId","subDivisionId","timing","length", "height","width","setcount","status","cLength","cHeight","cWidth","cSetcount","diffSubDivision");
             $whereClauseitem = "worktrackId='".$postArr["listingId"]."'";
