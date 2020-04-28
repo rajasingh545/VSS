@@ -125,6 +125,7 @@ class WORKREQUESTS
             $insertItemArr["itemId"] = $itemList["value_item"];
             $insertItemArr["workBased"] = $itemList["workBased"];
             $insertItemArr["sizeType"] = $itemList["sizeType"];
+            $insertItemArr["previousWR"] = $itemList["workRequestId"];
             $insertItemArr["createdOn"] = date("Y-m-d H:i:s");
             $insid2 = $dbm->insert($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUESTITEMS"],$insertItemArr,1,2);
             $invID = str_pad($insid, 4, '0', STR_PAD_LEFT);
@@ -208,7 +209,7 @@ class WORKREQUESTS
 		if($res[1] > 0){
             $requestArr["requestDetails"] = $db->fetchArray($res[0]);
             
-            $selectFiledsitem=array("id","workRequestId","itemId","sizeType","workBased","contractType");
+            $selectFiledsitem=array("id","workRequestId","itemId","sizeType","previousWR","workBased","contractType");
             $whereClauseitem = "workRequestId='".$postArr["listingId"]."'";
             $resitem=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUESTITEMS"],$selectFiledsitem,$whereClauseitem);
             if($resitem[1] > 0){
@@ -296,9 +297,9 @@ class WORKREQUESTS
             $insertArr["photo_1"]=$this->fileGetContents(trim($postArr["uniqueId"]),"photo_1");
             $insertArr["photo_2"]=$this->fileGetContents(trim($postArr["uniqueId"]),"photo_2");
             $insertArr["photo_3"]=$this->fileGetContents(trim($postArr["uniqueId"]),"photo_3");
-            $insertArr["supervisor"]=trim($postArr["value_supervisors"]);
+            $insertArr["supervisor"]=trim($postArr["value_supervisor"]);
             	
-            $insertArr["baseSupervisor"]=trim($postArr["value_basesupervisors"]);
+            $insertArr["baseSupervisor"]=trim($postArr["value_basesupervisor"]);
              $insertArr["matMisuse"]=trim($postArr["matMisuse"]);
             $insertArr["matRemarks"] = trim($postArr["matmisueremarks"]);
 			$insertArr["matPhotos"]=$this->fileGetContents(trim($postArr["uniqueId"]),"matPhotos");

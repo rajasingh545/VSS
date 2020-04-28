@@ -15,8 +15,8 @@ const devServer = {
   overlay: true,
   stats,
   proxy: {
-        '/productivity-api': {
-            target: 'http://localhost/',
+        '/api': {
+            target: 'http://localhost',
             secure: false
         }
     }

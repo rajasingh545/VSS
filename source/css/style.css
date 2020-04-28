@@ -11,7 +11,6 @@ body {
 
 div, label, input, select, option, ul, li, a, span, textarea {
 font-size: 13pt;
-font-weight: normal;
 }
 textarea {
 min-height: 50px;
@@ -25,11 +24,6 @@ min-height: 50px;
 	top: 0px;
 	bottom: 0px;
 }
-@media (min-width: 768px) {
-	.container {
-	  width: 100%;
-	}
-  }
 
 .ajaxLoadingContainer {
 	min-height: 100%; height:auto;
@@ -88,8 +82,7 @@ height: 100%;
 
 .row {
     margin-right: 0px !important;
-	margin-left:0px;
-	margin-bottom: 10px;
+    margin-left:0px;
 }
 
 .WelomeBK {
@@ -287,14 +280,21 @@ margin: 0px;
    background-image: url(../assets/images/button_bk_sel.jpg);
 }*/
 
- .width100 {
+.Button {
+    border: none;
+    border-radius: 5px;
+    color: white;
+    /*min-width: 120px;*/
+    font-weight: bold;
+    background-color: #b1222b;
+    height: 35px;
+}
 
-	width: 100%;
-} 
-.width50 {
-	text-align: center;
-	width: 50%;
-} 
+    .Button:hover {
+        background-color: #5d5c5b;
+        cursor: pointer;
+    }
+
 .GreenButton {
 	background-image: url(../assets/img/images/button_green_bk.jpg);
 	border-radius: 4px;
@@ -385,9 +385,7 @@ padding-bottom: 10px;
  display: block;
  margin: 5px 0px;
 }
-.red {
-	color: red;
-}
+
 .ComboBox {
 	border: 0 !important;  
 	 -webkit-appearance: none;
@@ -515,11 +513,7 @@ padding-bottom: 10px;
         list-style: none;
         margin: 5px 0;
     }
-.hoverColor:hover{
-	background-color: #f8f8f8;
-	border-color: #e7e7e7;
-	
-}
+
 .hrline {
     border-bottom: solid 1px gainsboro;
     padding-bottom: 5px;
@@ -552,7 +546,7 @@ text-align: center;
 
 .TitleLogin {
     padding-top: 1px;
-    background-color: #22b167;
+    background-color: #b1222b;
     height:50px;
 }
 
@@ -566,7 +560,7 @@ color: #fff;
 
 .Title {
 padding-top: 15px;
-background-color: #22b167;
+background-color: #d73232;
 color: #FFFFFF;
 }
 
@@ -589,7 +583,7 @@ padding-top: 3px;
 	opacity: 0.8;
 }
 .HomeBack.active {
-  background-color:#22b167;
+  background-color:#CC3300;
 }
 
 .Title a:hover,.TitleLogin a:hover {
@@ -703,9 +697,6 @@ width: 50%;
 	font-weight: bold;
 	
 }
-.strong{
-	font-weight: bold;
-}
 .center-div
 {
   margin: 0 auto;
@@ -713,20 +704,3 @@ width: 50%;
   height: 100px;
   border-radius: 3px;
 }
-.ellipsis{
-	display: inline-block;
-    /* width: 180px; */
-    white-space: nowrap;
-    overflow: hidden !important;
-    text-overflow: ellipsis;
-}
-
-.search { 
-	position: relative; 
-	margin: 0 auto ;
-	text-align: center;
-  }
-  .search input { 
-	text-indent: 30px;
-	 font-family:  FontAwesome, sans-serif;
-  }

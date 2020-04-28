@@ -330,8 +330,11 @@ class REQUESTS
 			
 			$insid = $dbm->insert($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKARRANGEMENTS"],$insertArr,1,2);
 			
-			
+			// tracking supervisor attendance
+			$this->insertSupervisorAttendance($insid, $postArr["value_supervisors"], $postArr["startDate"]);
+			$this->insertSupervisorAttendance($insid, $postArr["value_supervisors2"], $postArr["startDate"]);
 
+			//tracking wrokers attendance
 			foreach($postArr["workerIds"] as $value){
 				$insertArr2 = array();
 				$insertArr2["workArrangementId"]=$insid;
@@ -370,6 +373,19 @@ class REQUESTS
 		return $this->common->arrayToJson($returnval);
 	}
 		
+	function insertSupervisorAttendance($insid, $supervisor, $startDate){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$dbm = new DB;
+		$dbcon = $dbm->connect('M',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		$ins = array();
+		$ins["workArrangementId"]=$insid;
+		$ins["workerId"]=$supervisor;       
+		$ins["forDate"]=$startDate;
+		$ins["createdOn"]=date("Y-m-d H:i:s");
+		$ins["isSupervisor"] = 1;
+		$insid2 = $dbm->insert($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$ins,1,2);
+		
+	}
 	
 
 	

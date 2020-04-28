@@ -25,6 +25,7 @@ class commonAPI
         // $allDetails["category"] = $this->categoryDetails();
         $allDetails["subCategory"] = $this->subCategoryDetails();
 		$allDetails["supervisorsList"] = $this->allSupervisorDetails();
+		$allDetails["workRequestList"] = $this->getWorkRequestIDList();
 		// $allDetails["allprojects"] = $this->allProjectDetails();
 		// $allDetails["requestDetails"] = $this->requestDetails();
         
@@ -256,14 +257,42 @@ class commonAPI
 		
 		return $vehiclesArr;
 	}
-    function supervisorDetails($pid){
+
+	
+    function supervisorDetails($pid, $postArr){
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
 		$db = new DB;
 		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
 		
+
+		$whereClauseat = "forDate='".date("Y-m-d")."' and isSupervisor=1";
+		$selectFiledsat=array("workerId");
+		if($postArr["startDate"] != ""){
+			$whereClauseat = "forDate='".$postArr["startDate"]."' and isSupervisor=1";
+		}
+		// echo $whereClauseat;
+		$resat=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["ATTENDANCE"],$selectFiledsat,$whereClauseat);
+		if($resat[1] > 0){
+			$workerIds = $db->fetchArray($resat[0], 1);  
+			$assignedWorkers = array();
+			foreach($workerIds as $worker){
+				array_push($assignedWorkers, $worker["workerId"]);
+			}        	
+			
+		}
+		else{
+			$assignedWorkers =array();
+		}
+
 		$selectFileds=array("userId","Name");
 		
-		$whereClause = "project like '%$pid%' and userStatus=1";
+		if(count($assignedWorkers) > 0){
+
+		$whereClause = "project like '%$pid%' and userStatus=1 and userId NOT IN(".implode(",",$assignedWorkers).")";
+		}
+		else{
+			$whereClause = "project like '%$pid%' and userStatus=1 ";
+		}
 		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["USERS"],$selectFileds,$whereClause);
 		
 		$vehiclesArr = array();
@@ -427,6 +456,34 @@ class commonAPI
 		return $usersArr;
 	}
 
+	function getWorkRequestIDList(){
+		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
+		$db = new DB;
+		$dbcon = $db->connect('S',$DBNAME["NAME"],$DBINFO["USERNAME"],$DBINFO["PASSWORD"]);
+		
+		$selectFileds=array("workRequestId");
+		$whereClause = "status='1'";
+		$res=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUEST"],$selectFileds,$whereClause);
+		
+		$usersArr = array();
+		$listArr = array();
+		if($res[1] > 0){
+
+			
+			$usersArr = $db->fetchArray($res[0], 1);
+			foreach($usersArr as $key=>$item){
+				$invID = str_pad($item["workRequestId"], 4, '0', STR_PAD_LEFT);
+				$listArr[$key]["workRequestId"] = $item["workRequestId"];
+				$listArr[$key]["workRequestIdStr"] = "WR".$invID;
+			}
+		}
+		else{
+			$listArr=array(); 
+		}
+ 
+		return $listArr;
+	}
+
 	function getContracts($postArr){
 		global $DBINFO,$TABLEINFO,$SERVERS,$DBNAME;
 		$db = new DB;
@@ -503,7 +560,7 @@ class commonAPI
 				$resultArrr["workRequests"][$key]["requestedBy"] = $val["requestedBy"];
 			}
 			foreach($listArr as $works){
-				$selectFileds2=array("id","ItemUniqueId","length","height","width","scaffoldType");		
+				$selectFileds2=array("id","ItemUniqueId","length","height","width","scaffoldType","setcount");		
 				$whereClause2 = "workRequestId=".$works["workRequestId"];
 				
 				$res2=$db->select($dbcon, $DBNAME["NAME"],$TABLEINFO["WORKREQUESTSIZEBASED"],$selectFileds2,$whereClause2);
@@ -513,7 +570,7 @@ class commonAPI
 					$items = $db->fetchArray($res2[0], 1);
 					
 					foreach($items as $item){
-						$desc = "WR: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH";
+						$desc = "WR: ".$item["length"]."mL x ".$item["width"]."mW x ".$item["height"]."mH"." x ".$item["setcount"];
 						$resultArrr["items"][$works["workRequestId"]][] = array("itemId"=>$item["id"], "itemName"=>$item["ItemUniqueId"],"type"=>"1","desc"=>$desc,"requestBy"=>$works["requestedBy"]);
 						// $itemDesc = $this->getContractsDesc($item["itemId"]);
 						// $resultArrr["items"][$works["workRequestId"]][] = array("itemId"=> $item["itemId"], "itemName"=> $itemDesc["contractsname"], "itemDesc"=>$itemDesc["desc"] );
