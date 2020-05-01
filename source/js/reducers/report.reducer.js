@@ -1,43 +1,63 @@
 import { Map } from 'immutable';
 
 import {
-    REPORTDET_START,
-    REPORTDET_ERROR,
-    REPORTPOST_SUCCESS,
-  
+  REPORT_START,
+  REPORT_ERROR,
+  REPORT_SUCCESS,
+  REQUESTDET_START,
+  REQUESTDET_ERROR,
+  REQUESTDET_SUCCESS,
 } from 'actions/report.actions';
 
 const initialState = Map({
   loading: false,
   error: null,
-  reportData: null,
+  reportdata: null,
 });
 
 const actionsMap = {
   // Async action
-  [REPORTDET_START]: (state) => {
+  [REQUESTDET_START]: (state) => {
     return state.merge(Map({
       loading: true,
       error: null,
-      reportPost: null,
+      requestDet: null,
     }));
   },
-  [REPORTDET_ERROR]: (state, action) => {
+  
+  [REQUESTDET_ERROR]: (state, action) => {
     return state.merge(Map({
       loading: false,
       error: action.error.message,
     }));
   },
- 
-  [REPORTPOST_SUCCESS]: (state, action) => {
-    console.log("action==", state, action);
+  [REQUESTDET_SUCCESS]: (state, action) => {
+   
     return state.merge(Map({
       loading: false,
-      reportData: action.data,
+      requestDet: action.data,
     }));
-  }
-  
-  
+  },
+  [REPORT_START]: (state) => {
+    return state.merge(Map({
+      loading: true,
+      error: null,
+      userId: null,
+    }));
+  },
+  [REPORT_ERROR]: (state, action) => {
+    return state.merge(Map({
+      loading: false,
+      error: action.error.message,
+    }));
+  },
+  [REPORT_SUCCESS]: (state, action) => {
+   
+    return state.merge(Map({
+      loading: false,
+      reportdata: action.data,
+    }));
+  },
 };
 
 export default function reducer(state = initialState, action = {}) {

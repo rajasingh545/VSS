@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { validateLogin } from 'actions/login.actions';
 import { ToastContainer, toast } from 'react-toastify';
+import {Button} from 'react-bootstrap';
 // import {}
 
 @connect(state => ({
@@ -26,13 +27,14 @@ export default class Login extends Component {
     }
 
 componentWillReceiveProps(nextProps){
-        // console.log("props", nextProps);
+        console.log("props", nextProps);
         let {userId} = nextProps;
         
         if(userId && userId.response === "success"){ 
             sessionStorage.setItem("userId", userId.userId);
             sessionStorage.setItem("userType", userId.userType);
-            sessionStorage.setItem("userName", userId.userName);              
+            sessionStorage.setItem("userName", userId.userName);   
+            sessionStorage.setItem("project", userId.project);           
             this.props.history.push('/Home');
              
         }
@@ -86,7 +88,7 @@ componentWillReceiveProps(nextProps){
                         <input type="password" className="form-control" value={password} onChange={this.setPassword} id="txtPwd" name="txtPwd" placeholder="Password" />
                     </div>
                    
-                    <button className="Button btn-block" id="login" type="submit" onClick={this.handleLogin}>{loading === true ? "Loading ..." : "Login"}</button>
+                    <Button bsStyle="primary" id="login" type="submit" onClick={this.handleLogin}>{loading === true ? "Loading ..." : "Login"}</Button>
                 </div>
        
       </div>

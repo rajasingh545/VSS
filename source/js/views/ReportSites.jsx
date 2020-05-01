@@ -13,6 +13,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import moment from "moment";
 import ReactTable from "react-table";
+import { CSVLink } from "react-csv";
 
 @connect(state => ({
   listingDetails: state.request.get('listingDetails'),
@@ -316,13 +317,18 @@ callform = (key, list, stateKey, title) =>{
     </div>
     <br/>
     {columns.length > 0 && 
-                
+              <div>
+                  <div className="col-sm-3">
+                  <CSVLink data={data}><CustomButton bsStyle="primary" className="width50" id="submit">Download As Excel</CustomButton></CSVLink>
+                    <br />
+                  </div>
                 <ReactTable
                     data={data}
                     columns={columns}
                     showPagination={false}
                     defaultPageSize={15}
                 />
+                </div>
               }
         
     </div>

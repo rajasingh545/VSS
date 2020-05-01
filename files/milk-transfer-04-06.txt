@@ -1,5 +1,0 @@
-Thank you for Banking with us.
-Your request for IMPS Funds Transfer transaction of Rs 1,225.00 has been accepted.
-The User Reference Number for your transaction is : 909609166688.
-The RRN Reference Number for your transaction is : 909609126410.
-Request you to check the status of your transaction in "View IMPS Funds transfer".

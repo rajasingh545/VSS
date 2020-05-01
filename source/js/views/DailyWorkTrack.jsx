@@ -122,7 +122,7 @@ class DailyWorkTrack extends React.Component {
 
     if(nextProps.requestDet && nextProps.requestDet.supervisors){
         this.setState({supervisors:nextProps.requestDet.supervisors});
-        this.setState({value_supervisors:"", text_supervisors:"Select Supervisor"});
+        this.setState({value_supervisor:"", text_supervisor:"Select Supervisor"});
     }
 }
 selectImages = (event) => {
@@ -299,7 +299,8 @@ resetThenSet(key, list, stateKey, title){
       toast.error("Client is required", { autoClose: 3000 });       
       return false;
     }
-    if(!this.state.L){
+    if(this.state.cType == 1){
+      if(!this.state.L){
         toast.error("Length is required", { autoClose: 3000 });       
         return false;
       }
@@ -315,6 +316,17 @@ resetThenSet(key, list, stateKey, title){
         toast.error("Set is required", { autoClose: 3000 });       
         return false;
       }
+    }
+
+    
+    if(this.state.matMisuse == 1 && !this.state.matPhotos){
+        toast.error("Material misuse photo is required", { autoClose: 3000 });       
+        return false;
+    }
+    if(this.state.safetyvio == 1 && !this.state.safetyPhoto){
+        toast.error("Safety photo is required", { autoClose: 3000 });       
+        return false;
+    }
     
     // if(!this.state.requestBy || this.state.requestBy == ""){
     //   toast.error("Requested by is required", { autoClose: 3000 });       
@@ -610,7 +622,7 @@ resetThenSet(key, list, stateKey, title){
                   title={this.state.basesupervisorTitle}
                   name="Name"
                   keyName="userId"
-                  stateId="basesupervisors"
+                  stateId="basesupervisor"
                   reset={this.state.supervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.callform}
@@ -624,7 +636,7 @@ resetThenSet(key, list, stateKey, title){
                   title={this.state.supervisorTitle}
                   name="Name"
                   keyName="userId"
-                  stateId="supervisors"
+                  stateId="supervisor"
                   reset={this.state.supervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.callform}
@@ -737,7 +749,8 @@ resetThenSet(key, list, stateKey, title){
     &nbsp;
     </div>
     <br />
-    <div className="workBasedOn" style={{paddingTop:"15px"}}>
+    {this.state.cType == 1 &&
+     <div className="workBasedOn" style={{paddingTop:"15px"}}>
         
         <div className="col-sm-3">Timing</div>
         
@@ -764,6 +777,7 @@ resetThenSet(key, list, stateKey, title){
     
 
     </div>
+    }
     
   {this.state.timing == 2 &&
     <div >

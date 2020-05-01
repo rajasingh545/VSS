@@ -30,6 +30,7 @@ class WorkRequestEdit extends React.Component {
     clientTitle : "Select Client",
     scaffoldtypetitle : "Select Type",
     scaffoldworktypetitle : "Select Work Type",
+    workRequestTitle: "Select WR#",
     contracts : [],
     filteredArr : [],
     scaffoldWorkType : [],
@@ -60,6 +61,7 @@ class WorkRequestEdit extends React.Component {
         this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
         this.state.scaffoldType = nextProps.requestDet.scaffoldType;
         this.state.subCategoryStore = nextProps.requestDet.subCategory;
+        this.state.workRequestList = nextProps.requestDet.workRequestList;
         
     }
     if(nextProps.requestDet && nextProps.requestDet.contracts){
@@ -100,6 +102,7 @@ class WorkRequestEdit extends React.Component {
         let scaffoldTitle = "Select Type";
         let scaffoldworkTitle ="Select Work Type";
         let scaffoldSubCategory ="Select Sub Category";
+        let workRequestTitle = "Select WR#";
         
         if(requestItemsArr){           
             requestItems = requestItemsArr[requestItemsArr.length-1];
@@ -112,7 +115,10 @@ class WorkRequestEdit extends React.Component {
                 requestSizeList = requestSizeListArr[requestSizeListArr.length-1];
                 
                 scaffoldTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
+                
        scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");
+       
+       workRequestTitle = getDetailsWithMatchedKey2(requestItems.previousWR, this.state.workRequestList, "workRequestId", "workRequestIdStr");
                 if(this.state.subCategoryStore){
                     scaffoldSubCategory = getDetailsWithMatchedKey2(requestSizeList.scaffoldSubCategory, this.state.subCategoryStore[requestSizeList.scaffoldType], "scaffoldSubCateId", "scaffoldSubCatName");
                     
@@ -138,6 +144,8 @@ class WorkRequestEdit extends React.Component {
             requestBy:requestDet.requestedBy,
             value_item: requestItems.itemId,
             sizeType: requestItems.sizeType,
+            workRequestTitle: workRequestTitle,
+            workRequestId: requestItems.previousWR,
             workBased: requestItems.workBased,
             value_scaffoldWorkType : requestSizeList.scaffoldWorkType,
             value_scaffoldType : requestSizeList.scaffoldType,
@@ -204,11 +212,14 @@ getOrginalContDataPopulate = (requestItemsArr,requestManlistArr,requestSizeListA
         let scaffoldworkSubCategory = getDetailsWithMatchedKey2(sizeItem.scaffoldSubCategory, this.state.subCategoryStore[sizeItem.scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");   
         let itemTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "item");
         let locationTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "location");
+        let workRequestTitle = getDetailsWithMatchedKey2(items.previousWR, this.state.workRequestList, "workRequestId", "workRequestIdStr");
     let obj ={        
         value_item: items.itemId,
         text_item:itemTitle,
         text_location :locationTitle,
         sizeType: items.sizeType,
+        workRequestId: items.previousWR,
+        workRequestId_Text: workRequestTitle,
         workBased: items.workBased,
         text_scaffoldWorkType : scaffoldworkTitle,
         text_scaffoldType : scaffoldTitle,
@@ -367,20 +378,20 @@ resetThenSet(key, list, stateKey, title){
         this.onFormChange(e);
   }
   onChangeSizeType = (e) => {
-    if(e.target.value == 1){
-        this.setState({
-            L:this.state.filteredArr[0].length,
-            W:this.state.filteredArr[0].width,
-            H:this.state.filteredArr[0].height,
-        });
-    }
-    else{
-        this.setState({
-            L:"",
-            W:"",
-            H:"",
-        });
-    }
+    // if(e.target.value == 1){
+    //     // this.setState({
+    //     //     L:this.state.filteredArr[0].length,
+    //     //     W:this.state.filteredArr[0].width,
+    //     //     H:this.state.filteredArr[0].height,
+    //     // });
+    // }
+    // else{
+    //     this.setState({
+    //         L:"",
+    //         W:"",
+    //         H:"",
+    //     });
+    // }
     this.onFormChange(e);
   }
 
@@ -406,6 +417,7 @@ resetThenSet(key, list, stateKey, title){
             this.itemList.push({
                 value_item: this.state.value_item,
                 sizeType: this.state.sizeType,
+                workRequestId: this.state.value_workRequestId,
                 workBased: this.state.workBased,
                 value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                 value_scaffoldType : this.state.value_scaffoldType,
@@ -484,6 +496,8 @@ resetThenSet(key, list, stateKey, title){
             value_item: this.state.value_item,
             sizeType: this.state.sizeType,
             workBased: this.state.workBased,
+            workRequestId: this.state.value_workRequestId,
+            workRequestId_Text: this.state.text_workRequestId,
             value_scaffoldWorkType : this.state.value_scaffoldWorkType,
             value_scaffoldType : this.state.value_scaffoldType,
             L:this.state.L,
@@ -517,7 +531,7 @@ resetThenSet(key, list, stateKey, title){
             inTime : "",
             outTime: ""
         })
-        toast.success("Item sdded successfully", { autoClose: 3000 }); 
+        toast.success("Items added successfully", { autoClose: 3000 }); 
     }
   }
   sizeAddition = () =>{
@@ -624,14 +638,17 @@ resetThenSet(key, list, stateKey, title){
   }
 
   setPreview = ()=>{
-
+   
     if(this.state.cType == 1){
         const found = this.itemList.some(el => el.value_item === this.state.value_item);
         if (!found){
+            
             this.itemList.push({
                 value_item: this.state.value_item,
                 text_item: this.state.text_item,
                 sizeType: this.state.sizeType,
+                workRequestId: this.state.value_workRequestId,
+                workRequestId_Text: this.state.text_workRequestId,
                 workBased: this.state.workBased,
                 value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                 text_scaffoldWorkType : this.state.text_scaffoldWorkType,
@@ -820,6 +837,23 @@ resetThenSet(key, list, stateKey, title){
         </div>
     </div>
     }
+    {this.state.sizeType == 2 && 
+     <div className="description">
+        <div className="row">
+            <div className="col-xs-6"><label>Previous WR#</label></div>
+            <div className="col-xs-6">
+            <Dropdown
+                    title={this.state.workRequestTitle}
+                    name="workRequestIdStr"
+                    keyName="workRequestId"
+                    stateId="workRequestId"
+                    list={this.state.workRequestList}
+                    resetThenSet={this.callform}
+                />
+            </div>
+        </div>
+    </div>
+    }
     <div className="description">
         <div className="row">
             <div className="col-xs-6"><label>Description</label></div>
@@ -994,11 +1028,11 @@ resetThenSet(key, list, stateKey, title){
     </div>
         
 
-        <Modal show={this.state.show} onHide={this.handleClose}>
+        <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="modallg" >
           <Modal.Header closeButton>
             <Modal.Title><strong>Preview</strong></Modal.Title>
           </Modal.Header>
-          <Modal.Body>
+          <Modal.Body >
           <WorkRequestPreview curState={this.state} />
            
           </Modal.Body>

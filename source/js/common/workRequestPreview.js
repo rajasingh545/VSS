@@ -9,7 +9,7 @@ import React, { Component } from 'react';
       }
      
      setItemList = (itemList)=>{
-        console.log("itemList",itemList);
+        
         return itemList.map((item)=>{
 
             return(
@@ -24,22 +24,29 @@ import React, { Component } from 'react';
                     <div className="row">
                     <div className="col-sm-3"><label>Size Type:</label></div>
                     <div className="col-sm-3 strong">{(item.sizeType == 1)? "Full Size":"Partial Size"}</div>
+                   
                     <div className="col-sm-3"><label>Work Based On :</label></div>
                     <div className="col-sm-3 strong">{(item.workBased == 1)? "Size":"ManPower"}</div>
                     </div>
+                    {item.sizeType == 2 &&
+                    <div>
+                    <div className="col-sm-3"><label>Previous WR#:</label></div>
+                    <div className="col-sm-3 strong">{item.workRequestId_Text}</div>
+                    </div>
+                    }
                     {item.workBased == 1 &&
                     <div>
                         <div className="row">
-                            <div className="col-sm-6"><label>Scaffold Work Type:</label></div>
-                            <div className="col-sm-6 strong">{item.text_scaffoldWorkType}</div>
+                            <div className="col-sm-3"><label>Scaffold Work Type:</label></div>
+                            <div className="col-sm-3 strong">{item.text_scaffoldWorkType}</div>
                         </div>
                         <div className="row">
-                            <div className="col-sm-6"><label>Scaffold Type:</label></div>
-                            <div className="col-sm-6 strong">{item.text_scaffoldType}</div>
+                            <div className="col-sm-3"><label>Scaffold Type:</label></div>
+                            <div className="col-sm-3 strong">{item.text_scaffoldType}</div>
                         </div>
                         <div className="row">
-                            <div className="col-sm-6"><label>Scaffold Subcategory:</label></div>
-                            <div className="col-sm-6 strong">{item.text_scaffoldSubcategory}</div>
+                            <div className="col-sm-3"><label>Scaffold Subcategory:</label></div>
+                            <div className="col-sm-3 strong">{item.text_scaffoldSubcategory}</div>
                         </div>
                         <div className="row">
                             <div className="col-xs-3"> L: <span className="strong">{item.L}</span></div>
@@ -217,9 +224,9 @@ import React, { Component } from 'react';
             <div className="row">
                 <div className="col-sm-6"><label>Scaffold Register</label></div>
                 {curState.scaffoldRegister == 1 ?
-                <div className="col-sm-6 strong"> Checked  </div>
+                <div className="col-sm-6 strong"> Yes  </div>
                 :
-                <div className="col-sm-6 strong"> Not Checked  </div>
+                <div className="col-sm-6 strong"> No  </div>
                 }
             </div>
             <div className="row">

@@ -116,9 +116,10 @@ export default class WorkRequestList extends React.Component {
           clientname
         });
           let elmId="elm_"+requestDetails.workArrangementId;
+          let wrstr = "WR"+('0000'+data.workRequestId).substring(data.workRequestId.length);
         return (
                 <div  className="row Listing1 hrline hoverColor" style={{cursor:"pointer"}} key={data.workRequestId} onClick={()=>this.redirectView(data.workRequestId)}>
-                         <strong>{projectName} :</strong>  {clientname} Requested By : {data.requestedBy}
+                         <strong>{wrstr} : </strong>{projectName} :  {clientname} Requested By : {data.requestedBy}
                 </div>
             );
         });

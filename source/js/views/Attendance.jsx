@@ -12,6 +12,7 @@ import {getDetailsWithMatchedKey2} from '../common/utility';
 import { ToastContainer, toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import moment from "moment";
+import TimePicker from 'rc-time-picker';
 
 @connect(state => ({
   listingDetails: state.request.get('listingDetails'),
@@ -37,7 +38,8 @@ class Attedence extends React.Component {
     this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.reasonsList = getReasons();
-
+    var now = new Date().getTime()
+    this.time = moment(now);
   // console.log("ths reasons", this.reasonsList);
   }
   componentWillMount(){
@@ -57,7 +59,6 @@ class Attedence extends React.Component {
       }
       if(this.props.userType == 5){
         let projectId = this.props.project;
-        console.log("projectid", projectId, nextProps.requestDet.projects);
         let projectsArr = projectId.split(",");
         let porjectsMapArr = [];
         projectsArr.map((pid) =>{
@@ -85,7 +86,6 @@ class Attedence extends React.Component {
   
   }
   getWorkers = (key, list, stateKey) =>{
-    console.log("key", key)
     const { dispatch } = this.props;
     if(key){
       this.state.requestCode = 6;
@@ -163,7 +163,13 @@ class Attedence extends React.Component {
    this.setState({workersList:[], projectTitle:"Select Project", showSubButton:false});
   //  toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
     dispatch(requestPost(param));
-    toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
+    if(type == 1){
+      toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
+    }
+    else{
+      toast.success("Attendance Saved Successfully", { autoClose: 3000 });
+    }
+    
   }
   onCheckBoxClick = (e)=>{
     e.stopPropagation();
@@ -186,17 +192,42 @@ class Attedence extends React.Component {
 
   }
   setReason = (key, list, stateKey) =>{
-    this.timeValuesArr[stateKey] = key;
-  }
-  onTimeChange = (el)=>{
-    // console.log("==$$==",el.value, el.name);
+    const inTime = stateKey.split("_");
 
-    this.timeValuesArr[el.name] = el.value;
+    const key1 = "in_"+inTime[1];
+    const selectKey = "select_"+inTime[1];
+    
+    if (!this.timeValuesArr[key1] && (key == 5 || key == 99))
+    {
+      toast.error("In time can't be empty", { autoClose: 3000 });
+      this.state[selectKey] = "Select.."
+      this.setState({[selectKey]: "Select.."});
+      // return false;
+    }
+    else{
+      this.timeValuesArr[stateKey] = key;
+    }
   }
+  onTimeChange = (value, name)=>{
+  
+    this.timeValuesArr[name] = value.format('HH:mm');
+    
+  }
+
+  validateOutTime =(value, name)=>{
+    const fnme = name.split("_");
+
+    console.log("==>", this.timeValuesArr["out_"+fnme[1]], this.timeValuesArr["in_"+fnme[1]])
+    if(this.timeValuesArr["out_"+fnme[1]] && this.timeValuesArr["out_"+fnme[1]] < this.timeValuesArr["in_"+fnme[1]]){
+      toast.error("Out time can't be less than in time", { autoClose: 3000 });
+      return false;
+    }
+  }
+
   renderWorkers = (workers)=>{
 // console.log("this in", this.selectedIds);
     if(workers.length > 0){
-      // console.log
+    
       this.teamArr= [];
 
       // this.selectedIds = [];
@@ -210,7 +241,8 @@ class Attedence extends React.Component {
         this.WAId = worker.workArrangementId;
         let workerTeam= worker.workerTeam
        
-        let title = "Select.."
+        this.state["select_"+worker.workerId] = "Select.."
+       
         if(worker.reason != 0){
           // console.log("inside==",worker,worker.reason, title);
           title = getDetailsWithMatchedKey2(worker.reason, this.reasonsList, "id", "reason");
@@ -223,7 +255,18 @@ class Attedence extends React.Component {
          
           this.teamArr[workerTeam] = 1;
         }
-        // console.log("==jeeva",workerTeam, this.teamArr, this.teamArr[worker.workerTeam])
+       
+        let invalue = "";
+        let outvalue = "";
+        if(worker.inTime != "00:00:00"){
+          invalue = moment("03-25-2015 "+worker.inTime);
+          this.timeValuesArr[InName] = worker.inTime;
+
+        }
+        if(worker.outTime != "00:00:00"){
+          outvalue = moment("03-25-2015 "+worker.outTime);
+          this.timeValuesArr[OutName] = worker.outTime;
+        }
         rec++; 
         return(
           <div className="row" key={ind}>
@@ -235,17 +278,37 @@ class Attedence extends React.Component {
           </div>
           {this.state.selectedOption == 1 &&
           <div className="col-xs-2" style={{textAlign:"center"}}>
-          <TimeField value={worker.inTime} name={InName} className="width100" onChange={this.onTimeChange}/>
+         
+          <TimePicker
+         
+          defaultValue={invalue}
+          format="hh:mm a"
+          showSecond={false}
+          onChange={(value, id=InName) => this.onTimeChange(value, id)}
+          use12Hours
+          name={InName}
+          className="width100"
+          />
           </div>
           }
           {this.state.selectedOption == 2 &&
           <div className="col-xs-2" style={{textAlign:"center"}}>
-          <TimeField value={worker.outTime} name={OutName} className="width100" onChange={this.onTimeChange}/>
+         
+          <TimePicker 
+          defaultValue={outvalue}
+          format="hh:mm a"
+          showSecond={false}
+          onChange={(value, id=OutName) => this.onTimeChange(value, id)}
+          onClose={(value, id=OutName) => this.validateOutTime(value, id)}
+          use12Hours
+          name={OutName}
+          className="width100"
+          />
           </div>
           }
           <div className="col-xs-6" style={{textAlign:"center"}}>
           <Dropdown
-                  title={title}
+                  title={this.state["select_"+worker.workerId]}
                   name="reason"
                   keyName="id"
                   stateId={reasonId}

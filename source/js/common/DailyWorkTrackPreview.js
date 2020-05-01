@@ -82,16 +82,17 @@ class DailyWorkTrackPreview extends Component{
                <div className="hrline">                    
                    
                    <div className="row">
-                        <div className="col-sm-3"><label>Team:</label></div>
+                        <div className="col-sm-3"><label>Team/Type Worker:</label></div>
                         <div className="col-sm-3 strong">{item.text_team}</div>
                         
                         </div>
-                        
+                        {curState.cType == 1 &&
                         <div className="row">
                         <div className="col-sm-3"><label>Sub Division:</label></div>
                         <div className="col-sm-3 strong">{subdivisionTitle}</div>
                         
                         </div>
+                        }
                         <div className="row">
                             <div className="col-sm-3"><label>Worker Count:</label></div>
                             <div className="col-sm-3 strong">{item.workerCount}</div>
@@ -134,11 +135,13 @@ class DailyWorkTrackPreview extends Component{
                         <div className="col-sm-3 strong">{item.text_materials}</div>
                         
                         </div>
+                        {curState.cType == 1 &&
                         <div className="row">
                         <div className="col-sm-3"><label>Sub Division:</label></div>
                         <div className="col-sm-3 strong">{subdivisionTitle}</div>
                         
                         </div>
+                        }
                         <div className="row">
                             <div className="col-sm-3"><label>Worker Count:</label></div>
                             <div className="col-sm-3 strong">{item.mWorkerCount}</div>
@@ -203,7 +206,7 @@ class DailyWorkTrackPreview extends Component{
            {curState.cType == 1 &&
            <div className="row">
            <div className="col-sm-6"><label>WR #</label></div>
-           <div className="col-sm-6 strong">{curState.WRNOTitle}</div>
+           <div className="col-sm-6 strong">{curState.WRNOTitle || curState.text_wrno}</div>
            </div>
           
             }

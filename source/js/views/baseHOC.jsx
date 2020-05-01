@@ -18,7 +18,8 @@ export default function baseHOC(WrappedComponent) {
     render() {
     const newProps = {        
           userId: sessionStorage.getItem("userId"),
-          userType: sessionStorage.getItem("userType")        
+          userType: sessionStorage.getItem("userType"),
+          project: sessionStorage.getItem("project")        
       }
       return <WrappedComponent {...this.props} {...newProps}/>
     }

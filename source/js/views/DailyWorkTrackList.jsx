@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PreviewTemplate from '../common/PreviewTemplate';
 import Dropdown from '../common/Dropdown';
 import {DOMAIN_NAME} from "../config/api-config";
 import baseHOC from "./baseHoc";

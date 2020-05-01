@@ -1,3 +1,0 @@
-- DO view details
-- input default value for collection 
-- quanity delivered proper update

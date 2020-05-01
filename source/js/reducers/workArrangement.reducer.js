@@ -73,7 +73,7 @@ const actionsMap = {
     }));
   },
   [WORKREQUESTPOST_SUCCESS]: (state, action) => {
-    console.log("action==",  action);
+    
     return state.merge(Map({
       loadingListing: false,
       workRequestData: action.data,

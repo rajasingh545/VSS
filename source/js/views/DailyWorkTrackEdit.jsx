@@ -98,7 +98,7 @@ class DailyWorkTrackEdit extends React.Component {
     if(nextProps.requestDet && nextProps.requestDet.supervisors){
         this.setState({supervisors:nextProps.requestDet.supervisors});
         this.setState({value_supervisors:"", text_supervisors:"Select Supervisor"});
-        this.setState({value_basesupervisors:"", text_basesupervisors:"Select Supervisor"});
+        this.setState({value_basesupervisor:"", text_basesupervisor:"Select Supervisor"});
     }
     if(nextProps.requestDet && nextProps.requestDet.projects){
         this.state.projects = nextProps.requestDet.projects;
@@ -166,10 +166,11 @@ class DailyWorkTrackEdit extends React.Component {
         let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
         let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
         let supervisorName = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.supervisors, "userId", "Name");
-        let baseSupervisor = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.baseSupervisor, "userId", "Name");
+        let baseSupervisor = getDetailsWithMatchedKey2(requestDet.baseSupervisor, this.state.supervisors, "userId", "Name");
         let statusTitle =  getDetailsWithMatchedKey2(requestItems.status, this.state.workStatus, "id", "value");
         let teamTitle =  getDetailsWithMatchedKey2(requestSizeList.teamId, this.state.team, "teamid", "teamName");
         let materialTitle =  getDetailsWithMatchedKey2(requestMatlist.material, this.state.materials, "id", "value");
+       
         this.setState({
             projectTitle:proTitle,
             clientTitle:clientname,           
@@ -489,10 +490,10 @@ resetThenSet(key, list, stateKey, title){
       return false;
     }
     
-    if(!this.state.requestBy || this.state.requestBy == ""){
-      toast.error("Requested by is required", { autoClose: 3000 });       
-      return false;
-    }
+    // if(!this.state.requestBy || this.state.requestBy == ""){
+    //   toast.error("Requested by is required", { autoClose: 3000 });       
+    //   return false;
+    // }
     return true;
   }
 
@@ -736,12 +737,7 @@ resetThenSet(key, list, stateKey, title){
             </label>
         </div>
     </div>
-     <div className="row">
-        <div className="col-xs-6"><label>Work Request By</label></div>
-          <div className="col-xs-6">
-          <CustInput type="text" name="requestBy" value={this.state.requestBy} onChange={this.onFormChange} />
-          </div>
-    </div>
+    
     <div className="row">
         <div className="col-sm-6"><label>Base Supervisor</label></div>
           <div className="col-sm-6">

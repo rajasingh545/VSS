@@ -35,7 +35,8 @@ export default class WorkArrangementList extends React.Component {
         startDate1: moment(),
         show:false,
         modalCont : '',
-        requestTypeTitle : "Select Status"
+        requestTypeTitle : "Select Status",
+        selectAll: false
     };
     
     this.selectedIds = [];
@@ -56,6 +57,7 @@ export default class WorkArrangementList extends React.Component {
     const { requestDet } = nextProps;
     this.setState({listingDetails : nextProps.listingDetails});
     this.setState({requestDet : requestDet});
+
     
   }
   componentWillUnmount(){
@@ -63,6 +65,10 @@ export default class WorkArrangementList extends React.Component {
     dispatch(clearListing());
   }
   componentDidMount(){
+    this.getlist();
+  
+  }
+  getlist = ()=>{
     let requestType = sessionStorage.getItem("requestType");
     let requestTypeTitle = sessionStorage.getItem("requestTypeTitle");
     let selectedDate = moment();
@@ -78,10 +84,12 @@ export default class WorkArrangementList extends React.Component {
       this.state.startDate = actualDate;
       this.handleRequestType(requestType,[] ,"", requestTypeTitle);
     }
-  
   }
-  redirectView = (requestId) =>{        
+  redirectView = (requestId) =>{     
+    if(this.props.userType == 1){
       this.props.history.push('/WorkArrangment/'+requestId);
+    }   
+      
                   
   }
   
@@ -93,23 +101,27 @@ export default class WorkArrangementList extends React.Component {
     let requestDetails = {};
 
     if(listingDetails && listingDetails.length > 0){
+
         response = listings.map((data, index) =>{
         if(this.state.requestDet)  
           requestDetails = getDetailsWithLib2(data, this.state.requestDet);
         let checkBox = true;
-        if(this.state.requestType == 1){
+        if(this.state.requestType == 1 || this.props.userType == 5){
           checkBox=false;
         }
          
           let elmId="elm_"+requestDetails.workArrangementId;
         return (
-                <div  className="row Listing1 hrline hoverColor" style={{cursor:"pointer"}} key={data.workArrangementId} onClick={()=>this.redirectView(data.workArrangementId)}>
+                <div  className="row Listing1 hrline hoverColor" style={{cursor:"pointer"}} key={data.workArrangementId} >
+               
                           <PreviewTemplate 
                             detailsArr={requestDetails} 
                             list={checkBox} 
+                            checkBoxChecked={this.state.selectAll}
                             onCheckBoxClickCallBack={this.onCheckBoxClickCallBack}
                             elementId={elmId}
-                          
+                            onClickList = {()=>this.redirectView(data.workArrangementId)}
+                            userType={this.props.userType}
                           />  
                 </div>
             );
@@ -126,6 +138,7 @@ export default class WorkArrangementList extends React.Component {
      this.selectedIds.push(id);
     }
     else{
+      this.setState({selectAll:false});
       let index = this.selectedIds.indexOf(id);
       this.selectedIds.splice(index, 1);
     }
@@ -161,8 +174,6 @@ setPreview =() =>{
   this.selectedIds.map((ind)=>{
 
     contArr.push(document.getElementById("elm_"+ind).innerHTML+"<br />");
-
-
 
   });
   this.setState({show:true, modalCont:contArr.join("")});
@@ -200,21 +211,36 @@ handleSubmit = () =>{
   param.ids = this.selectedIds;
   dispatch(requestPost(param));
   toast.success("Updated Successfully", { autoClose: 2000 }); 
-  // setTimeout(()=>{
-  //   this.props.history.push('/Home');
-  // }, 2000)
+  this.setState({showSubButton:false});
+  setTimeout(()=>{
+   this.getlist();
+  }, 2000)
   
 }
-  render() {
+
+handleSelectAll = (e) =>{
+  if(e.target.checked){
+    this.setState({selectAll: true});
+    this.state.listingDetails.map((item)=>{
+      this.onCheckBoxClickCallBack(item.workArrangementId, true)
+    });
+  }
+  else{
+    this.setState({selectAll: false})
+    this.state.listingDetails.map((item)=>{
+      this.onCheckBoxClickCallBack(item.workArrangementId, false)
+    });
+  }
+
+  
+}
+render() {
     const {
       userType, requestDet
     } = this.props;
     const {listingDetails, requestType} = this.state;
 // console.log("options", options);
 const {loading} = this.props;
-
-
-
 let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
     return (
       <div>
@@ -263,6 +289,11 @@ let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
             </div>
 
             <div className="padding15" id="divRequestListing">
+            {this.state.requestType == 2 && this.props.userType == 1 && listingDetails && listingDetails.length > 0 &&
+                <div className="row" style={{paddingLeft:"17px"}}><input type="checkbox" checked={this.state.selectAll} name="select" onClick={this.handleSelectAll} /> <strong>Select All</strong></div>
+            }
+                
+            
             {loading == true &&
                 <div className="center-div"><img src={loadingurl} /></div>
             }

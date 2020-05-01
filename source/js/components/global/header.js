@@ -3,9 +3,9 @@ import { withRouter } from "react-router-dom";
 import {DOMAIN_NAME} from "../../config/api-config";
 import Sidebar from 'react-sidebar';
 import {Button, Glyphicon, Navbar, Nav, NavItem, MenuItem} from "react-bootstrap";
-/*
-https://github.com/balloob/react-sidebar
-*/
+import Accordion from '../../common/Accordion';
+
+
 const defaultStyles = {
   root: {
     position: 'absolute',
@@ -96,7 +96,7 @@ export default class Header extends Component {
     let title = "Details";
     // console.log("page",page);
     if(page.match(/home/gi)){
-      title = "Listing"
+      title = "Home"
     }
     else if(page.match(/\/$/gi)){
       title = "Login"
@@ -104,15 +104,34 @@ export default class Header extends Component {
      else if(page.match(/login/gi)){
       title = "Login"
     }
-    else if(page.match(/matrequest/gi)){
-      title = "Material Request";
+    else if(page.match(/Attendance/gi)){
+      title = "Attendance";
+    }
+    else if(page.match(/AttendanceList/gi)){
+      title = "Attendance List";
+    }
+    else if(page.match(/WorkArrangmentList/gi)){
+      title = "Work Arrangement List";
+    }
+    else if(page.match(/WorkArrangment/gi)){
+      title = "Work Arrangement";
+    }
+    else if(page.match(/WorkRequestList/gi)){
+      title = "Work Request List";
+    }
+    else if(page.match(/WorkRequest/gi)){
+      title = "Work Request";
+    }
+    else if(page.match(/DailyWorkTrackList/gi)){
+      title = "Daily Work Progress List";
+    }
+    else if(page.match(/DailyWorkTrack/gi)){
+      title = "Daily Work Progress";
     }
     else if(page.match(/Report/gi)){
       title = "Report";
     }
-    else if(page.match(/Search/gi)){
-      title = "Notification Search";
-    }
+   
      else if(page.match(/View/gi)){
       title = "Details";
     }
@@ -133,19 +152,12 @@ export default class Header extends Component {
      this.props.history.push('/Home'); 
      this.onSetOpen(false);
   }
-  goReport = () => {    
-     this.props.history.push('/Report'); 
+  goToUrl = (url) => {    
+     this.props.history.push(url); 
      this.onSetOpen(false);
   }
-  goSearch = () => {    
-    this.props.history.push('/Search'); 
-    this.onSetOpen(false);
-    
- }
- goAlerts = () => {    
-  this.props.history.push('/Alerts'); 
-  this.onSetOpen(false);
-}
+ 
+
   logout = () =>{
     sessionStorage.setItem("userId", "");
     sessionStorage.setItem("userType", "");       
@@ -197,14 +209,14 @@ export default class Header extends Component {
         },
         sidebarLink: {
           display: 'block',
-          padding: '16px 0px',
-          color: '#757575',
+          padding: '6px 0px',
           textDecoration: 'none',
+          color: '#757575',
         },
         divider: {
           margin: '8px 0',
           height: 1,
-          backgroundColor: '#757575',
+          
         },
         content: {
           padding: '16px',
@@ -216,18 +228,65 @@ export default class Header extends Component {
        let userType = sessionStorage.getItem("userType");      
     return(
     <div style={styles2.content}>
-        
+         
         <div style={{width:"100%",textAlign:"right",cursor:"pointer"}} onClick={this.menuButtonClick}><Glyphicon glyph="remove"/> </div>
-        <div className="menuText">Welcome {username}</div>
+        <div style={styles2.sidebarLink}>Welcome <strong>{username}</strong></div>
         <div style={styles2.divider} />
         <a href="javascript:void(0);" onClick={this.goBack} style={styles2.sidebarLink}><Glyphicon glyph="home"/> Home</a>
-        {(userType == 1 || userType == 5 || userType == 3) &&
-        <a href="javascript:void(0);" onClick={this.goReport} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Report</a>   
-        }     
-        {(userType == 1) &&
-        <a href="javascript:void(0);" onClick={this.goAlerts} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Mismatch Alerts</a>   
-        }     
-         <a href="javascript:void(0);" onClick={this.goSearch} style={styles2.sidebarLink}><Glyphicon glyph="duplicate"/> Notification Search</a> 
+       
+          <Accordion allowMultipleOpen>
+          {userType == 1 && 
+            <div label='Work Arrangements'>
+            
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}>Create Work Arrangement</a>   
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}> Work Arrangement List</a> 
+                 
+            </div>
+          }
+          {userType == 5 && 
+            <div label='Work Arrangements'>
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}> Work Arrangement List</a> 
+                 
+            </div>
+          }
+            <div label='Attendance'>
+            {(userType == 1 || userType == 5 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}> Create Attendance</a> 
+              }  
+              {(userType == 1 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
+              } 
+            </div>
+            {(userType == 1 || userType == 5) && 
+              <div label='Work Request'>
+               
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequest')} style={styles2.sidebarLink}> Create Work Request</a>   
+               
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequestList')} style={styles2.sidebarLink}> Work Request List</a>   
+              
+              </div>
+            }
+            {(userType == 1 || userType == 5) && 
+              <div label='Daily Work Track'>
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrack')} style={styles2.sidebarLink}>Create DWTR</a>   
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrackList')} style={styles2.sidebarLink}>DWTR List</a>   
+              
+              </div>
+            }
+            {userType == 1 && 
+              <div label='Productivity Report'>
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DWTRReport')} style={styles2.sidebarLink}>DWTR Report</a>   
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Supervisor')} style={styles2.sidebarLink}>Productivity Report by <br />Supervisor</a>   
+                
+                <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Report-Sites')} style={styles2.sidebarLink}>Productivity Report by <br /> Site & Supervisor</a>   
+              
+              </div>
+            }
+        </Accordion>
+        
         <a href="javascript:void(0);" onClick={this.logout} style={styles2.sidebarLink}><Glyphicon glyph="log-out"/> Logout</a>
         <div style={styles2.divider} />
          
@@ -259,24 +318,27 @@ export default class Header extends Component {
      <div className="headerBK">
        <Sidebar {...sidebarProps} styles={this.state.panelStyle}>
      </Sidebar> 
+     
+    
+   
+      
+   
       <div className="TitleLogin" >
         
-                <div>
+        <Navbar varient="dark" >
                 <img src={iconurl} className="imgFixed" />
-                 &nbsp;<Button style={{float:"left", marginTop: "5px"}} onClick={this.menuButtonClick}>
+                 <Button style={{float:"left", marginTop: "5px"}} onClick={this.menuButtonClick}>
                   <Glyphicon glyph="align-justify" />
                 </Button>
-                {this.state.pagename.toLowerCase() != "listing" && this.state.pagename.toLowerCase() != "login" &&
-                <img src={backButton} onClick={this.goBack} style={{float:"left", marginTop: "10px"}} />  
-                }
                 
-                &nbsp;<h3 style={{float:"left"}}>{this.state.pagename}</h3>
-               </div>
+                
+                &nbsp;<Navbar.Brand href="#home"> &nbsp;{this.state.pagename}</Navbar.Brand>
+              
                 
         
-        </div>
+               </Navbar>
             
-           
+      </div>
          
        
         </div>

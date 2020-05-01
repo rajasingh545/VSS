@@ -13,6 +13,7 @@ import {getPreviewContent, getDetailsWithMatchedKey2} from '../common/utility';
 import { ToastContainer, toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import moment from "moment";
+import {DOMAIN_NAME} from "../config/api-config";
 
 @connect(state => ({
   loading: state.request.get('loadingListing'),
@@ -106,11 +107,20 @@ class WorkArrangementEdit extends React.Component {
           selected
         }
       });
-    console.log("log1", this.partialWorkers);
+    
       this.setState({workers:workerListArr, workerIds: selectedWorkerIds, workerName: selectedWorkerNames, selectedItems, partialWorkers:this.partialWorkers});
 
       // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
     }
+    if(this.state.projectId){
+      const obj = {
+        requestCode: 1,
+        projectId: this.state.projectId,
+        workArrangement:this.props.match.params.id
+      };
+      
+      dispatch(requestDetails(obj));
+      }
   
   }
   componentWillUnmount(){
@@ -203,6 +213,9 @@ class WorkArrangementEdit extends React.Component {
       dispatch(requestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success("Work Arrangement updated Successfully", { autoClose: 3000 });  
+      setTimeout(()=>{
+        this.props.history.push('/WorkArrangmentList');
+    }, 3000);
     }
   }
   handleClose = () =>{
@@ -268,11 +281,19 @@ selectPartialWorkers = (e)=>{
   render() {
     const {headerTitle, listingId} = this.state;
 
-      console.log("render", this.state.projectTitle);
+    const {loading} =  this.props;
+    let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
+
     return (
     <div className="container work-arr-container">
     <br />
     <ToastContainer autoClose={8000} />
+    {loading == true &&
+                <div className="center-div"><img src={loadingurl} /></div>
+                
+
+            }
+   
     <div className="row">
         <div className="col-sm-6"><label>Date</label></div>
           <div className="col-sm-6">
@@ -280,11 +301,12 @@ selectPartialWorkers = (e)=>{
                     selected={this.state.startDate1}
                   
                     className=" form-control"
-                    isClearable={true}
+                    isClearable={false}
                     onChange={this.onStartDateChange}
                     name="startDate"
                     dateFormat="DD-MM-YYYY"
                     locale="UTC"
+                    disabled
                     
                 />
           </div>

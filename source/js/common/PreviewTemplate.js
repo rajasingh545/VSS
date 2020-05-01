@@ -1,23 +1,43 @@
 import React from 'react';
 
- const PreviewTemplate = (props) => {
+import {truncate} from "./utility"
+
+class PreviewTemplate extends React.Component { 
   
-     let {detailsArr, list, onCheckBoxClickCallBack, elementId} = props;
-     console.log("detais", detailsArr);
-    const onCheckBoxClick = (e, id)=>{
-        e.stopPropagation();
+    constructor(props) {
+        super(props);
         
-        onCheckBoxClickCallBack(e.target.value, e.target.checked);
+        this.state = {
+            checked:false 
+        };
+    }
     
-    };
+     onCheckBoxClick = (e, id)=>{
+        // e.stopPropagation();
+        if(e.target.checked){
+            this.setState({checked: true});
+          }
+          else{
+            this.setState({checked: false})
+          }
+        
+        
+        this.props.onCheckBoxClickCallBack(e.target.value, e.target.checked);
+    
+    }
+    
+    render() {
+        let {detailsArr, list, elementId, checkBoxChecked, onClickList} = this.props;
+        let checkedValue = checkBoxChecked == true ? true : this.state.checked;
+       
     return(
         <div>
             {list === true && 
-                <span ><input value={detailsArr.workArrangementId} type="checkbox" onClick={onCheckBoxClick}/> &nbsp;</span>
+                <span style={{zIndex:"999"}}><input value={detailsArr.workArrangementId} checked={checkedValue} type="checkbox" onChange={this.onCheckBoxClick}/> &nbsp;</span>
             }
-            <span id={elementId}>
+            <span id={elementId} onClick={onClickList}>
             <strong>{detailsArr.projectId}</strong> : {detailsArr.supervisor} &amp; {detailsArr.supervisor2} {detailsArr.workerCount > 0 && 
-               <span>+{detailsArr.workerCount}pax ({detailsArr.workerNames})</span>
+               <span>+{detailsArr.workerCount}pax ({truncate(detailsArr.workerNames, 30)})</span>
             } 
            </span>
            {detailsArr.Remarks &&
@@ -27,5 +47,6 @@ import React from 'react';
         </div>
         );
 
+    }
 }
 export default PreviewTemplate;

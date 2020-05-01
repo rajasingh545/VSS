@@ -17,6 +17,8 @@ import App from 'views/App';
 import "style.css";
 import "alerts.css";
 import "cal.css";
+import 'rc-time.css';
+import 'react-table.css';
 
 // import "menu.css";
 

@@ -15,6 +15,7 @@ import DatePicker from 'react-datepicker';
 import moment from "moment";
 import ReactTable from "react-table";
 import * as API from "../config/api-config";
+import { CSVLink } from "react-csv";
 @connect(state => ({
   reportdata: state.request.get('reportdata'),
   requestDet: state.request.get('requestDet'),
@@ -291,16 +292,23 @@ callform = (key, list, stateKey, title) =>{
         <div className="center-div"><img src={loadingurl} /></div>
     }
     {this.state.loading == false && columns.length > 0 &&
-   
-        <div className="col-sm-12">
-        <ReactTable
-            data={data}
-            columns={columns}
-            showPagination={false}
-            defaultPageSize={15}
-        />
+        <div>
+          <div className="col-sm-3">
+          <CSVLink data={data}><CustomButton bsStyle="primary" className="width50" id="submit">Download As Excel</CustomButton></CSVLink>
+            <br />
           </div>
-        
+          <div className="col-sm-12">
+          
+          <ReactTable
+              data={data}
+              columns={columns}
+              showPagination={false}
+              defaultPageSize={15}
+          />
+            
+          
+          </div>
+        </div>
       }
         
     </div>

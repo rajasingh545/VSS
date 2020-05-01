@@ -166,6 +166,7 @@ class DWTRPreview extends React.Component {
         let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
         let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
         let supervisorName = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.supervisors, "userId", "Name");
+        let baseSupervisor = getDetailsWithMatchedKey2(requestDet.baseSupervisor, this.state.supervisors, "userId", "Name");
         let statusTitle =  getDetailsWithMatchedKey2(requestItems.status, this.state.workStatus, "id", "value");
         let teamTitle =  getDetailsWithMatchedKey2(requestSizeList.teamId, this.state.team, "teamid", "teamName");
         let materialTitle =  getDetailsWithMatchedKey2(requestMatlist.material, this.state.materials, "id", "value");
@@ -184,6 +185,7 @@ class DWTRPreview extends React.Component {
             value_wrno:requestDet.workRequestId,
             supervisorTitle : supervisorName,
             text_supervisor : supervisorName,
+            text_basesupervisor : baseSupervisor,
             text_wrno:requestDet.workRequestId,
             L:requestItems.length,
             H:requestItems.height,

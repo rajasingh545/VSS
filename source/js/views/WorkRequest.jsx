@@ -60,6 +60,7 @@ class WorkRequest extends React.Component {
     if(nextProps.requestDet && nextProps.requestDet.projects){
         this.state.projects = nextProps.requestDet.projects;
         this.state.clients = nextProps.requestDet.clients;
+        this.state.workRequestList = nextProps.requestDet.workRequestList;
         this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
         this.state.scaffoldType = nextProps.requestDet.scaffoldType;
         this.state.subCategoryStore = nextProps.requestDet.subCategory;
@@ -183,12 +184,14 @@ resetThenSet(key, list, stateKey, title){
             set:this.state.filteredArr[0].sets
             
         });
+       
     }
     else{
         this.setState({
             L:"",
             W:"",
             H:"",
+            set:""
         });
     }
     this.onFormChange(e);
@@ -201,9 +204,9 @@ resetThenSet(key, list, stateKey, title){
 
   submitRequest = (status) =>{
     const { dispatch } = this.props;
-    
+   
     let formValidation = this.validateForm();
-    // console.log("validatiing form===", formValidation);
+    
     if(formValidation == true){
 
         if(this.state.cType == 1){
@@ -214,6 +217,7 @@ resetThenSet(key, list, stateKey, title){
                     value_item: this.state.value_item,
                     sizeType: this.state.sizeType,
                     workBased: this.state.workBased,
+                    workRequestId: this.state.value_workRequestId,
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
@@ -311,6 +315,83 @@ resetThenSet(key, list, stateKey, title){
       toast.error("Requested by is required", { autoClose: 3000 });       
       return false;
     }
+    
+    if(!this.state.cType || this.state.cType == ""){
+        toast.error("Contract Type is required", { autoClose: 3000 });       
+        return false;
+    }
+
+    if(this.state.workBased == 1){
+       
+        if(!this.state.value_scaffoldWorkType || this.state.value_scaffoldWorkType == ""){
+            toast.error("Scaffold Work Type is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.value_scaffoldType || this.state.value_scaffoldType == ""){
+            toast.error("Scaffold Type is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.value_scaffoldSubcategory || this.state.value_scaffoldSubcategory == ""){
+            toast.error("Scaffold Subcategory is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.L || this.state.L == ""){
+            toast.error("Length is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.W || this.state.W == ""){
+            toast.error("Width is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.H || this.state.H == ""){
+            toast.error("Height is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.set || this.state.set == ""){
+            toast.error("Set is required", { autoClose: 3000 });       
+            return false;
+        }
+        
+        if(this.state.filteredArr[0] && this.state.L > parseInt(this.state.filteredArr[0].length)){
+            toast.error("Length should not be greater than "+this.state.filteredArr[0].length, { autoClose: 3000 });       
+            return false;
+        }
+        if(this.state.filteredArr[0] && this.state.W >  parseInt(this.state.filteredArr[0].width)){
+            toast.error("Width should not be greater than "+this.state.filteredArr[0].width, { autoClose: 3000 });       
+            return false;
+        }
+        
+        if(this.state.filteredArr[0] && this.state.H >  parseInt(this.state.filteredArr[0].height)){
+            toast.error("Height should not be greater than "+this.state.filteredArr[0].height, { autoClose: 3000 });       
+            return false;
+        }
+        if(this.state.filteredArr[0] && this.state.set >  parseInt(this.state.filteredArr[0].sets)){
+            toast.error("Set should not be greater than "+this.state.filteredArr[0].sets, { autoClose: 3000 });       
+            return false;
+        }
+       
+        
+    }
+    if(this.state.workBased == 2){
+      
+        if(!this.state.safety || this.state.safety == ""){
+            toast.error("Safety is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.supervisor || this.state.supervisor == ""){
+            toast.error("Supervisor is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.erectors || this.state.erectors == ""){
+            toast.error("Erectors is required", { autoClose: 3000 });       
+            return false;
+        }
+        if(!this.state.gworkers || this.state.gworkers == ""){
+            toast.error("General Workers is required", { autoClose: 3000 });       
+            return false;
+        }
+    }
+
     return true;
   }
 
@@ -324,11 +405,13 @@ resetThenSet(key, list, stateKey, title){
                     text_item: this.state.text_item,
                     sizeType: this.state.sizeType,
                     workBased: this.state.workBased,
+                    workRequestId: this.state.value_workRequestId,
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     text_scaffoldType : this.state.text_scaffoldType,
                     value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+                    text_scaffoldSubcategory : this.state.text_scaffoldSubcategory,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -494,11 +577,14 @@ resetThenSet(key, list, stateKey, title){
                     text_item: this.state.text_item,
                     sizeType: this.state.sizeType,
                     workBased: this.state.workBased,
+                    workRequestId: this.state.value_workRequestId,
+                    workRequestId_Text: this.state.text_workRequestId,
                     value_scaffoldWorkType : this.state.value_scaffoldWorkType,
                     text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                     value_scaffoldType : this.state.value_scaffoldType,
                     text_scaffoldType : this.state.text_scaffoldType,
                     value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+                    text_scaffoldSubcategory : this.state.text_scaffoldSubcategory,
                     L:this.state.L,
                     H:this.state.H,
                     W:this.state.W,
@@ -526,6 +612,7 @@ resetThenSet(key, list, stateKey, title){
                         value_scaffoldType : this.state.value_scaffoldType,
                         text_scaffoldType : this.state.text_scaffoldType,
                         value_scaffoldSubcategory: this.state.value_scaffoldSubcategory,
+                        text_scaffoldSubcategory: this.state.text_scaffoldSubcategory,
                         L:this.state.L,
                         H:this.state.H,
                         W:this.state.W,
@@ -691,6 +778,23 @@ resetThenSet(key, list, stateKey, title){
         </div>
     </div>
     }
+    {this.state.sizeType == 2 && 
+     <div className="description">
+        <div className="row">
+            <div className="col-xs-6"><label>Previous WR#</label></div>
+            <div className="col-xs-6">
+            <Dropdown
+                    title="Select WR#"
+                    name="workRequestIdStr"
+                    keyName="workRequestId"
+                    stateId="workRequestId"
+                    list={this.state.workRequestList}
+                    resetThenSet={this.callform}
+                />
+            </div>
+        </div>
+    </div>
+    }
     <div className="description">
         <div className="row">
             <div className="col-xs-6"><label>Description</label></div>
@@ -817,7 +921,7 @@ resetThenSet(key, list, stateKey, title){
         }
         <br></br>
         <br></br>
-      
+        
         <div className="row">
             <div className="col-xs-3"><label>Safety</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="safety" value={this.state.safety} onChange={this.onFormChange}/></div>
             <div className="col-xs-3"><label>Supervisor</label></div><div className="col-xs-3"><CustInput type="number" size="4" name="supervisor" value={this.state.supervisor} onChange={this.onFormChange}/></div>
@@ -860,7 +964,7 @@ resetThenSet(key, list, stateKey, title){
 
 
 
-    <Modal show={this.state.show} onHide={this.handleClose}>
+    <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="modallg">
           <Modal.Header closeButton>
             <Modal.Title><strong>Preview</strong></Modal.Title>
           </Modal.Header>

@@ -252,9 +252,12 @@ class WorkArrangement extends React.Component {
           startDate1: ""
         });
       }
-      console.log("date==", e.format("YYYY/MM/DD"));
+     
       this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
       this.getAvailableWorker();
+      if(this.state.projectId){
+        this.getSupervisor(this.state.projectId)
+      }
 }
 goBack = (e) =>{
   e.preventDefault();
