@@ -9,7 +9,7 @@ const paths = {
   css: path.join(__dirname, '../source/css/'),
   fonts: path.join(__dirname, '../source/assets/fonts/'),
   images: path.join(__dirname, '../source/assets/img'),
-  javascript: path.join(__dirname, '../source/js'),
+  javascript: path.join(__dirname, '../source'),
   svg: path.join(__dirname, '../source/assets/svg'),
   build: path.join(__dirname, '../build'),
 };

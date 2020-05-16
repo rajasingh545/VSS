@@ -19,7 +19,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 // Default client app entry file
 const entry = [
-  path.join(paths.javascript, 'client.js'),
+  path.join(__dirname, 'source/server.js'),
 ];
 
 plugins.push(

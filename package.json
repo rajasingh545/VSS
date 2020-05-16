@@ -6,23 +6,8 @@
   "main": "build/server.js",
   "scripts": {
     "start": "webpack-dev-server",
-    "client:dev": "webpack-dev-server",
-    "client:watch": "cross-env HYDRATE=\"true\" webpack",
-    "client:build": "cross-env NODE_ENV=\"production\" webpack",
-    "client:build-hydrate": "npm run clean && cross-env HYDRATE=\"true\" cross-env NODE_ENV=\"production\" webpack",
-    "client:preview": "npm run clean && cross-env NODE_ENV=\"production\" webpack-dev-server",
-    "server:watch": "cross-env SERVER_RENDER=\"true\" webpack --config webpack.config.server.js",
-    "server:restart": "nodemon",
-    "server:build": "cross-env SERVER_RENDER=\"true\" cross-env NODE_ENV=\"production\" webpack --config webpack.config.server.js",
-    "server:dev": "npm run clean && concurrently --prefix \"[{name}]\" --names \"build-server,node-server\" --kill-others \"npm run server:watch\" \"npm run server:restart\"",
-    "universal:dev": "concurrently -c blue,cyan,yellow --names \"build-server,build-client,node-server\" --kill-others \"npm run server:watch\" \"npm run client:watch\" \"npm run server:restart\"",
-    "universal:build": "npm run client:build-hydrate && npm run server:build",
-    "clean": "rm -rf ./build",
-    "lint-hook": "eslint ./source/js ./webpack ./*.js -f table --ext .js --ext .jsx",
-    "lint": "npm run lint-hook --silent || true",
-    "hook-add": "prepush install",
-    "hook-remove": "prepush remove",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "cross-env NODE_ENV=\"production\" webpack",
+    "clean": "rm -rf ./build"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
