@@ -1,47 +1,41 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-import { routeCodes } from 'constants/routes';
-import Menu from 'common/global/Menu';
-import Header from "common/global/header";
-import Home from 'views/Home';
-import Login from "views/Login";
-import NotFound from 'views/NotFound';
-import Attendance from 'views/Attendance';
-import AttendanceEdit from 'views/AttendanceEdit';
-import AttendanceList from 'views/attendanceList';
-import WorkArrangment from 'views/WorkArrangement';
-import WorkArrangmentEdit from 'views/WorkArrangementEdit';
-import WorkArrangmentList from 'views/WorkArrangementList';
-import WorkRequestList from 'views/WorkRequestList';
-import WorkRequest from 'views/WorkRequest';
-import WorkRequestEdit from 'views/WorkRequestEdit';
-import DailyWorkTrack from 'views/DailyWorkTrack';
-import DailyWorkTrackList from 'views/DailyWorkTrackList';
-import DailyWorkTrackEdit from 'views/DailyWorkTrackEdit';
-import DWTRPreview from 'views/DWTRPreview';
-import ReportSupervisor from "views/ReportSupervisor";
-import DWTRReport from "views/DWTRReport";
-import ReportSites from "views/ReportSites";
+import Menu from 'common/Menu';
+import Header from "common/header";
+import Home from 'pages/Home';
+import Login from "pages/Login";
+import NotFound from 'pages/NotFound';
+import Attendance from 'pages/Attendance';
+import AttendanceEdit from 'pages/AttendanceEdit';
+import AttendanceList from 'pages/attendanceList';
+import WorkArrangment from 'pages/WorkArrangement';
+import WorkArrangmentEdit from 'pages/WorkArrangementEdit';
+import WorkArrangmentList from 'pages/WorkArrangementList';
+import WorkRequestList from 'pages/WorkRequestList';
+import WorkRequest from 'pages/WorkRequest';
+import WorkRequestEdit from 'pages/WorkRequestEdit';
+import DailyWorkTrack from 'pages/DailyWorkTrack';
+import DailyWorkTrackList from 'pages/DailyWorkTrackList';
+import DailyWorkTrackEdit from 'pages/DailyWorkTrackEdit';
+import DWTRPreview from 'pages/DWTRPreview';
+import ReportSupervisor from "pages/ReportSupervisor";
+import DWTRReport from "pages/DWTRReport";
+import ReportSites from "pages/ReportSites";
 class App extends Component {
   constructor(props) {
     super(props);
-    // this.child = React.createRef();
   }
-  componentWillReceiveProps(nextProps){
-    
-  }
+  
  
   render() {
     let currentUser = sessionStorage.getItem("userId");
     
-    // console.log("location", this.props, window.location.pathname, currentLocation, this.props.userId);
     return (
     
      <div className="mobileContainer">
         {(currentUser)? <Header /> :  <Menu />}
-        
-
+      
         <div className='Page'>
          <Switch>
             <Route exact path="/" component={ Login } />

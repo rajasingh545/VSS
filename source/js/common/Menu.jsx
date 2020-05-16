@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
-import {DOMAIN_NAME} from "../../config/api-config";
-import {Button, Glyphicon, Navbar, Nav, NavItem, MenuItem} from "react-bootstrap";
+import {DOMAIN_NAME} from "../config/api-config";
+import {Navbar} from "react-bootstrap";
 
 export default class Menu extends Component {
   render() {
@@ -10,7 +10,7 @@ export default class Menu extends Component {
      <div className="LoginBK">
        <Navbar bg="primary" variant="dark" width="100%">
        <img src={iconurl} className="imgFixed" />
-                <Navbar.Brand href="#home">  Login </Navbar.Brand>
+                <Navbar.Brand href="#home">  Login= </Navbar.Brand>
         </Navbar>
         </div>
      

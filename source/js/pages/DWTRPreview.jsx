@@ -338,9 +338,6 @@ requestItems = ()=>{
   render() {
     const {headerTitle} = this.state;
     
-    // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
-    console.log("state==",this.state);
-    
     return (
     <div className="container work-arr-container">
     

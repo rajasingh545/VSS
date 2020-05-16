@@ -17,12 +17,9 @@ filterList =(event)=>{
           break;
         }
     }
-    console.log("...obj", item, result);
     return result;
   });
-console.log("...final value", updatedList, this.props.initialItems);
 this.props.FilterData(updatedList);
-// this.setState({items: updatedList});
 }
 render(){
 return(

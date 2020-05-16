@@ -64,7 +64,6 @@ const actionsMap = {
     }));
   },
   [REQUESTPOST_SUCCESS]: (state, action2) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loading: false,
       requestPost: action2.data,
@@ -72,14 +71,12 @@ const actionsMap = {
   },
   
   [REQUESTDONUMBER_SUCCESS]: (state, action2) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loading: false,
       requestDONumber: action2.data,
     }));
   },
   [REQUESTPOST_CLEAR]: (state, action) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loading: false,
       requestPost: [],
@@ -87,7 +84,6 @@ const actionsMap = {
   },
 
   [LISTINGDETAILS_SUCCESS]: (state, action) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loadingListing: false,
       listingDetails: action.data,
@@ -100,14 +96,12 @@ const actionsMap = {
     }));
   },
   [VIEWDETAILS_SUCCESS]: (state, action) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loadingViewDetail: false,
       viewDetails: action.data,
     }));
   },
   [CLEAR_VIEWDETAILS]: (state, action) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loading: false,
       viewDetails: [],
@@ -128,7 +122,6 @@ const actionsMap = {
   },
  
   [REPORTPOST_SUCCESS]: (state, action) => {
-    // console.log("action==", state, action);
     return state.merge(Map({
       loading: false,
       reportData: action.data,

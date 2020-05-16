@@ -8,7 +8,7 @@ import { AppContainer } from 'react-hot-loader';
 import { Provider } from 'react-redux';
 
 import configureStore from 'config/store';
-import App from 'views/App';
+import App from 'pages/App';
 
 // Load CSS
 // import 'index.css';

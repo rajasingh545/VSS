@@ -12,7 +12,6 @@ import {FormControl} from 'react-bootstrap';
        
         if(props.type === "number"){
             let val = e.target.value;
-            // console.log("e", val);
             if(val < 0){
                 return false;
             }

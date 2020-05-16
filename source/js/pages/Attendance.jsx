@@ -40,7 +40,6 @@ class Attedence extends React.Component {
     this.reasonsList = getReasons();
     var now = new Date().getTime()
     this.time = moment(now);
-  // console.log("ths reasons", this.reasonsList);
   }
   componentWillMount(){
     const { dispatch } = this.props;
@@ -51,7 +50,6 @@ class Attedence extends React.Component {
     
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("next props", nextProps);
     
     if(nextProps.requestDet){
       if(this.props.userType == 1){
@@ -114,7 +112,6 @@ class Attedence extends React.Component {
   onSubmit = (type) =>{
     const {dispatch} = this.props;
     let finalValuesArr = [];
-    // console.log("===", this.selectedIds);
     if(this.selectedIds.length == 0){
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
@@ -149,7 +146,6 @@ class Attedence extends React.Component {
       toast.error("Please make any one change to submit", { autoClose: 3000 });
       return false;
     }
-    // console.log("finalValuesArr", finalValuesArr, this.selectedIds, this.timeValuesArr);
     let param={
       ...this.state,
       requestCode:7,
@@ -161,7 +157,6 @@ class Attedence extends React.Component {
     }
     
    this.setState({workersList:[], projectTitle:"Select Project", showSubButton:false});
-  //  toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
     dispatch(requestPost(param));
     if(type == 1){
       toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
@@ -183,7 +178,6 @@ class Attedence extends React.Component {
        let index = this.selectedIds.indexOf(id);
        this.selectedIds.splice(index, 1);
      }
-    //  console.log("selected ids", this.selectedIds)
      if(this.selectedIds.length > 0){
        this.setState({showSubButton:true});
      }else{
@@ -217,7 +211,6 @@ class Attedence extends React.Component {
   validateOutTime =(value, name)=>{
     const fnme = name.split("_");
 
-    console.log("==>", this.timeValuesArr["out_"+fnme[1]], this.timeValuesArr["in_"+fnme[1]])
     if(this.timeValuesArr["out_"+fnme[1]] && this.timeValuesArr["out_"+fnme[1]] < this.timeValuesArr["in_"+fnme[1]]){
       toast.error("Out time can't be less than in time", { autoClose: 3000 });
       return false;
@@ -225,7 +218,6 @@ class Attedence extends React.Component {
   }
 
   renderWorkers = (workers)=>{
-// console.log("this in", this.selectedIds);
     if(workers.length > 0){
     
       this.teamArr= [];
@@ -244,10 +236,8 @@ class Attedence extends React.Component {
         this.state["select_"+worker.workerId] = "Select.."
        
         if(worker.reason != 0){
-          // console.log("inside==",worker,worker.reason, title);
           title = getDetailsWithMatchedKey2(worker.reason, this.reasonsList, "id", "reason");
         }
-        // console.log("worker==",worker,worker.reason, title);
         if(this.teamArr[workerTeam]) {
           
           this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam])+1

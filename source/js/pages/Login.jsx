@@ -27,7 +27,6 @@ export default class Login extends Component {
     }
 
 componentWillReceiveProps(nextProps){
-        console.log("props", nextProps);
         let {userId} = nextProps;
         
         if(userId && userId.response === "success"){ 

@@ -56,8 +56,6 @@ class DWTRReport extends React.Component {
     if(nextProps.requestDet && nextProps.requestDet.supervisorsList){
         this.setState({supervisors:nextProps.requestDet.supervisorsList});
     }
-
-    console.log("results", nextProps);
    
   }
  
@@ -78,7 +76,7 @@ class DWTRReport extends React.Component {
           headerClassName:"gridcolHeader",
         })
       });
-      console.log("data",data)
+     
       this.setState({loading:false});
       this.setState({data,columns});
       this.setState({msg:""});

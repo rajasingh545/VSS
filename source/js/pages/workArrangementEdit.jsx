@@ -175,9 +175,7 @@ class WorkArrangementEdit extends React.Component {
     this.setState({workerIds:selectedIds, workerName:nameArr, selectedItems});
   }
   resetThenSet(key, list, stateKey){
-    // let temp = this.state[key];
-    // temp.forEach(item => item.selected = false);
-    // temp[id].selected = true;
+   
     
     this.setState({
       [stateKey]: list
@@ -185,7 +183,7 @@ class WorkArrangementEdit extends React.Component {
     
     let valuekey= `value_${stateKey}`;
    
-     console.log("====",  valuekey, key);
+    
     this.setState({
       [valuekey]:key.toString()
     });
@@ -274,7 +272,7 @@ displayPartialWorkers = (workers)=>{
     if(this.state.partialWorkers && this.state.partialWorkers.includes(name.workerId.toString())){
       flag = true;
     }
-    console.log("fl", flag, name.workerIdActual, this.state.partialWorkers);
+    
     return(
       <div> <input value={name.workerId} type="checkbox" checked={flag} onClick={this.selectPartialWorkers}/>&nbsp;{name.workerName}</div>
     )

@@ -522,9 +522,9 @@ resetThenSet(key, list, stateKey, title){
         
     if(this.validateSizeForm() == true){
 
-        console.log("==1>", this.sizeList)
+      
         this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType)
-        console.log("==2>", this.sizeList, this.state, this.state.text_scaffoldSubCategory)
+       
       let sizeList = {
         value_scaffoldWorkType : this.state.value_scaffoldWorkType,
         text_scaffoldWorkType : this.state.text_scaffoldWorkType,
@@ -538,7 +538,7 @@ resetThenSet(key, list, stateKey, title){
         set:this.state.set
       }
       this.sizeList.push(sizeList);
-      console.log("==3>", this.sizeList)
+     
       this.state.sizeList = this.sizeList;
       toast.success("Size list added successfully", { autoClose: 3000 }); 
       this.setState({
@@ -679,9 +679,7 @@ resetThenSet(key, list, stateKey, title){
 
             if(this.state.value_scaffoldWorkType != ""){
 
-            console.log("==1=>", this.sizeList, this.state.value_scaffoldSubcategory)
             this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType);
-            console.log("==2=>", this.sizeList, this.state.value_scaffoldSubcategory)
            
             let scaffoldworkSubCategory = getDetailsWithMatchedKey2(this.state.value_scaffoldSubcategory, this.state.subCategoryStore[this.state.value_scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");  
             this.sizeList.push({
@@ -696,7 +694,7 @@ resetThenSet(key, list, stateKey, title){
                 W:this.state.W,
                 set:this.state.set
             });
-            console.log("==3=>", this.sizeList)
+          
             this.state.sizeList = this.sizeList;
         }
             

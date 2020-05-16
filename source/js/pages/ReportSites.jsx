@@ -49,7 +49,7 @@ class ReportSites extends React.Component {
     
   }
   componentWillReceiveProps(nextProps) {
-      console.log("==", nextProps);
+     
     if(nextProps.requestDet && nextProps.requestDet.supervisorsList){
         this.setState({supervisors:nextProps.requestDet.supervisorsList});
         this.setState({projects:nextProps.requestDet.projects});

@@ -57,7 +57,6 @@ class AttedenceEdit extends React.Component {
     
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("next props", nextProps);
     
     if(nextProps.requestDet){
       if(this.props.userType == 1){
@@ -65,7 +64,6 @@ class AttedenceEdit extends React.Component {
       }
       if(this.props.userType == 5){
         let projectId = this.props.project;
-        // console.log("projectid", projectId, nextProps.requestDet.projects);
         let projectName = getDetailsWithMatchedKey2(projectId, nextProps.requestDet.projects, "projectId", "projectName")
         this.setState({projects: [{projectId, projectName}]});
         this.state.projects = [{projectId, projectName}];
@@ -110,7 +108,6 @@ class AttedenceEdit extends React.Component {
   onSubmit = (type) =>{
     const {dispatch} = this.props;
     let finalValuesArr = [];
-    console.log("===", this.selectedIds);
     if(this.selectedIds.length == 0){
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
@@ -145,7 +142,6 @@ class AttedenceEdit extends React.Component {
       toast.error("Please make any one change to submit", { autoClose: 3000 });
       return false;
     }
-    // console.log("finalValuesArr", finalValuesArr, this.selectedIds, this.timeValuesArr);
     let param={
       ...this.state,
       requestCode:7,
@@ -156,8 +152,7 @@ class AttedenceEdit extends React.Component {
 
     }
     
-//    this.setState({workersList:[], projectTitle:"Select Project", showSubButton:false});
-  //  toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
+
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
   }
@@ -173,7 +168,6 @@ class AttedenceEdit extends React.Component {
        let index = this.selectedIds.indexOf(id);
        this.selectedIds.splice(index, 1);
      }
-    //  console.log("selected ids", this.selectedIds)
      if(this.selectedIds.length > 0){
        this.setState({showSubButton:true});
      }else{
@@ -185,16 +179,12 @@ class AttedenceEdit extends React.Component {
     this.timeValuesArr[stateKey] = key;
   }
   onTimeChange = (el)=>{
-    // console.log("==$$==",el.value, el.name);
 
     this.timeValuesArr[el.name] = el.value;
   }
   renderWorkers = (workers)=>{
-// console.log("this in", this.selectedIds);
     if(workers.length > 0){
-      // console.log
       this.teamArr= [];
-      // this.selectedIds = [];
       return workers.map((worker, ind)=>{
         let workerName= getDetailsWithMatchedKey2(worker.workerId, this.state.workers, "workerIdActual", "workerName");
         let InName= "in_"+worker.workerId;
@@ -205,10 +195,8 @@ class AttedenceEdit extends React.Component {
         
         let title = "Select.."
         if(worker.reason != 0){
-          // console.log("inside==",worker,worker.reason, title);
           title = getDetailsWithMatchedKey2(worker.reason, this.reasonsList, "id", "reason");
         }
-        // console.log("worker==",worker,worker.reason, title);
         if(this.teamArr[workerTeam]) {
           
           this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam])+1
@@ -216,7 +204,6 @@ class AttedenceEdit extends React.Component {
          
           this.teamArr[workerTeam] = 1;
         }
-        // console.log("==jeeva",workerTeam, this.teamArr, this.teamArr[worker.workerTeam])
 
         return(
           <div className="row" key={ind}>

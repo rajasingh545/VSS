@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { withRouter } from "react-router-dom";
-import {DOMAIN_NAME} from "../../config/api-config";
+import {DOMAIN_NAME} from "../config/api-config";
 import Sidebar from 'react-sidebar';
-import {Button, Glyphicon, Navbar, Nav, NavItem, MenuItem} from "react-bootstrap";
-import Accordion from '../../components/Accordion';
+import {Button, Glyphicon, Navbar} from "react-bootstrap";
+import Accordion from '../components/Accordion';
 
 
 const defaultStyles = {
@@ -80,10 +80,7 @@ export default class Header extends Component {
 
   componentWillReceiveProps(){
     let page = window.location.pathname;
-    // console.log("listingid", listingid);
     let title = this.setTilte();
-  
-    
     this.setState({pagename:title});
   }
   updateModal(isVisible) {
@@ -92,9 +89,7 @@ export default class Header extends Component {
     }
   setTilte =() =>{
      let page = window.location.pathname;
-    // console.log("listingid", listingid);
     let title = "Details";
-    // console.log("page",page);
     if(page.match(/home/gi)){
       title = "Home"
     }
@@ -166,9 +161,7 @@ export default class Header extends Component {
     this.props.history.push('/Login');
   }
    onSetOpen =(open)=> {
-    //  console.log("open", open)
     let styles = this.state.panelStyle;
-    // console.log("styles=", styles, open);
     if(open === true){
       styles.root={
         position: 'absolute',
@@ -178,7 +171,6 @@ export default class Header extends Component {
         bottom: 0,
         overflow: 'hidden'
       };
-      // console.log("styles", styles);
       this.setState({panelStyle:styles});
     }
     else{
@@ -191,7 +183,6 @@ export default class Header extends Component {
         overflow: 'hidden'
       };
       this.setState({panelStyle:styles});
-      // console.log("styles", styles);
     }
 
     this.setState({open: open});
@@ -318,11 +309,7 @@ export default class Header extends Component {
      <div className="headerBK">
        <Sidebar {...sidebarProps} styles={this.state.panelStyle}>
      </Sidebar> 
-     
-    
-   
-      
-   
+
       <div className="TitleLogin" >
         
         <Navbar varient="dark" >

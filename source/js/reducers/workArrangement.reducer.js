@@ -51,7 +51,6 @@ const actionsMap = {
     }));
   },
   [LISTINGDETAILS_SUCCESS]: (state, action) => {
-    // console.log("action", state, action);
     return state.merge(Map({
       loadingListing: false,
       listingDetails: action.data,
@@ -66,7 +65,6 @@ const actionsMap = {
   },
    
   [REQUESTPOST_SUCCESS]: (state, action) => {
-    // console.log("action==", state, action);
     return state.merge(Map({
       loading: false,
       requestPost: action.data,

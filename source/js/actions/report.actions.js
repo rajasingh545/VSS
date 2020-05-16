@@ -1,5 +1,4 @@
 
-import get from "../api/";
 
 export const REPORT_START = 'REPORT_START';
 export const REPORT_ERROR = 'REPORT_ERROR';

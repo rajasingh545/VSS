@@ -1,5 +1,4 @@
 
-// import get from "../api/";
 export const REQUESTDET_START = 'REQUESTDET_START';
 export const REQUESTDET_ERROR = 'REQUESTDET_ERROR';
 export const REQUESTDET_SUCCESS = 'REQUESTDET_SUCCESS';
@@ -88,7 +87,6 @@ export function reportDetailsSuccess(loginData) {
   };
 }
 export function reportPostSuccess(data) {
-  // console.log("in action", data);
   return {
     type: REPORTPOST_SUCCESS,
     data:data
@@ -103,7 +101,6 @@ export function reportDetailsStart() {
 }
 
 export function requestDONumberSuccess(data) {
-  // console.log("in action", data);
   return {
     type: REQUESTDONUMBER_SUCCESS,
     data:data

@@ -9,7 +9,6 @@ export default function baseHOC(WrappedComponent) {
     componentDidMount(){
        
         let userId = sessionStorage.getItem("userId");
-        //  console.log("userid", userId);
         if(userId == null){
             this.props.history.push('/Login');
         }

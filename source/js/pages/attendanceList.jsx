@@ -122,7 +122,6 @@ export default class AttendanceList extends React.Component {
     
   }
   onStartDateChange = (e) =>{
-    // console.log("===",e);
     if(e != null){
         this.setState({
           startDate: e.format("YYYY/MM/DD"),
@@ -188,11 +187,7 @@ handleSubmit = () =>{
       userType, requestDet
     } = this.props;
     const {listingDetails, requestType} = this.state;
-console.log("options", listingDetails);
 const {loading} = this.props;
-
-
-
 let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
     return (
       <div>

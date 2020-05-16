@@ -9,18 +9,17 @@ import CustInput from '../components/CustInput';
 import baseHOC from "./baseHoc";
 import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
-import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
+import { requestDetails, requestPost, workRequestPost, fileuploads} from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
-import { getDetailsWithMatchedKey2} from '../components/utility';
 import * as API from "../config/api-config";
 @connect(state => ({
     loading: state.request.get('loadingListing'),
     listingDetails: state.request.get('listingDetails'),
-    workRequestData: state.request.get('workRequestData'),
+    workRequestPost: state.request.get('workRequestPost'),
     requestDet: state.request.get('requestDet'),
   }))
   @baseHOC
-class DailyWorkTrackEdit extends React.Component {
+class DailyWorkTrack extends React.Component {
 
   constructor(props) {
     super(props);
@@ -29,6 +28,7 @@ class DailyWorkTrackEdit extends React.Component {
     clients:[],
     team:[],
     projectTitle : "Select Project",
+    basesupervisorTitle : "Select Supervisor",
     clientTitle : "Select Client",
     divisionTitle : "Select Sub Division",
     statusTitle : "Select Status",
@@ -39,7 +39,6 @@ class DailyWorkTrackEdit extends React.Component {
     scaffoldTypetitle : "Select Type",
     scaffoldWorkTypetitle : "Select Work Type",
     scaffoldSubcategorytitle : "Select Category",
-    WRNOTitle : "Select WR #",
     value_workstatus: 0,
     workRequests : [],
     items : [],
@@ -50,6 +49,8 @@ class DailyWorkTrackEdit extends React.Component {
     itemList:[],
     teamList:[],
     materialList:[],
+    diffSubDivition : [],
+    images:[],
     workStatus:[{
         id:"1",
         value:"Ongoing"
@@ -75,31 +76,30 @@ class DailyWorkTrackEdit extends React.Component {
         id:"3",
         value:"Prod. Hrs"
     }
-    ]
+    ],
+    images: [],
+    imageUrls: [],
+    message: '',
+    uploads : [],
+    uniqueId:Date.now(),
+    desc:"",
+    requestByName:""
    };
+  
    this.teamList = [];
    this.materialList = [];
   this.itemList = [];
+  this.images=[];
+  
   }
   componentWillMount(){
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
      dispatch(requestDetails(this.state));
-     if(this.props.match.params && this.props.match.params.id){
-        this.state.listingId = this.props.match.params.id;     
-        this.state.requestCode = 19;
-        dispatch(workRequestPost(this.state));
-       }
     
   }
   componentWillReceiveProps(nextProps){
-  
-    if(nextProps.requestDet && nextProps.requestDet.supervisors){
-        this.setState({supervisors:nextProps.requestDet.supervisors});
-        this.setState({value_supervisors:"", text_supervisors:"Select Supervisor"});
-        this.setState({value_basesupervisor:"", text_basesupervisor:"Select Supervisor"});
-    }
     if(nextProps.requestDet && nextProps.requestDet.projects){
         this.state.projects = nextProps.requestDet.projects;
         this.state.clients = nextProps.requestDet.clients;
@@ -111,258 +111,54 @@ class DailyWorkTrackEdit extends React.Component {
     }
     if(nextProps.requestDet && nextProps.requestDet.workRequests){
         this.setState({workRequests:nextProps.requestDet.workRequests});
+        // let subitem = nextProps.requestDet.items[nextProps.requestDet.workRequests.workRequestId];
         this.setState({items:nextProps.requestDet.items});
+        
         // this.setState()
-
-        let requestDet = this.props.workRequestData.requestDetails;
-        let requestItemsArr = this.props.workRequestData.requestItems;
-        let requestItems = requestItemsArr[requestItemsArr.length-1];
-        let itemTitle = "Select WR #";
-        let subdivisionTitle = "Select Sub Division";
-        let  subdivisiontype = "";
-        let subitem = nextProps.requestDet.items[requestDet.workRequestId];
-        if(requestDet.type == 1){
-            
-            itemTitle = getDetailsWithMatchedKey2(requestDet.workRequestId, this.state.workRequests, "workRequestId", "workRequestId");
-            subdivisionTitle = getDetailsWithMatchedKey2(requestItems.subDivisionId, subitem, "itemId", "itemName");
-            subdivisiontype = getDetailsWithMatchedKey2(requestItems.subDivisionId, subitem, "itemId", "type");
-            }
-           
-            
-            this.setState({
-                divisionTitle : subdivisionTitle,
-                value_wrno:requestDet.workRequestId,
-                WRNOTitle : requestDet.workRequestStrId,
-                text_item:itemTitle,
-                subItem:subitem,
-                text_location:subdivisionTitle,
-                workType:subdivisiontype
-            });
-            requestItemsArr = this.populateItemText(requestItemsArr, requestDet);
-            this.itemList = requestItemsArr;
-            this.state.itemList = requestItemsArr;
-    }else if(nextProps.workRequestData && nextProps.workRequestData.requestDetails){
-       
-        let requestDet = nextProps.workRequestData.requestDetails;
-        let requestItemsArr = nextProps.workRequestData.requestItems;
-        let requestMatlistArr = (nextProps.workRequestData.requestMatList) ? nextProps.workRequestData.requestMatList : [];
-        let requestSizeListArr = (nextProps.workRequestData.requestSizeList) ? nextProps.workRequestData.requestSizeList : [];
-        let requestItems = requestItemsArr;
-        let requestMatlist = requestMatlistArr;
-        let requestSizeList = requestSizeListArr;
-       
-       
-        if(requestItemsArr){           
-            requestItems = requestItemsArr[requestItemsArr.length-1];
-            if(requestMatlistArr){
-                requestMatlist = requestMatlistArr[requestMatlistArr.length-1];
-            }
-            if(requestSizeList){
-                requestSizeList = requestSizeListArr[requestSizeListArr.length-1];
-            }
-            
-        }      
-      
-        let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
-        let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
-        let supervisorName = getDetailsWithMatchedKey2(requestDet.supervisor, this.state.supervisors, "userId", "Name");
-        let baseSupervisor = getDetailsWithMatchedKey2(requestDet.baseSupervisor, this.state.supervisors, "userId", "Name");
-        let statusTitle =  getDetailsWithMatchedKey2(requestItems.status, this.state.workStatus, "id", "value");
-        let teamTitle =  getDetailsWithMatchedKey2(requestSizeList.teamId, this.state.team, "teamid", "teamName");
-        let materialTitle =  getDetailsWithMatchedKey2(requestMatlist.material, this.state.materials, "id", "value");
-       
-        this.setState({
-            projectTitle:proTitle,
-            clientTitle:clientname,           
-            cType:requestDet.type,
-            value_projects:requestDet.projectId,
-            value_clients:requestDet.clientId,
-            text_projects:proTitle,
-            text_clients:clientname,
-            requestBy:requestDet.requestedBy,
-            value_item: requestItems.itemId,
-            sizeType: requestItems.sizeType,
-            value_supervisor:requestDet.supervisor,
-            value_wrno:requestDet.workRequestId,
-            supervisorTitle : supervisorName,
-            text_supervisor : supervisorName,
-            text_basesupervisor : baseSupervisor,
-            basesupervisorTitle : baseSupervisor,
-            text_wrno:requestDet.workRequestId,
-            L:requestItems.length,
-            H:requestItems.height,
-            W:requestItems.width,
-            set:requestItems.setcount,
-            cL:requestItems.cLength,
-            cH:requestItems.cHeight,
-            cW:requestItems.cWidth,
-            cset:requestItems.cSetcount,
-            value_workstatus:requestItems.status,
-            timing:requestItems.timing,
-            inTime : requestSizeList.inTime,
-            outTime: requestSizeList.outTime,
-            statusTitle : statusTitle,
-            teamtitle:teamTitle,
-            materialstitle:materialTitle,
-            value_materials:requestMatlist.material,
-            workerCount : requestSizeList.workerCount,
-            mWorkerCount : requestMatlist.workerCount,
-            value_team : requestSizeList.teamId,
-            minTime : requestMatlist.inTime,
-            moutTime: requestMatlist.outTime,
-            remarks:requestDet.remarks,
-            matMisuse:requestDet.matMisuse,
-            matmisueremarks:requestDet.matRemarks,
-            safetyvio:requestDet.safetyVio,
-            safetyvioremarks:requestDet.safetyRemarks,
-            photo_1:requestDet.photo_1,
-            photo_2:requestDet.photo_2,
-            photo_3:requestDet.photo_3,
-            safetyPhoto:requestDet.safetyPhoto,
-            matPhotos:requestDet.matPhotos,
-            uniqueId:requestDet.uniqueId           
-
-        });
-        if(requestDet.type == 1){
-            this.state.value_projects = requestDet.projectId;
-            this.state.value_clients = requestDet.clientId;
-            this.state.cType = requestDet.type;
-           
-            this.requestItems();
+        if(nextProps.requestDet.workRequests.length == 0){
+            toast.error("No work requests available for this project and client", { autoClose: 3000 });     
         }
-        // console.log("==",requestItemsArr);
+    }
 
-       
-       requestMatlistArr = this.populateMaterialText(requestMatlistArr);
-        requestSizeListArr = this.populateTeamText(requestSizeListArr);
-        
-        this.itemList = requestItemsArr;
-        this.materialList = requestMatlistArr;
-        this.sizeList = requestSizeListArr;
-        this.teamList = requestSizeListArr;
-        this.state.itemList = requestItemsArr;
-        this.state.manpowerList = requestMatlistArr;
-        this.state.materialList = requestMatlistArr;
-        this.state.sizeList = requestSizeListArr;
-        this.state.teamList = requestSizeListArr;
-
-      
+    if(nextProps.requestDet && nextProps.requestDet.supervisors){
+        this.setState({supervisors:nextProps.requestDet.supervisors});
+        this.setState({value_supervisor:"", text_supervisor:"Select Supervisor"});
     }
 }
-populateItemText = (requestItemsArr, requestDet) =>{
-    
-
-    let items =[];
-    if(this.props.requestDet && this.props.requestDet.items){
-        
-        requestItemsArr.map((item)=>{
-            let subitem = this.props.requestDet.items[requestDet.workRequestId];
-            let subdivisionTitle = getDetailsWithMatchedKey2(item.subDivisionId, subitem, "itemId", "itemName");
-            let statusTitle =  getDetailsWithMatchedKey2(item.status, this.state.workStatus, "id", "value");
-            // let subdivisiontype = getDetailsWithMatchedKey2(item.subDivisionId, subitem, "itemId", "type");
-
-            let obj = {
-                ...item,
-                text_subdivision:subdivisionTitle, 
-                text_workstatus:statusTitle,
-                H:item.height,
-                W:item.width,
-                L:item.length,
-                set:item.setcount
-            }
-            items.push(obj);
-            
-        });
-    }
-    
-    return items;
-}
-populateTeamText= (requestSizeListArr) =>{
-    let items =[];
-        requestSizeListArr.map((item)=>{
-            let teamTitle =  getDetailsWithMatchedKey2(item.teamId, this.state.team, "teamid", "teamName");
-            // subdivisionTitle = getDetailsWithMatchedKey2(item.subDevisionId, subitem, "itemId", "itemName");
-            let obj = {
-                ...item,
-                text_team:teamTitle,
-                value_team :item.teamId,
-                value_subdivision2 : item.subDevisionId,
-                // text_subdivision2 : subdivisionTitle
-            }
-           
-            items.push(obj);
-            
-        });
-        
-    
-    return items;
-}
-populateMaterialText = (requestMatlistArr, subitem) =>{
-    let items =[];
-    requestMatlistArr.map((item)=>{
-        let materialTitle =  getDetailsWithMatchedKey2(item.material, this.state.materials, "id", "value");
-        // subdivisionTitle = getDetailsWithMatchedKey2(item.subDevisionId, subitem, "itemId", "itemName");
-        let obj = {
-            ...item,
-            text_materials:materialTitle,
-            minTime:item.inTime,
-            moutTime:item.outTime,
-            mWorkerCount:item.workerCount,
-            value_materials:item.material,
-            value_subdivision2 : item.subDevisionId,
-            // text_subdivision2 : subdivisionTitle
-        }
-        items.push(obj);
-        
-    });
-// console.log("matitems", items);
-    
-    return items;
-    
-
-}
-
 selectImages = (event) => {
-    const {dispatch} = this.props;
-     // this.images[event.target.name] = event.target.files[0];
-     // this.setState({ images:this.images });
-     let ext = event.target.files[0].name.split(".");
-    //  console.log("ext", ext);
-     const data = new FormData();
-     data.append("image", event.target.files[0], event.target.files[0].name);
-     data.append("uniqueId", this.state.uniqueId);
-     data.append("requestCode", 20);
-     data.append("imagefor", event.target.name);
-     this.setState({[event.target.name]:"images/"+this.state.uniqueId+"/"+event.target.name+"."+ext[1]});
- 
-     this.uploadImages(data);
- }
-   
- uploadImages = (obj) => {
-     fetch(API.WORKREQUEST_URI, {
-         method: 'post',
-         mode:'cors',
-         body: obj,
-       }).then(response =>response.json())
-           .then(json => this.imageUploadSuccess(json));
- }
- imageUploadSuccess = (json) =>{
-     // console.log("success", json);
-     if(json.responsecode == 1){
-      toast.success("Image uploaded Successfully", { autoClose: 3000 });  
-     }
-     else {
-         toast.error("Error: "+json.response, { autoClose: 3000 });  
-         
-     } 
- }
-onFormChange = (e) =>{
-      
-    if(e){
-      //   console.log("e", e, e.target.name, e.target.value);
-      this.setState({[e.target.name]: e.target.value});
-    }
+   const {dispatch} = this.props;
+    // this.images[event.target.name] = event.target.files[0];
+    // this.setState({ images:this.images });
+    let ext = event.target.files[0].name.split(".");
+    
+    const data = new FormData();
+    data.append("image", event.target.files[0], event.target.files[0].name);
+    data.append("uniqueId", this.state.uniqueId);
+    data.append("requestCode", 20);
+    data.append("imagefor", event.target.name);
+    this.setState({[event.target.name]:"images/"+this.state.uniqueId+"/"+event.target.name+"."+ext[1]});
+
+    this.uploadImages(data);
 }
+  
+uploadImages = (obj) => {
+    fetch(API.WORKREQUEST_URI, {
+        method: 'post',
+        mode:'cors',
+        body: obj,
+      }).then(response =>response.json())
+          .then(json => this.imageUploadSuccess(json));
+}
+imageUploadSuccess = (json) =>{
+    if(json.responsecode == 1){
+     toast.success("Image uploaded Successfully", { autoClose: 3000 });  
+    }
+    else {
+        toast.error("Error: "+json.response, { autoClose: 3000 });  
+        
+    } 
+}
+
 getSupervisor = (key, list, stateKey, title) =>{
     const { dispatch } = this.props;
     this.state.requestCode = 1;
@@ -371,11 +167,18 @@ getSupervisor = (key, list, stateKey, title) =>{
      this.resetThenSet(key, list, stateKey, title);
     this.requestItems();
   }
+onFormChange = (e) =>{
+      
+    if(e){
+      this.setState({[e.target.name]: e.target.value});
+    }
+}
 callform = (key, list, stateKey, title) =>{
     this.resetThenSet(key, list, stateKey, title);
 }
 displayDesc = (key, list, stateKey, title, selectedArr) =>{
-   this.setState({desc:selectedArr.desc});
+  
+    this.setState({desc:selectedArr.desc});
     
     this.setState({requestByName:selectedArr.requestBy});
      this.setState({workType:selectedArr.type});
@@ -409,6 +212,8 @@ resetThenSet(key, list, stateKey, title){
     this.state[textKey] = title;
 
     this.state[titleKey] = title;
+
+    // console.log("==", textKey, valuekey);
   }
   onChangeItem = (key, list, stateKey, title)=>{
     this.resetThenSet(key, list, stateKey, title);
@@ -462,16 +267,19 @@ resetThenSet(key, list, stateKey, title){
     const { dispatch } = this.props;
     
     let formValidation = this.validateForm();
+    // this.uploadImages();
     // console.log("validatiing form===", formValidation);
     if(formValidation == true){
 
         this.itemAddition(2);
+        this.teamAddition(2);
+        this.materialAddition(2);
       
-      this.state.requestCode = 20;
+      this.state.requestCode = 17;
       this.state.listingstatus = status;
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-      toast.success("DWTR updated Successfully", { autoClose: 3000 });    
+      toast.success("DWTR Created Successfully", { autoClose: 3000 });    
       
         setTimeout(()=>{
             this.props.history.push('/DailyWorkTrackList');
@@ -479,8 +287,7 @@ resetThenSet(key, list, stateKey, title){
     }
   }
   validateForm = () =>{
-    
-    
+ 
     if(!this.state.value_projects){
       toast.error("Project is required", { autoClose: 3000 });       
       return false;
@@ -488,6 +295,34 @@ resetThenSet(key, list, stateKey, title){
     if(!this.state.value_clients){
       toast.error("Client is required", { autoClose: 3000 });       
       return false;
+    }
+    if(this.state.cType == 1){
+      if(!this.state.L){
+        toast.error("Length is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.W){
+        toast.error("Width is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.H){
+        toast.error("Height is required", { autoClose: 3000 });       
+        return false;
+      }
+      if(!this.state.set){
+        toast.error("Set is required", { autoClose: 3000 });       
+        return false;
+      }
+    }
+
+    
+    if(this.state.matMisuse == 1 && !this.state.matPhotos){
+        toast.error("Material misuse photo is required", { autoClose: 3000 });       
+        return false;
+    }
+    if(this.state.safetyvio == 1 && !this.state.safetyPhoto){
+        toast.error("Safety photo is required", { autoClose: 3000 });       
+        return false;
     }
     
     // if(!this.state.requestBy || this.state.requestBy == ""){
@@ -497,9 +332,16 @@ resetThenSet(key, list, stateKey, title){
     return true;
   }
 
-  itemAddition = (from=1) =>{
+  itemAddition = (from) =>{
+
+    if(from==1){
+        if(this.validateForm() == false){
+            return false;
+        }
+    
+    }
      
-    if(this.validateForm() == true){
+    
 
         //  this.teamAddition(from);
             // this.materialAddition(from);
@@ -566,12 +408,17 @@ resetThenSet(key, list, stateKey, title){
             
             toast.success("Work item added successfully", { autoClose: 3000 }); 
         }
-    }
+   
   }
-  teamAddition = (from=1) =>{
-        
-    if(this.validateTeamForm() == true){
-        console.log("=s=", this.teamList, this.state.value_team);
+  teamAddition = (from) =>{
+    if(from==1){
+        if(this.validateTeamForm() == false){
+            return false;
+        }
+    
+    }
+   
+
         const found = this.teamList.some(el => el.value_team === this.state.value_team);
         if (!found){
 
@@ -607,9 +454,16 @@ resetThenSet(key, list, stateKey, title){
         }
         
       
-    }
+    
   }
-  materialAddition = (from=1) =>{
+  materialAddition = (from) =>{
+
+    if(from==1){
+        if(this.validateMaterialForm() == false){
+            return false;
+        }
+    
+    }
 
         const found = this.materialList.some(el => (el.value_materials === this.state.value_materials));
             
@@ -660,12 +514,26 @@ resetThenSet(key, list, stateKey, title){
     return true;
   }
 
+  validateMaterialForm =()=>{
+   
+    if((typeof this.state.value_materials == "undefined" || this.state.value_materials == "") && this.state.teamList.length == 0 ){
+        toast.error("Please select material", { autoClose: 3000 });       
+        return false;
+    }
+    if((typeof this.state.mWorkerCount == "undefined" || this.state.mWorkerCount == "") && this.state.teamList.length == 0){
+        toast.error("Please enter material worker count", { autoClose: 3000 });       
+        return false;
+    }
+   
+    return true;
+  }
+
   setPreview = ()=>{
 
     this.itemAddition(3);
     this.teamAddition(3);
     this.materialAddition(3);
-    // console.log("state==", this.state.teamList);
+
       this.setState({show:true});
   }
   handleClose = () =>{
@@ -675,11 +543,12 @@ resetThenSet(key, list, stateKey, title){
   render() {
     const {headerTitle} = this.state;
     // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
-    console.log("state==",this.state);
-    
+    // console.log("images", this.state.images);
     return (
     <div className="container work-arr-container">
     <ToastContainer autoClose={8000} />
+
+
     <br />
     <div className="row">
         <div className="col-sm-6"><label>Project</label></div>
@@ -737,7 +606,12 @@ resetThenSet(key, list, stateKey, title){
             </label>
         </div>
     </div>
-    
+    { /*<div className="row">
+        <div className="col-xs-6"><label>Work Request By</label></div>
+          <div className="col-xs-6">
+          <CustInput type="text" name="requestBy" value={this.state.requestBy} onChange={this.onFormChange} />
+          </div>
+    </div>*/}
     <div className="row">
         <div className="col-sm-6"><label>Base Supervisor</label></div>
           <div className="col-sm-6">
@@ -745,7 +619,7 @@ resetThenSet(key, list, stateKey, title){
                   title={this.state.basesupervisorTitle}
                   name="Name"
                   keyName="userId"
-                  stateId="basesupervisors"
+                  stateId="basesupervisor"
                   reset={this.state.supervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.callform}
@@ -759,15 +633,17 @@ resetThenSet(key, list, stateKey, title){
                   title={this.state.supervisorTitle}
                   name="Name"
                   keyName="userId"
-                  stateId="supervisors"
+                  stateId="supervisor"
                   reset={this.state.supervisorResetFlag}
                   list={this.state.supervisors}
                   resetThenSet={this.callform}
             />
           </div>
     </div>
+    
     {this.state.cType == 1 &&
     <div className="pull-right" >
+    
        <div className="col-xs-6">
         <button type="button" id="Add" onClick={()=>this.itemAddition(1)} className="btn btn-default btn-sm right">
             <span className="glyphicon glyphicon-plus right"></span>
@@ -777,14 +653,16 @@ resetThenSet(key, list, stateKey, title){
         </div>
     }
        <br />
-    <br />
-    {this.state.workRequests.length > 0 &&
+    
+    {this.state.workRequests.length > 0 && this.state.cType == 1 &&
     <div className="orginalContract">
+
+   
         <div className="row">
             <div className="col-xs-12">
             <label>WR #</label>
                 <Dropdown
-                    title={this.state.WRNOTitle}
+                    title="Select WR #"
                     name="workRequestStrId"
                     keyName="workRequestId"
                     stateId="wrno"
@@ -817,6 +695,7 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-6 "> {this.state.requestByName}</div>
         </div>
         }
+       
         {this.state.workType == 1 && 
         <div>
         <div className="row">
@@ -840,7 +719,7 @@ resetThenSet(key, list, stateKey, title){
                     name="value"
                     keyName="id"
                     stateId="workstatus"
-                    value={this.state.value_item}
+                    value={this.state.value_workstatus}
                     list={this.state.workStatus}
                     resetThenSet={this.callform}
                 />
@@ -863,8 +742,12 @@ resetThenSet(key, list, stateKey, title){
     </div>
     }
     
-
-    <div className="workBasedOn">
+    <div className="hrline col-xs-12">
+    &nbsp;
+    </div>
+    <br />
+    {this.state.cType == 1 &&
+     <div className="workBasedOn" style={{paddingTop:"15px"}}>
         
         <div className="col-sm-3">Timing</div>
         
@@ -888,8 +771,13 @@ resetThenSet(key, list, stateKey, title){
                 Different
             </div>
         </div>
-    {this.state.timing == 2 &&
-    <div>
+    
+
+    </div>
+    }
+    
+  {this.state.timing == 2 &&
+    <div >
         <div className="col-xs-6">
             Diff.Timing
             </div>
@@ -907,18 +795,15 @@ resetThenSet(key, list, stateKey, title){
         </div>
 
     }
-
-    </div>
-  
     <div className="row">
             <div className="col-xs-12 strong">Manpower </div>
         </div>
 
     <div className="manPowerSelection">
 
-  <div className="pull-right" >
-       <div className="col-xs-6">
-        <button type="button" id="Add" onClick={this.teamAddition} className="btn btn-default btn-sm right">
+  <div className="pull-right " >
+       <div className="col-xs-6 ">
+        <button type="button" id="Add" onClick={()=>this.teamAddition(1)} className="btn btn-default btn-sm right">
             <span className="glyphicon glyphicon-plus right"></span>
         </button>
         </div>
@@ -926,6 +811,7 @@ resetThenSet(key, list, stateKey, title){
     </div>
         <br />
         <br />
+        
        <div className="row"> 
         <div className="col-xs-6">
             Team/Type Worker
@@ -959,15 +845,15 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-3"><TimeField value={this.state.outTime}  name="outTime" className="width100" onChange={this.onTimeChange}/></div>
         </div>
     </div>
-    <div className="row">
-            <div className="col-xs-12"><label>&nbsp;  </label></div>
+    <div className="row ">
+            <div className="col-xs-12 hrline"><label>&nbsp;  </label></div>
         </div>
 
     <div className="manPowerSelection">
 
         <div className="pull-right" >
        <div className="col-xs-6">
-        <button type="button" id="Add" onClick={this.materialAddition} className="btn btn-default btn-sm right">
+        <button type="button" id="Add" onClick={()=>this.materialAddition(1)} className="btn btn-default btn-sm right">
             <span className="glyphicon glyphicon-plus right"></span>
         </button>
         </div>
@@ -977,7 +863,7 @@ resetThenSet(key, list, stateKey, title){
         <br />
        <div className="row"> 
         <div className="col-xs-6">
-            Materlial
+            Material
             </div>
              <div className="col-xs-6">
              <Dropdown
@@ -995,10 +881,6 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-6"><label>No.of Workers</label></div><div className="col-xs-6"><CustInput type="number" size="4" name="mWorkerCount" value={this.state.mWorkerCount} onChange={this.onFormChange}/></div>
             
         </div>
-
-        
-
-       
         <div className="row">
             <div className="col-xs-3">Time IN</div>
             <div className="col-xs-3"><TimeField  value={this.state.minTime} name="minTime" className="width100" onChange={this.onTimeChange}/></div>
@@ -1008,7 +890,11 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-3"><TimeField   value={this.state.moutTime} name="moutTime" className="width100" onChange={this.onTimeChange}/></div>
         </div>
     </div>
-<br /><div className="row" style={{paddingTop:"15px"}}>
+    <div className="hrline col-xs-12">
+    &nbsp;
+    </div>
+<br />
+<div className="row" style={{paddingTop:"15px"}}>
             <div className="col-xs-3">Upload Photo 1</div>
             <div className="col-xs-6"> <input type="file" name="photo_1" onChange={this.selectImages}/></div>
         </div>
@@ -1024,8 +910,6 @@ resetThenSet(key, list, stateKey, title){
             <div className="col-xs-3">Remarks</div>
             <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={this.state.remarks} onChange={this.onFormChange} /></div>
         </div>
-
-
 
 
         <div className="workBasedOn">
@@ -1104,9 +988,9 @@ resetThenSet(key, list, stateKey, title){
     </div>
     <div className="row">
       <div className="col-12">
-      
+      <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={()=>this.submitRequest(2)}>Draft</CustomButton> </div>
       <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Update</CustomButton> </div>
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Submit</CustomButton> </div>
       </div>
     </div>
 
@@ -1133,4 +1017,4 @@ resetThenSet(key, list, stateKey, title){
 
 
 
-export default DailyWorkTrackEdit;
+export default DailyWorkTrack;
