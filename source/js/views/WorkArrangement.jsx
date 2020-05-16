@@ -67,17 +67,13 @@ class WorkArrangement extends React.Component {
         this.setState({supervisors:nextProps.requestDet.supervisors});
         this.setState({value_supervisors:"", value_supervisors2:""});
       }
-      else if(nextProps.requestDet.availableWorkers){
-       
-        this.setState({workers:nextProps.requestDet.availableWorkers});
-        
-      }
+      
       else{        
         
         // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors= nextProps.requestDet.supervisorsList;
-        // this.state.workers = nextProps.requestDet.workers;
+        this.state.workers = nextProps.requestDet.availableWorkers;
       }
     } 
     
@@ -99,9 +95,7 @@ class WorkArrangement extends React.Component {
     
   
   }
-  componentDidMount(){
-    this.getAvailableWorker();
-  }
+  
   
   resetForm = () =>{
     
@@ -208,10 +202,10 @@ class WorkArrangement extends React.Component {
       toast.error("Workers is required", { autoClose: 3000 });       
       return false;
     }
-    // if(this.state.value_supervisors == this.state.value_supervisors2){
-    //   toast.error("Base & Additional Supervisors can not be same", { autoClose: 3000 });       
-    //   return false;
-    // }
+    if(this.state.value_supervisors == this.state.value_supervisors2){
+      toast.error("Base & Additional Supervisors can not be same", { autoClose: 3000 });       
+      return false;
+    }
     return true;
   }
   submitRequest = (status) =>{

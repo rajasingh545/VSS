@@ -97,7 +97,7 @@ class WorkRequestEdit extends React.Component {
         let requestManlistArr = (nextProps.workRequestData.requestManList) ? nextProps.workRequestData.requestManList : [];
         let requestSizeListArr = (nextProps.workRequestData.requestSizeList) ? nextProps.workRequestData.requestSizeList : [];
         let requestItems = requestItemsArr;
-        let requestManlist = requestManlistArr;
+        let requestManlist = [{...requestManlistArr}];
         let requestSizeList = requestSizeListArr;
         let scaffoldTitle = "Select Type";
         let scaffoldworkTitle ="Select Work Type";
@@ -105,14 +105,18 @@ class WorkRequestEdit extends React.Component {
         let workRequestTitle = "Select WR#";
         
         if(requestItemsArr){           
-            requestItems = requestItemsArr[requestItemsArr.length-1];
+            requestItems = requestItemsArr.slice(-1).pop();
            
             
             if(requestItems.workBased == 2){
-                requestManlist = requestManlistArr[requestManlistArr.length-1]
+               
+                requestManlist = requestManlistArr.slice(-1).pop();
+                // console.log("=x=>", requestManlist, requestManlistArr, requestManlistArr.length-1)
             }
             if(requestItems.workBased == 1){
-                requestSizeList = requestSizeListArr[requestSizeListArr.length-1];
+                requestSizeList = requestSizeListArr.slice(-1).pop();
+
+                
                 
                 scaffoldTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
                 
@@ -137,6 +141,7 @@ class WorkRequestEdit extends React.Component {
             clientTitle:clientname,           
             cType:requestDet.contractType,
             description : requestDet.description,
+            status: requestDet.status,
             value_projects:requestDet.projectId,
             value_clients:requestDet.clientId,
             text_projects:proTitle,
@@ -149,8 +154,8 @@ class WorkRequestEdit extends React.Component {
             workBased: requestItems.workBased,
             value_scaffoldWorkType : requestSizeList.scaffoldWorkType,
             value_scaffoldType : requestSizeList.scaffoldType,
-            text_scaffoldType : this.state.text_scaffoldType,
-            value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+            text_scaffoldType : scaffoldTitle,
+            value_scaffoldSubcategory : requestSizeList.scaffoldSubCategory,
             text_scaffoldSubCategory : scaffoldSubCategory,
             scaffoldSubcategorytitle : scaffoldSubCategory,
             subCategory : subCate,
@@ -171,6 +176,7 @@ class WorkRequestEdit extends React.Component {
         text_scaffoldWorkType : scaffoldworkTitle,
             text_scaffoldType : scaffoldTitle,
         });
+        
         if(requestDet.contractType == 1){
             this.state.value_projects = requestDet.projectId;
             this.state.value_clients = requestDet.clientId;
@@ -190,6 +196,8 @@ class WorkRequestEdit extends React.Component {
         if(requestDet.contractType ==2 ){
             let sizeList = this.getSizeDataPopulated(requestSizeListArr);
             let manpowerList = this.getManPowerPopulated(requestManlistArr);
+
+           
             this.state.sizeList = sizeList; 
             this.state.manpowerList = manpowerList;          
             this.manpowerList = manpowerList;
@@ -224,6 +232,9 @@ getOrginalContDataPopulate = (requestItemsArr,requestManlistArr,requestSizeListA
         text_scaffoldWorkType : scaffoldworkTitle,
         text_scaffoldType : scaffoldTitle,
         text_scaffoldSubcategory : scaffoldworkSubCategory,
+        value_scaffoldType:sizeItem.scaffoldType,
+        value_scaffoldWorkType: sizeItem.scaffoldWorkType,
+        value_scaffoldSubcategory:sizeItem.scaffoldSubCategory,
         L:sizeItem.length,
         H:sizeItem.height,
         W:sizeItem.width,
@@ -261,12 +272,14 @@ getSizeDataPopulated = (requestSizeListArr) =>{
         text_scaffoldType : scaffoldTitle,
         value_scaffoldType : items.scaffoldType,
         text_scaffoldSubcategory : scaffoldworkSubCategory,
+        value_scaffoldSubcategory : items.scaffoldSubCategory,
         L:items.length,
         H:items.height,
         W:items.width,
         set:items.setcount
 
       }
+
       returnArr.push(obj);
       i++;
     });
@@ -413,53 +426,9 @@ resetThenSet(key, list, stateKey, title){
     // console.log("validatiing form===", formValidation);
     if(formValidation == true){
 
-        if(this.state.cType == 1){
-            this.itemList.push({
-                value_item: this.state.value_item,
-                sizeType: this.state.sizeType,
-                workRequestId: this.state.value_workRequestId,
-                workBased: this.state.workBased,
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                set:this.state.set,
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
-
-            });
-            this.state.itemList = this.itemList;
-        } else if(this.state.cType == 2){
-            if(this.state.workBased == 1){ //size
-                this.sizeList.push({
-                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                    value_scaffoldType : this.state.value_scaffoldType,
-                    L:this.state.L,
-                    H:this.state.H,
-                    W:this.state.W,
-                    set:this.state.set
-                });
-                this.state.sizeList = this.sizeList;
-            }
-            if(this.state.workBased == 2){ //manpower
-                this.manpowerList.push({
-                    safety:this.state.safety,
-                    supervisor:this.state.supervisor,
-                    erectors:this.state.erectors,
-                    gworkers:this.state.gworkers,
-                    inTime : this.state.inTime,
-                    outTime: this.state.outTime
-                });
-                this.state.manpowerList = this.manpowerList;
-            }
-        }
+       this.setData();
       
-      this.state.requestCode = 17;
+      this.state.requestCode = 21;
       this.state.status = status;
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
@@ -491,65 +460,97 @@ resetThenSet(key, list, stateKey, title){
 
   itemAddition = () =>{
     if(this.validateForm() == true){
+        
+            this.itemList = this.itemList.filter(el => el.value_item !== this.state.value_item)
+                let list = {
+                    value_item: this.state.value_item,
+                    text_item: this.state.text_item,
+                    sizeType: this.state.sizeType,
+                    workBased: this.state.workBased,
+                    workRequestId: this.state.value_workRequestId,
+                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                    text_scaffoldWorkType : this.state.text_scaffoldWorkType,
+                    value_scaffoldType : this.state.value_scaffoldType,
+                    text_scaffoldType : this.state.text_scaffoldType,
+                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+                    text_scaffoldSubcategory : this.state.text_scaffoldSubcategory,
+                    L:this.state.L,
+                    H:this.state.H,
+                    W:this.state.W,
+                    Set:this.state.Set,
+                    safety:this.state.safety,
+                    supervisor:this.state.supervisor,
+                    erectors:this.state.erectors,
+                    gworkers:this.state.gworkers,
+                    inTime : this.state.inTime,
+                    outTime: this.state.outTime
+                }
+            
 
-        let list = {
-            value_item: this.state.value_item,
-            sizeType: this.state.sizeType,
-            workBased: this.state.workBased,
-            workRequestId: this.state.value_workRequestId,
-            workRequestId_Text: this.state.text_workRequestId,
-            value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-            value_scaffoldType : this.state.value_scaffoldType,
-            L:this.state.L,
-            H:this.state.H,
-            W:this.state.W,
-            set:this.state.set,
-            safety:this.state.safety,
-            supervisor:this.state.supervisor,
-            erectors:this.state.erectors,
-            gworkers:this.state.gworkers,
-            inTime : this.state.inTime,
-            outTime: this.state.outTime
-        }
-
-        this.itemList.push(list);
+                this.itemList.push(list);
+            
+        
 
         this.setState({
+            itemtitle: "Select Item",
+            locationTitle: "Select Location",
             value_item: "",
             sizeType: "",
             workBased: "",
             value_scaffoldWorkType : "",
             value_scaffoldType : "",
+            text_scaffoldSubcategory : "",
+            scaffoldtypetitle: "Select Scaffold Type",
+            scaffoldSubcategorytitle : "Select Subcatogory",
+            scaffoldworktypetitle: "Select Work",
             L:"",
             H:"",
             W:"",
-            set:"",
+            Set:"",
             safety:"",
             supervisor:"",
             erectors:"",
             gworkers:"",
             inTime : "",
             outTime: ""
-        })
-        toast.success("Items added successfully", { autoClose: 3000 }); 
+        });
+        
+        toast.success("Item added successfully", { autoClose: 3000 }); 
     }
   }
   sizeAddition = () =>{
         
     if(this.validateSizeForm() == true){
+
+        console.log("==1>", this.sizeList)
+        this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType)
+        console.log("==2>", this.sizeList, this.state, this.state.text_scaffoldSubCategory)
       let sizeList = {
         value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+        text_scaffoldWorkType : this.state.text_scaffoldWorkType,
         value_scaffoldType : this.state.value_scaffoldType,
+        text_scaffoldType : this.state.text_scaffoldType,
+        value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+        text_scaffoldSubcategory : this.state.text_scaffoldSubCategory,
         L:this.state.L,
         H:this.state.H,
         W:this.state.W,
         set:this.state.set
       }
       this.sizeList.push(sizeList);
+      console.log("==3>", this.sizeList)
+      this.state.sizeList = this.sizeList;
       toast.success("Size list added successfully", { autoClose: 3000 }); 
       this.setState({
         value_scaffoldWorkType : "",
         value_scaffoldType : "",
+        value_scaffoldSubcategory : "",
+        text_scaffoldWorkType : "",
+        text_scaffoldType : "",
+        text_scaffoldSubCategory : "",
+        scaffoldtypetitle: "Select Type",
+        scaffoldSubcategorytitle : "Select Sub Category",
+        scaffoldworktypetitle: "Select Work",
         L:"",
         H:"",
         W:"",
@@ -637,12 +638,13 @@ resetThenSet(key, list, stateKey, title){
     this.props.history.goBack();
   }
 
-  setPreview = ()=>{
+  setData = ()=>{
    
     if(this.state.cType == 1){
-        const found = this.itemList.some(el => el.value_item === this.state.value_item);
-        if (!found){
-            
+        
+        //remove item if duplicate
+            this.itemList = this.itemList.filter(el => el.value_item !== this.state.value_item)
+            let scaffoldworkSubCategory = getDetailsWithMatchedKey2(this.state.value_scaffoldSubcategory, this.state.subCategoryStore[this.state.value_scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");   
             this.itemList.push({
                 value_item: this.state.value_item,
                 text_item: this.state.text_item,
@@ -654,6 +656,10 @@ resetThenSet(key, list, stateKey, title){
                 text_scaffoldWorkType : this.state.text_scaffoldWorkType,
                 value_scaffoldType : this.state.value_scaffoldType,
                 text_scaffoldType : this.state.text_scaffoldType,
+                value_scaffoldType : this.state.value_scaffoldType,
+                text_scaffoldType : this.state.text_scaffoldType,
+                value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+                text_scaffoldSubcategory : scaffoldworkSubCategory,
                 L:this.state.L,
                 H:this.state.H,
                 W:this.state.W,
@@ -667,30 +673,38 @@ resetThenSet(key, list, stateKey, title){
 
             });
             this.state.itemList = this.itemList;
-        }
+        
     } else if(this.state.cType == 2){
         if(this.state.workBased == 1){ //size
 
-            const found = this.sizeList.some(el => el.value_scaffoldWorkType === this.state.value_scaffoldWorkType);
-            if (!found){
-                this.sizeList.push({
-                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                    text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                    value_scaffoldType : this.state.value_scaffoldType,
-                    text_scaffoldType : this.state.text_scaffoldType,
-                    L:this.state.L,
-                    H:this.state.H,
-                    W:this.state.W,
-                    set:this.state.set
-                });
-                this.state.sizeList = this.sizeList;
-            }
+            if(this.state.value_scaffoldWorkType != ""){
+
+            console.log("==1=>", this.sizeList, this.state.value_scaffoldSubcategory)
+            this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType);
+            console.log("==2=>", this.sizeList, this.state.value_scaffoldSubcategory)
+           
+            let scaffoldworkSubCategory = getDetailsWithMatchedKey2(this.state.value_scaffoldSubcategory, this.state.subCategoryStore[this.state.value_scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");  
+            this.sizeList.push({
+                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
+                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
+                value_scaffoldType : this.state.value_scaffoldType,
+                text_scaffoldType : this.state.text_scaffoldType,
+                value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
+                text_scaffoldSubcategory : scaffoldworkSubCategory,
+                L:this.state.L,
+                H:this.state.H,
+                W:this.state.W,
+                set:this.state.set
+            });
+            console.log("==3=>", this.sizeList)
+            this.state.sizeList = this.sizeList;
+        }
+            
         }
         if(this.state.workBased == 2){ //manpower
-
-            const found = this.manpowerList.some(el => (el.safety === this.state.safety && el.supervisor === this.state.supervisor && el.erectors === this.state.erectors && el.gworkers === this.state.gworkers));
             
-            if (!found){
+            this.manpowerList= this.manpowerList.filter(el => (el.safety !== this.state.safety && el.supervisor !== this.state.supervisor && el.erectors !== this.state.erectors && el.gworkers !== this.state.gworkers));
+           
                 this.manpowerList.push({
                     safety:this.state.safety,
                     supervisor:this.state.supervisor,
@@ -700,12 +714,17 @@ resetThenSet(key, list, stateKey, title){
                     outTime: this.state.outTime
                 });
                 this.state.manpowerList = this.manpowerList;
-             }
+             
         }
     }
 
 
-      this.setState({show:true});
+      
+  }
+  
+  setPreview = ()=>{
+    this.setData();
+    this.setState({show:true});
   }
   handleClose = () =>{
     this.setState({show:false});
@@ -713,6 +732,7 @@ resetThenSet(key, list, stateKey, title){
   /* Render */
   render() {
     const {headerTitle} = this.state;
+
    
     return (
     <div className="container work-arr-container">
@@ -963,11 +983,11 @@ resetThenSet(key, list, stateKey, title){
                 <div className="col-sm-12"><label>Size</label></div>
             </div>
             <div className="row">
-                <div className="col-xs-3"> <CustInput  size="4" type="text" name="L" value={this.state.L} onChange={this.onFormChange} /> L</div>
-                <div className="col-xs-3"><CustInput size="4" type="text" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
-                <div className="col-xs-3"><CustInput size="4" type="text" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
+                <div className="col-xs-3"> <CustInput  size="4" type="number" name="L" value={this.state.L} onChange={this.onFormChange} /> L</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
             
-                <div className="col-xs-3"><CustInput size="4" type="text" name="set" value={this.state.set} onChange={this.onFormChange} />Set</div>
+                <div className="col-xs-3"><CustInput size="4" type="number" name="set" value={this.state.set} onChange={this.onFormChange} />Set</div>
             </div>
         </div>
     </div>
@@ -1023,8 +1043,16 @@ resetThenSet(key, list, stateKey, title){
       <div className="col-12">
       <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={this.goBack}>Back</CustomButton> </div>
       <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Update</CustomButton> </div>
+
+      {this.state.userType == "1" &&
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(this.state.status)}>Update</CustomButton> </div>
+    }
+
+      {this.state.status == 2 &&
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Submit</CustomButton> </div>
+    } 
       </div>
+     
     </div>
         
 

@@ -45,32 +45,39 @@ class WorkArrangementEdit extends React.Component {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
-     dispatch(requestDetails(this.state));
+   
      //get details of listing
      if(this.props.match.params && this.props.match.params.id){
       this.state.listingId = this.props.match.params.id;     
+      dispatch(requestDetails(this.state));
+      
       this.state.requestCode = 3;
+      
       dispatch(listigDetails(this.state));
+
+      
      }
   }
   componentWillReceiveProps(nextProps) {
     // console.log("next props", nextProps);
     let {listingDetails} = nextProps;
+    const { dispatch } = this.props;
     if(nextProps.requestDet){
       if(nextProps.requestDet.supervisors){
         this.setState({supervisors:nextProps.requestDet.supervisors});
         this.setState({value_supervisors:"", value_supervisors2:""});
       }
+    
       else{        
         // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors= nextProps.requestDet.supervisorsList;
-        this.state.workers = nextProps.requestDet.workers;
-       
-
+        this.state.workers= nextProps.requestDet.availableWorkers;
        
       }
+
     }
+    
     
     if(listingDetails && this.state.projects && this.state.supervisors){
       
@@ -126,6 +133,16 @@ class WorkArrangementEdit extends React.Component {
   componentWillUnmount(){
     const { dispatch } = this.props;
     dispatch(clearListing([]));
+  }
+
+  
+
+  getAvailableWorker = () =>{
+    const { dispatch } = this.props;
+    this.state.requestCode = 99;
+    this.state.workArrangementId = this.props.match.params.id;
+     dispatch(requestDetails(this.state));
+     
   }
 
   getSupervisor = (key, list, stateKey) =>{
@@ -196,10 +213,10 @@ class WorkArrangementEdit extends React.Component {
       toast.error("Workers is required", { autoClose: 3000 });       
       return false;
     }
-    // if(this.state.value_supervisors == this.state.value_supervisors2){
-    //   toast.error("Base & Additional Supervisors can not be same", { autoClose: 3000 });       
-    //   return false;
-    // }
+    if(this.state.value_supervisors == this.state.value_supervisors2){
+      toast.error("Base & Additional Supervisors can not be same", { autoClose: 3000 });       
+      return false;
+    }
     return true;
   }
   submitRequest = (status) =>{
