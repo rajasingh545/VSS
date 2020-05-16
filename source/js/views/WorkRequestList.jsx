@@ -1,18 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PreviewTemplate from '../common/PreviewTemplate';
-import Dropdown from '../common/Dropdown';
+import PreviewTemplate from '../components/PreviewTemplate';
+import Dropdown from '../components/Dropdown';
 import {DOMAIN_NAME} from "../config/api-config";
 import baseHOC from "./baseHoc";
 import { requestDetails, workRequestPost, requestPostClear, listigDetails,clearListing } from 'actions/workArrangement.actions';
-import CustomButton from '../common/CustomButton';
-    import { getDetailsWithMatchedKey2} from '../common/utility';
+import CustomButton from '../components/CustomButton';
+    import { getDetailsWithMatchedKey2} from '../components/utility';
 
 import DatePicker from 'react-datepicker';
 import moment from "moment";
 import {Modal} from 'react-bootstrap';
 import { ToastContainer, toast } from 'react-toastify';
-import InputSearch from "../common/InputSearch";
+import InputSearch from "../components/InputSearch";
 
 @connect(state => ({
 loading: state.request.get('loadingListing'),

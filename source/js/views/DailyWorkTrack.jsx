@@ -2,12 +2,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import Dropdown from '../common/Dropdown';
-import CustomButton from '../common/CustomButton';
-import DailyWorkTrackPreview from "../common/DailyWorkTrackPreview";
-import CustInput from '../common/CustInput';
+import Dropdown from '../components/Dropdown';
+import CustomButton from '../components/CustomButton';
+import DailyWorkTrackPreview from "../components/DailyWorkTrackPreview";
+import CustInput from '../components/CustInput';
 import baseHOC from "./baseHoc";
-import TimeField from '../common/TimePicker';
+import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { requestDetails, requestPost, workRequestPost, fileuploads} from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';

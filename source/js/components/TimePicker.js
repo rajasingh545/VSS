@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import CustInput from '../common/CustInput';
+import CustInput from '../components/CustInput';
 
 const DEFAULT_COLON = ':';
 const DEFAULT_VALUE_SHORT = `00${DEFAULT_COLON}00`;

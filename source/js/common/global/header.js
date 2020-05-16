@@ -3,7 +3,7 @@ import { withRouter } from "react-router-dom";
 import {DOMAIN_NAME} from "../../config/api-config";
 import Sidebar from 'react-sidebar';
 import {Button, Glyphicon, Navbar, Nav, NavItem, MenuItem} from "react-bootstrap";
-import Accordion from '../../common/Accordion';
+import Accordion from '../../components/Accordion';
 
 
 const defaultStyles = {

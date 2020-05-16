@@ -2,15 +2,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import Dropdown from '../common/Dropdown';
-import CustomButton from '../common/CustomButton';
-import CustInput from '../common/CustInput';
-import WorkRequestPreview from "../common/workRequestPreview";
+import Dropdown from '../components/Dropdown';
+import CustomButton from '../components/CustomButton';
+import CustInput from '../components/CustInput';
+import WorkRequestPreview from "../components/workRequestPreview";
 import baseHOC from "./baseHoc";
-import TimeField from '../common/TimePicker';
+import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { requestDetails,  workRequestPost} from 'actions/workArrangement.actions';
-import { getDetailsWithMatchedKey2} from '../common/utility';
+import { getDetailsWithMatchedKey2} from '../components/utility';
 import {Modal} from 'react-bootstrap';
 @connect(state => ({
     loading: state.request.get('loadingListing'),
