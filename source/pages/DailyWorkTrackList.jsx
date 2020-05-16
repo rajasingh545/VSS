@@ -5,7 +5,7 @@ import {DOMAIN_NAME} from "../config/api-config";
 import baseHOC from "./baseHoc";
 import { requestDetails, workRequestPost, requestPostClear, listigDetails,clearListing } from 'actions/workArrangement.actions';
 import CustomButton from '../components/CustomButton';
-    import { getDetailsWithMatchedKey2} from '../components/utility';
+    import { getDetailsWithMatchedKey2} from '../common/utility';
 
 import DatePicker from 'react-datepicker';
 import moment from "moment";

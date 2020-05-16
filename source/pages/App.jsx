@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { hot } from 'react-hot-loader';
-import Menu from 'common/Menu';
+import LoginHeader from 'common/LoginHeader';
 import Header from "common/header";
 import Home from 'pages/Home';
 import Login from "pages/Login";
 import NotFound from 'pages/NotFound';
 import Attendance from 'pages/Attendance';
 import AttendanceEdit from 'pages/AttendanceEdit';
-import AttendanceList from 'pages/attendanceList';
+import AttendanceList from 'pages/AttendanceList';
 import WorkArrangment from 'pages/WorkArrangement';
 import WorkArrangmentEdit from 'pages/WorkArrangementEdit';
 import WorkArrangmentList from 'pages/WorkArrangementList';
@@ -34,7 +34,7 @@ class App extends Component {
     return (
     
      <div className="mobileContainer">
-        {(currentUser)? <Header /> :  <Menu />}
+        {(currentUser)? <Header /> :  <LoginHeader />}
       
         <div className='Page'>
          <Switch>

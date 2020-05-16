@@ -4,11 +4,8 @@ import Dropdown from '../components/Dropdown';
 import CustomButton from '../components/CustomButton';
 import { connect } from 'react-redux';
 import baseHOC from "./baseHoc";
-import CustInput from '../components/CustInput';
-import TimeField from '../components/TimePicker';
-import {getCurrentDate, getReasons} from '../components/utility';
+
 import { requestDetails, fetchReport } from 'actions/report.actions';
-import {getDetailsWithMatchedKey2} from '../components/utility';
 import { ToastContainer, toast } from 'react-toastify';
 import {DOMAIN_NAME} from "../config/api-config";
 import DatePicker from 'react-datepicker';

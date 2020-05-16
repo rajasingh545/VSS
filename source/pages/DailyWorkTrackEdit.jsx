@@ -11,7 +11,7 @@ import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
-import { getDetailsWithMatchedKey2} from '../components/utility';
+import { getDetailsWithMatchedKey2} from '../common/utility';
 import * as API from "../config/api-config";
 @connect(state => ({
     loading: state.request.get('loadingListing'),

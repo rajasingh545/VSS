@@ -9,7 +9,7 @@ import PreviewTemplate from '../components/PreviewTemplate';
 import baseHOC from "./baseHoc";
 import { requestDetails, requestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
-import {getPreviewContent, getDetailsWithMatchedKey2} from '../components/utility';
+import {getPreviewContent, getDetailsWithMatchedKey2} from '../common/utility';
 import { ToastContainer, toast } from 'react-toastify';
 import DatePicker from 'react-datepicker';
 import moment from "moment";

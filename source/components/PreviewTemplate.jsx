@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {truncate} from "./utility"
+import {truncate} from "../common/utility"
 
 class PreviewTemplate extends React.Component { 
   

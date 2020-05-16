@@ -317,12 +317,9 @@ export default class Header extends Component {
                  <Button style={{float:"left", marginTop: "5px"}} onClick={this.menuButtonClick}>
                   <Glyphicon glyph="align-justify" />
                 </Button>
-                
-                
+
                 &nbsp;<Navbar.Brand href="#home"> &nbsp;{this.state.pagename}</Navbar.Brand>
-              
-                
-        
+
                </Navbar>
             
       </div>

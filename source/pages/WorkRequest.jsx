@@ -4,12 +4,12 @@ import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Dropdown from '../components/Dropdown';
 import CustomButton from '../components/CustomButton';
-import WorkRequestPreview from "../components/workRequestPreview";
+import WorkRequestPreview from "../components/WorkRequestPreview";
 import CustInput from '../components/CustInput';
 import baseHOC from "./baseHoc";
 import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
-import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
+import { requestDetails,  workRequestPost } from 'actions/workArrangement.actions';
 import {Modal} from 'react-bootstrap';
 
 @connect(state => ({

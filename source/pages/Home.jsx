@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { listigDetails, requestDetails, clearListing,requestPostClear } from 'actions/request.actions';
-import {getDetailsWithLib2} from "../components/utility";
 import {DOMAIN_NAME} from "../config/api-config";
 import baseHOC from "./baseHoc";
 import { ToastContainer, toast } from 'react-toastify';

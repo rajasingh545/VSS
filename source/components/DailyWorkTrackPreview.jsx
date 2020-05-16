@@ -3,9 +3,9 @@
 import React, { Component } from 'react';
 
 import * as CONFIG from "../config/api-config";
-import { getDetailsWithMatchedKey2} from '../components/utility';
+import { getDetailsWithMatchedKey2} from '../common/utility';
 
-import CustomButton from '../components/CustomButton';
+import CustomButton from './CustomButton';
 
 class DailyWorkTrackPreview extends Component{
    constructor(props){

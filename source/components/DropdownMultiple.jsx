@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import {Glyphicon}  from 'react-bootstrap';
-import './global.css'
+import '../css/global.css'
 
 class DropdownMultiple extends Component{
   constructor(props){
