@@ -220,7 +220,8 @@ class DailyWorkTrackEdit extends React.Component {
             photo_3:requestDet.photo_3,
             safetyPhoto:requestDet.safetyPhoto,
             matPhotos:requestDet.matPhotos,
-            uniqueId:requestDet.uniqueId           
+            uniqueId:requestDet.uniqueId,
+            status:requestDet.status           
 
         });
         if(requestDet.type == 1){
@@ -467,7 +468,7 @@ resetThenSet(key, list, stateKey, title){
 
         this.itemAddition(2);
       
-      this.state.requestCode = 20;
+      this.state.requestCode = 22;
       this.state.listingstatus = status;
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
@@ -501,8 +502,8 @@ resetThenSet(key, list, stateKey, title){
      
     if(this.validateForm() == true){
 
-        //  this.teamAddition(from);
-            // this.materialAddition(from);
+        this.teamAddition(from);
+        this.materialAddition(from);
         const found = this.itemList.some(el => el.value_subdivision === this.state.value_subdivision);
         if (!found){
            
@@ -572,23 +573,23 @@ resetThenSet(key, list, stateKey, title){
         
     if(this.validateTeamForm() == true){
 
-        const found = this.teamList.some(el => el.value_team === this.state.value_team);
-        if (!found){
+        
+        this.teamList = this.teamList.filter(el => el.value_team !== this.state.value_team);
 
-            if(this.state.value_team != ""){
-                let teamList = {
-                    value_team: this.state.value_team,
-                    text_team: this.state.text_team,
-                    workerCount : this.state.workerCount,
-                    inTime : this.state.inTime,
-                    outTime: this.state.outTime,
-                    value_subdivision2: this.state.value_subdivision2,
-                    text_subdivision2: this.state.text_subdivision2
-                }
-                this.teamList.push(teamList);
-                this.state.teamList = this.teamList;
+        if(this.state.value_team != ""){
+            let teamList = {
+                value_team: this.state.value_team,
+                text_team: this.state.text_team,
+                workerCount : this.state.workerCount,
+                inTime : this.state.inTime,
+                outTime: this.state.outTime,
+                value_subdivision2: this.state.value_subdivision2,
+                text_subdivision2: this.state.text_subdivision2
             }
+            this.teamList.push(teamList);
+            this.state.teamList = this.teamList;
         }
+        
         // console.log("teamList", this.teamList)
         if(from == 1){
              toast.success("Team added successfully", { autoClose: 3000 });
@@ -611,23 +612,22 @@ resetThenSet(key, list, stateKey, title){
   }
   materialAddition = (from=1) =>{
 
-        const found = this.materialList.some(el => (el.value_materials === this.state.value_materials));
-            
-        if (!found){
-            if(this.state.value_materials !=""){
-                let manpowerList = {
-                    value_materials :this.state.value_materials,
-                    text_materials :this.state.text_materials,
-                    mWorkerCount : this.state.mWorkerCount,
-                    minTime : this.state.minTime,
-                    moutTime: this.state.moutTime,
-                    value_subdivision2: this.state.value_subdivision2,
-                    text_subdivision2: this.state.text_subdivision2,
-                }
-                this.materialList.push(manpowerList);
-                this.state.materialList = this.materialList;
+        
+        this.materialList = this.materialList.filter(el => el.value_materials !== this.state.value_materials)
+        if(this.state.value_materials !=""){
+            let manpowerList = {
+                value_materials :this.state.value_materials,
+                text_materials :this.state.text_materials,
+                mWorkerCount : this.state.mWorkerCount,
+                minTime : this.state.minTime,
+                moutTime: this.state.moutTime,
+                value_subdivision2: this.state.value_subdivision2,
+                text_subdivision2: this.state.text_subdivision2,
             }
+            this.materialList.push(manpowerList);
+            this.state.materialList = this.materialList;
         }
+        
         // console.log("materialList", this.materialList)
         if(from == 1){
             toast.success("Material list added successfully", { autoClose: 3000 }); 
@@ -1104,7 +1104,10 @@ resetThenSet(key, list, stateKey, title){
       <div className="col-12">
       
       <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Update</CustomButton> </div>
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(this.state.status)}>Update</CustomButton> </div>
+      {this.state.status == 2 && 
+      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="submit" type="submit" onClick={()=>this.submitRequest(1)}>Submit</CustomButton> </div>
+    }
       </div>
     </div>
 
