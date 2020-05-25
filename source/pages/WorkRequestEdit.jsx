@@ -5,390 +5,337 @@ import { connect } from 'react-redux';
 import Dropdown from '../components/Dropdown';
 import CustomButton from '../components/CustomButton';
 import CustInput from '../components/CustInput';
-import WorkRequestPreview from "../components/WorkRequestPreview";
-import baseHOC from "./baseHoc";
+import WorkRequestPreview from '../components/WorkRequestPreview';
+import baseHOC from './baseHoc';
 import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
-import { requestDetails,  workRequestPost} from 'actions/workArrangement.actions';
-import { getDetailsWithMatchedKey2} from '../common/utility';
-import {Modal} from 'react-bootstrap';
+import { requestDetails, workRequestPost } from 'actions/workArrangement.actions';
+import { getDetailsWithMatchedKey2 } from '../common/utility';
+import { Modal } from 'react-bootstrap';
+
+import SizeWorkRequest from '../components/SizeWorkRequest';
+import Popup from '../components/Popup';
+import SizePreview from '../components/SizePreview';
+import ManPowerPreview from '../components/ManPowerPreview';
+import ManPowerWorkRequest from '../components/ManPowerWorkRequest';
+
 @connect(state => ({
-    loading: state.request.get('loadingListing'),
-    listingDetails: state.request.get('listingDetails'),
-    workRequestData: state.request.get('workRequestData'),
-    requestDet: state.request.get('requestDet'),
-  }))
+  loading: state.request.get('loadingListing'),
+  listingDetails: state.request.get('listingDetails'),
+  workRequestData: state.request.get('workRequestData'),
+  requestDet: state.request.get('requestDet'),
+}))
   @baseHOC
 class WorkRequestEdit extends React.Component {
-
   constructor(props) {
     super(props);
-   this.state ={
-    project: [],
-    clients:[],
-    projectTitle : "Select Project",
-    clientTitle : "Select Client",
-    scaffoldtypetitle : "Select Type",
-    scaffoldworktypetitle : "Select Work Type",
-    workRequestTitle: "Select WR#",
-    contracts : [],
-    filteredArr : [],
-    scaffoldWorkType : [],
-    scaffoldType:[],
-    itemList:[],
-    sizeList:[],
-    manpowerList:[]
-   };
-   this.itemList = [];
-   this.sizeList = [];
-   this.manpowerList = [];
+    this.state = {
+      project: [],
+      clients: [],
+      projectTitle: 'Select Project',
+      clientTitle: 'Select Client',
+      scaffoldtypetitle: 'Select Type',
+      scaffoldworktypetitle: 'Select Work Type',
+      workRequestTitle: 'Select WR#',
+      contracts: [],
+      filteredArr: [],
+      scaffoldWorkType: [],
+      scaffoldType: [],
+      itemList: [],
+      sizeList: [],
+      manpowerList: [],
+    };
+    this.itemList = [];
+    this.sizeList = [];
+    this.manpowerList = [];
   }
-  componentWillMount(){
+  componentWillMount() {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
-     dispatch(requestDetails(this.state));
-     if(this.props.match.params && this.props.match.params.id){
-        this.state.listingId = this.props.match.params.id;     
-        this.state.requestCode = 16;
-        dispatch(workRequestPost(this.state));
-       }
-  }
-  componentWillReceiveProps(nextProps){
-    if(nextProps.requestDet && nextProps.requestDet.projects){
-        this.state.projects = nextProps.requestDet.projects;
-        this.state.clients = nextProps.requestDet.clients;
-        this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
-        this.state.scaffoldType = nextProps.requestDet.scaffoldType;
-        this.state.subCategoryStore = nextProps.requestDet.subCategory;
-        this.state.workRequestList = nextProps.requestDet.workRequestList;
-        
+    dispatch(requestDetails(this.state));
+    if (this.props.match.params && this.props.match.params.id) {
+      this.state.listingId = this.props.match.params.id;
+      this.state.requestCode = 16;
+      dispatch(workRequestPost(this.state));
     }
-    if(nextProps.requestDet && nextProps.requestDet.contracts){
-        this.setState({contracts:nextProps.requestDet.contracts});
-        // this.setState()
-        this.state.contracts = nextProps.requestDet.contracts;
+  }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.requestDet && nextProps.requestDet.projects) {
+      this.state.projects = nextProps.requestDet.projects;
+      this.state.clients = nextProps.requestDet.clients;
+      this.state.scaffoldWorkType = nextProps.requestDet.scaffoldWorkType;
+      this.state.scaffoldType = nextProps.requestDet.scaffoldType;
+      this.state.subCategoryStore = nextProps.requestDet.subCategory;
+      this.state.workRequestList = nextProps.requestDet.workRequestList;
+    }
+    if (nextProps.requestDet && nextProps.requestDet.contracts) {
+      this.setState({ contracts: nextProps.requestDet.contracts });
+      // this.setState()
+      this.state.contracts = nextProps.requestDet.contracts;
 
-        if(this.props.workRequestData && this.props.workRequestData.requestDetails){
-
-            let requestDet = this.props.workRequestData.requestDetails;
-            let requestItemsArr = this.props.workRequestData.requestItems;
-            let requestItems = requestItemsArr[requestItemsArr.length-1];
-            let itemTitle = "Select Item";
-             let locationTitle = "Select Title";
-            //  console.log("thisprops", requestDet, requestItems, this.state.contracts);
-            if(requestDet.contractType == 1){
-                itemTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, "id", "item");
-                locationTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, "id", "location");
-                }
-
-                this.setState({
-                    locationTitle : locationTitle,
-                    itemTitle : itemTitle,
-                    text_item:itemTitle,
-                    text_location:locationTitle
-                });
-
-        }
-    }else if(nextProps.workRequestData && nextProps.workRequestData.requestDetails){
-       
-        let requestDet = nextProps.workRequestData.requestDetails;
-        let requestItemsArr = nextProps.workRequestData.requestItems;
-        let requestManlistArr = (nextProps.workRequestData.requestManList) ? nextProps.workRequestData.requestManList : [];
-        let requestSizeListArr = (nextProps.workRequestData.requestSizeList) ? nextProps.workRequestData.requestSizeList : [];
-        let requestItems = requestItemsArr;
-        let requestManlist = [{...requestManlistArr}];
-        let requestSizeList = requestSizeListArr;
-        let scaffoldTitle = "Select Type";
-        let scaffoldworkTitle ="Select Work Type";
-        let scaffoldSubCategory ="Select Sub Category";
-        let workRequestTitle = "Select WR#";
-        
-        if(requestItemsArr){           
-            requestItems = requestItemsArr.slice(-1).pop();
-           
-            
-            if(requestItems.workBased == 2){
-               
-                requestManlist = requestManlistArr.slice(-1).pop();
-                // console.log("=x=>", requestManlist, requestManlistArr, requestManlistArr.length-1)
-            }
-            if(requestItems.workBased == 1){
-                requestSizeList = requestSizeListArr.slice(-1).pop();
-
-                
-                
-                scaffoldTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
-                
-       scaffoldworkTitle = getDetailsWithMatchedKey2(requestSizeList.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName");
-       
-       workRequestTitle = getDetailsWithMatchedKey2(requestItems.previousWR, this.state.workRequestList, "workRequestId", "workRequestIdStr");
-                if(this.state.subCategoryStore){
-                    scaffoldSubCategory = getDetailsWithMatchedKey2(requestSizeList.scaffoldSubCategory, this.state.subCategoryStore[requestSizeList.scaffoldType], "scaffoldSubCateId", "scaffoldSubCatName");
-                    
-                }
-            }
-        }
-        let proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, "projectId", "projectName");
-        let clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, "clientId", "clientName");
-        let subCate = ""
-        if(this.state.subCategoryStore){
-            subCate = this.state.subCategoryStore[requestSizeList.scaffoldType];
+      if (this.props.workRequestData && this.props.workRequestData.requestDetails) {
+        const requestDet = this.props.workRequestData.requestDetails;
+        const requestItemsArr = this.props.workRequestData.requestItems;
+        const requestItems = requestItemsArr[requestItemsArr.length - 1];
+        let itemTitle = 'Select Item';
+        let locationTitle = 'Select Title';
+        //  console.log("thisprops", requestDet, requestItems, this.state.contracts);
+        if (requestDet.contractType == 1) {
+          itemTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, 'id', 'item');
+          locationTitle = getDetailsWithMatchedKey2(requestItems.itemId, this.state.contracts, 'id', 'location');
         }
 
         this.setState({
-            projectTitle:proTitle,
-            clientTitle:clientname,           
-            cType:requestDet.contractType,
-            description : requestDet.description,
-            status: requestDet.status,
-            value_projects:requestDet.projectId,
-            value_clients:requestDet.clientId,
-            text_projects:proTitle,
-            text_clients:clientname,
-            requestBy:requestDet.requestedBy,
-            value_item: requestItems.itemId,
-            sizeType: requestItems.sizeType,
-            workRequestTitle: workRequestTitle,
-            workRequestId: requestItems.previousWR,
-            workBased: requestItems.workBased,
-            value_scaffoldWorkType : requestSizeList.scaffoldWorkType,
-            value_scaffoldType : requestSizeList.scaffoldType,
-            text_scaffoldType : scaffoldTitle,
-            value_scaffoldSubcategory : requestSizeList.scaffoldSubCategory,
-            text_scaffoldSubCategory : scaffoldSubCategory,
-            scaffoldSubcategorytitle : scaffoldSubCategory,
-            subCategory : subCate,
-            L:requestSizeList.length,
-            H:requestSizeList.height,
-            W:requestSizeList.width,
-            set:requestSizeList.setcount,
-            safety:requestManlist.safety,
-            supervisor:requestManlist.supervisor,
-            erectors:requestManlist.erectors,
-            gworkers:requestManlist.generalWorker,
-            inTime : requestManlist.timeIn,
-            outTime: requestManlist.timeOut,
-            scaffoldRegister: requestDet.scaffoldRegister,
-            remarks:requestDet.remarks,
-            scaffoldtypetitle : scaffoldTitle,
-        scaffoldworktypetitle : scaffoldworkTitle,
-        text_scaffoldWorkType : scaffoldworkTitle,
-            text_scaffoldType : scaffoldTitle,
+          locationTitle,
+          itemTitle,
+          text_item: itemTitle,
+          text_location: locationTitle,
         });
-        
-        if(requestDet.contractType == 1){
-            this.state.value_projects = requestDet.projectId;
-            this.state.value_clients = requestDet.clientId;
-            this.state.cType = requestDet.contractType;
-           
-            this.requestItems();
-        }
-        if(requestDet.contractType == 1){
-            setTimeout(()=>{
-                let itemList = this.getOrginalContDataPopulate(requestItemsArr, requestManlistArr, requestSizeListArr);
-                this.state.itemList = itemList;
-                this.itemList=itemList;
-            }, 1000);
-           
-          
-        }
-        if(requestDet.contractType ==2 ){
-            let sizeList = this.getSizeDataPopulated(requestSizeListArr);
-            let manpowerList = this.getManPowerPopulated(requestManlistArr);
-
-           
-            this.state.sizeList = sizeList; 
-            this.state.manpowerList = manpowerList;          
-            this.manpowerList = manpowerList;
-            this.sizeList = sizeList;
-        }
-    }
-}
-
-getOrginalContDataPopulate = (requestItemsArr,requestManlistArr,requestSizeListArr) =>{
-
-    // console.log("in pop===", this.state.contracts);
-    let returnArr = [];
-    let i =0;
-    requestItemsArr.map((items) =>{
-        let sizeItem = (requestSizeListArr[i])?requestSizeListArr[i]:[];
-        let materialItem = (requestManlistArr[i])?requestManlistArr[i]:[];
-        
-        let scaffoldTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
-        let scaffoldworkTitle = getDetailsWithMatchedKey2(sizeItem.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
-        let scaffoldworkSubCategory = getDetailsWithMatchedKey2(sizeItem.scaffoldSubCategory, this.state.subCategoryStore[sizeItem.scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");   
-        let itemTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "item");
-        let locationTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, "id", "location");
-        let workRequestTitle = getDetailsWithMatchedKey2(items.previousWR, this.state.workRequestList, "workRequestId", "workRequestIdStr");
-    let obj ={        
-        value_item: items.itemId,
-        text_item:itemTitle,
-        text_location :locationTitle,
-        sizeType: items.sizeType,
-        workRequestId: items.previousWR,
-        workRequestId_Text: workRequestTitle,
-        workBased: items.workBased,
-        text_scaffoldWorkType : scaffoldworkTitle,
-        text_scaffoldType : scaffoldTitle,
-        text_scaffoldSubcategory : scaffoldworkSubCategory,
-        value_scaffoldType:sizeItem.scaffoldType,
-        value_scaffoldWorkType: sizeItem.scaffoldWorkType,
-        value_scaffoldSubcategory:sizeItem.scaffoldSubCategory,
-        L:sizeItem.length,
-        H:sizeItem.height,
-        W:sizeItem.width,
-        set:sizeItem.setcount,
-        safety:materialItem.safety,
-        supervisor:materialItem.supervisor,
-        erectors:materialItem.erectors,
-        gworkers:materialItem.generalWorker,
-        inTime : materialItem.timeIn,
-        outTime: materialItem.timeOut         
-
       }
-      returnArr.push(obj);
-      i++;
-    });
+    } else if (nextProps.workRequestData && nextProps.workRequestData.requestDetails) {
+      const requestDet = nextProps.workRequestData.requestDetails;
+      const requestItemsArr = nextProps.workRequestData.requestItems;
+      const requestManlistArr = (nextProps.workRequestData.requestManList) ? nextProps.workRequestData.requestManList : [];
+      const requestSizeListArr = (nextProps.workRequestData.requestSizeList) ? nextProps.workRequestData.requestSizeList : [];
+      let requestItems = requestItemsArr;
+      let requestManlist = [{ ...requestManlistArr }];
+      let requestSizeList = requestSizeListArr;
 
-    return returnArr;
+      let workRequestTitle = 'Select WR#';
 
-}
-getSizeDataPopulated = (requestSizeListArr) =>{
-    let returnArr = [];
-    let i =0;
-    requestSizeListArr.map((items) =>{
-        
-        let scaffoldTitle = getDetailsWithMatchedKey2(items.scaffoldType, this.state.scaffoldType, "id", "scaffoldName");
-        let scaffoldworkTitle = getDetailsWithMatchedKey2(items.scaffoldWorkType, this.state.scaffoldWorkType, "id", "scaffoldName"); 
-        let scaffoldworkSubCategory = "";
-        if(this.state.subCategoryStore){
-            scaffoldworkSubCategory = getDetailsWithMatchedKey2(items.scaffoldSubCategory, this.state.subCategoryStore[items.scaffoldType], "scaffoldSubCateId", "scaffoldSubCatName");
-        }   
-       
-    let obj ={        
-        value_scaffoldWorkType : items.scaffoldWorkType,
-        text_scaffoldWorkType : scaffoldworkTitle,
-        text_scaffoldType : scaffoldTitle,
-        value_scaffoldType : items.scaffoldType,
-        text_scaffoldSubcategory : scaffoldworkSubCategory,
-        value_scaffoldSubcategory : items.scaffoldSubCategory,
-        L:items.length,
-        H:items.height,
-        W:items.width,
-        set:items.setcount
+      if (requestItemsArr) {
+        requestItems = requestItemsArr.slice(-1).pop();
 
-      }
 
-      returnArr.push(obj);
-      i++;
-    });
-
-    return returnArr;
-}
-
-getManPowerPopulated = (requestManlistArr) =>{
-    let returnArr = [];
-    let i =0;
-    requestManlistArr.map((items) =>{
- 
-    let obj ={        
-        safety:items.safety,
-        supervisor:items.supervisor,
-        erectors:items.erectors,
-        gworkers:items.generalWorker,
-        inTime : items.timeIn,
-        outTime: items.timeOut
-
-      }
-      returnArr.push(obj);
-      i++;
-    });
-
-    return returnArr;
-}
-onFormChange = (e) =>{
-      
-    if(e){
-      //   console.log("e", e, e.target.name, e.target.value);
-      this.setState({[e.target.name]: e.target.value});
-    }
-}
-onCheckBoxChecked = (e)=>{
-    if(e.target.checked == true){
-        this.setState({[e.target.name]:1});
-    }
-    else{
-        this.setState({[e.target.name]:0});
-    }
-}
-callform = (key, list, stateKey) =>{
-    this.resetThenSet(key, list, stateKey);
-}
-onItemChange = (key, list, stateKey, title) =>{
-
-    this.state.filteredArr = this.state.contracts.filter((list)=>{
-        return list.id == key;
-    });
-    let LocTitle = "";
-    let itemTitle = "";
-    list.map((item)=>{
-
-        if(item.id == key){
-            LocTitle = item.location;
-            itemTitle = item.item;
+        if (requestItems.workBased == 2) {
+          requestManlist = requestManlistArr.slice(-1).pop();
+          // console.log("=x=>", requestManlist, requestManlistArr, requestManlistArr.length-1)
         }
+        if (requestItems.workBased == 1) {
+          requestSizeList = requestSizeListArr.slice(-1).pop();
+          workRequestTitle = getDetailsWithMatchedKey2(requestItems.previousWR, this.state.workRequestList, 'workRequestId', 'workRequestIdStr');
+        }
+      }
+      const proTitle = getDetailsWithMatchedKey2(requestDet.projectId, this.state.projects, 'projectId', 'projectName');
+      const clientname = getDetailsWithMatchedKey2(requestDet.clientId, this.state.clients, 'clientId', 'clientName');
 
-    })
-    this.resetThenSet(key, list, "location", LocTitle);
-    this.resetThenSet(key, list, "item", itemTitle);
-    this.setState({itemTitle:this.state.text_item, locationTitle:this.state.text_location});
-   
-}
 
-resetThenSet(key, list, stateKey, title){
-    // let temp = this.state[key];
-    // temp.forEach(item => item.selected = false);
-    // temp[id].selected = true;
-    
-    this.setState({
-      [stateKey]: list
-    });
-    
-    let valuekey= `value_${stateKey}`;
-    let textKey = `text_${stateKey}`;
-    //  console.log("inside==", valuekey, key.toString())
-    this.setState({
-      [valuekey]:key.toString(),
-      [textKey]:title
-    });
-    this.state[valuekey] = key.toString();
-    this.state[textKey] = title;
+      this.setState({
+        projectTitle: proTitle,
+        clientTitle: clientname,
+        cType: requestDet.contractType,
+        description: requestDet.description,
+        status: requestDet.status,
+        value_projects: requestDet.projectId,
+        value_clients: requestDet.clientId,
+        text_projects: proTitle,
+        text_clients: clientname,
+        requestBy: requestDet.requestedBy,
+        value_item: requestItems.itemId,
+        sizeType: requestItems.sizeType,
+        workRequestTitle,
+        workRequestId: requestItems.previousWR,
+        workBased: requestItems.workBased,
+        scaffoldRegister: requestDet.scaffoldRegister,
+        remarks: requestDet.remarks,
+      });
+
+      if (requestDet.contractType == 1) {
+        this.state.value_projects = requestDet.projectId;
+        this.state.value_clients = requestDet.clientId;
+        this.state.cType = requestDet.contractType;
+
+        this.requestItems();
+      }
+      if (requestDet.contractType == 1) {
+        setTimeout(() => {
+          const itemList = this.getOrginalContDataPopulate(requestItemsArr);
+          this.state.itemList = itemList;
+          this.itemList = itemList;
+
+          const sizeList = this.getSizeDataPopulated(requestSizeListArr);
+          const manpowerList = this.getManPowerPopulated(requestManlistArr);
+          this.manpowerList = manpowerList;
+          this.sizeList = sizeList;
+          this.setState({ sizeList });
+          this.setState({ manpowerList });
+        }, 1000);
+      }
+      if (requestDet.contractType == 2) {
+        const sizeList = this.getSizeDataPopulated(requestSizeListArr);
+        const manpowerList = this.getManPowerPopulated(requestManlistArr);
+
+
+        this.state.sizeList = sizeList;
+        this.state.manpowerList = manpowerList;
+        this.manpowerList = manpowerList;
+        this.sizeList = sizeList;
+      }
+    }
   }
-  onChangeItem = (key, list, stateKey)=>{
+
+getOrginalContDataPopulate = (requestItemsArr) => {
+  // console.log("in pop===", this.state.contracts);
+  const returnArr = [];
+  let i = 0;
+
+  requestItemsArr.map((items) => {
+    const sizeArray = [];
+    const manPowerArray = [];
+
+    const itemTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, 'id', 'item');
+    const locationTitle = getDetailsWithMatchedKey2(items.itemId, this.state.contracts, 'id', 'location');
+    const workRequestTitle = getDetailsWithMatchedKey2(items.previousWR, this.state.workRequestList, 'workRequestId', 'workRequestIdStr');
+    if (items.workBased == 1) {
+      sizeArray.push(items.sizeList);
+    }
+
+    if (items.workBased == 2) {
+      manPowerArray.push(items.manpowerList);
+    }
+    const obj = {
+      value_item: items.itemId,
+      text_item: itemTitle,
+      text_location: locationTitle,
+      sizeType: items.sizeType,
+      workRequestId: items.previousWR,
+      workRequestId_Text: workRequestTitle,
+      workBased: items.workBased,
+      sizeList: this.getSizeDataPopulated(sizeArray),
+      manpowerList: this.getManPowerPopulated(manPowerArray),
+
+    };
+    returnArr.push(obj);
+    i++;
+  });
+
+  return returnArr;
+}
+getSizeDataPopulated = (requestSizeListArr) => {
+  const returnArr = [];
+  let i = 0;
+  requestSizeListArr.map((items) => {
+    const scaffoldTitle = getDetailsWithMatchedKey2(items.scaffoldType, this.state.scaffoldType, 'id', 'scaffoldName');
+    const scaffoldworkTitle = getDetailsWithMatchedKey2(items.scaffoldWorkType, this.state.scaffoldWorkType, 'id', 'scaffoldName');
+    let scaffoldworkSubCategory = '';
+    if (this.state.subCategoryStore) {
+      scaffoldworkSubCategory = getDetailsWithMatchedKey2(items.scaffoldSubCategory, this.state.subCategoryStore[items.scaffoldType], 'scaffoldSubCateId', 'scaffoldSubCatName');
+    }
+
+    const obj = {
+      value_scaffoldWorkType: items.scaffoldWorkType,
+      text_scaffoldWorkType: scaffoldworkTitle,
+      text_scaffoldType: scaffoldTitle,
+      value_scaffoldType: items.scaffoldType,
+      text_scaffoldSubcategory: scaffoldworkSubCategory,
+      value_scaffoldSubcategory: items.scaffoldSubCategory,
+      L: items.length,
+      H: items.height,
+      W: items.width,
+      set: items.setcount,
+
+    };
+
+    returnArr.push(obj);
+    i++;
+  });
+
+  return returnArr;
+}
+
+getManPowerPopulated = (requestManlistArr) => {
+  const returnArr = [];
+  let i = 0;
+  requestManlistArr.map((items) => {
+    const obj = {
+      safety: items.safety,
+      supervisor: items.supervisor,
+      erectors: items.erectors,
+      gworkers: items.generalWorker,
+      inTime: items.timeIn,
+      outTime: items.timeOut,
+
+    };
+    returnArr.push(obj);
+    i++;
+  });
+
+  return returnArr;
+}
+onFormChange = (e) => {
+  if (e) {
+    //   console.log("e", e, e.target.name, e.target.value);
+    this.setState({ [e.target.name]: e.target.value });
+  }
+}
+onCheckBoxChecked = (e) => {
+  if (e.target.checked == true) {
+    this.setState({ [e.target.name]: 1 });
+  } else {
+    this.setState({ [e.target.name]: 0 });
+  }
+}
+callform = (key, list, stateKey) => {
+  this.resetThenSet(key, list, stateKey);
+}
+onItemChange = (key, list, stateKey, title) => {
+  this.state.filteredArr = this.state.contracts.filter((list) => {
+    return list.id == key;
+  });
+  let LocTitle = '';
+  let itemTitle = '';
+  list.map((item) => {
+    if (item.id == key) {
+      LocTitle = item.location;
+      itemTitle = item.item;
+    }
+  });
+  this.resetThenSet(key, list, 'location', LocTitle);
+  this.resetThenSet(key, list, 'item', itemTitle);
+  this.setState({ itemTitle: this.state.text_item, locationTitle: this.state.text_location });
+}
+
+resetThenSet(key, list, stateKey, title) {
+  // let temp = this.state[key];
+  // temp.forEach(item => item.selected = false);
+  // temp[id].selected = true;
+
+  this.setState({
+    [stateKey]: list,
+  });
+
+  const valuekey = `value_${ stateKey }`;
+  const textKey = `text_${ stateKey }`;
+  //  console.log("inside==", valuekey, key.toString())
+  this.setState({
+    [valuekey]: key.toString(),
+    [textKey]: title,
+  });
+  this.state[valuekey] = key.toString();
+  this.state[textKey] = title;
+}
+  onChangeItem = (key, list, stateKey) => {
     this.resetThenSet(key, list, stateKey);
     this.requestItems();
   }
-  requestItems = ()=>{
+  requestItems = () => {
     const { dispatch } = this.props;
-    
-       if(this.state.value_projects && this.state.value_clients && this.state.cType == 1){        
-        this.state.requestCode = 5;
-        dispatch(requestDetails(this.state));
-      }
 
+    if (this.state.value_projects && this.state.value_clients && this.state.cType == 1) {
+      this.state.requestCode = 5;
+      dispatch(requestDetails(this.state));
+    }
   }
 
-  onctypeChange = (e) =>{
-   
-        if(e.target.value == 1){
-            this.state.cType = 1;
-            this.requestItems();
-        }
-        else{
-            this.setState({contracts:[]});
-        }
-        this.onFormChange(e);
+  onctypeChange = (e) => {
+    if (e.target.value == 1) {
+      this.state.cType = 1;
+      this.requestItems();
+    } else {
+      this.setState({ contracts: [] });
+    }
+    this.onFormChange(e);
   }
   onChangeSizeType = (e) => {
     // if(e.target.value == 1){
@@ -408,670 +355,473 @@ resetThenSet(key, list, stateKey, title){
     this.onFormChange(e);
   }
 
-  onTimeChange = (el)=>{  
-
-    this.setState({[el.name] : el.value});
+  onTimeChange = (el) => {
+    this.setState({ [el.name]: el.value });
   }
-  populateSubCat = (key, list, stateKey, title) =>{
-    
-     this.setState({subCategory:this.state.subCategoryStore[key], scaffoldSubcategorytitle: "Select Category"});
+  populateSubCat = (key, list, stateKey, title) => {
+    this.setState({ subCategory: this.state.subCategoryStore[key], scaffoldSubcategorytitle: 'Select Category' });
 
-        this.resetThenSet(key, list, stateKey, title);
-    }
+    this.resetThenSet(key, list, stateKey, title);
+  }
 
-  submitRequest = (status) =>{
+  submitRequest = (status) => {
     const { dispatch } = this.props;
-    
-    let formValidation = this.validateForm();
-    // console.log("validatiing form===", formValidation);
-    if(formValidation == true){
 
-       this.setData();
-      
+    const formValidation = this.validateForm();
+    // console.log("validatiing form===", formValidation);
+    if (formValidation == true) {
+      this.addListToItem();
+
       this.state.requestCode = 21;
       this.state.status = status;
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-      toast.success("Work Request Updated Successfully", { autoClose: 3000 });    
-      
-        setTimeout(()=>{
-            this.props.history.push('/WorkRequestList');
-        }, 3000)
+      toast.success('Work Request Updated Successfully', { autoClose: 3000 });
+
+      setTimeout(() => {
+        this.props.history.push('/WorkRequestList');
+      }, 3000);
     }
   }
-  validateForm = () =>{
-    
-    
-    if(!this.state.value_projects){
-      toast.error("Project is required", { autoClose: 3000 });       
+
+  validateForm = () => {
+    if (!this.state.value_projects) {
+      toast.error('Project is required', { autoClose: 3000 });
       return false;
     }
-    if(!this.state.value_clients){
-      toast.error("Client is required", { autoClose: 3000 });       
+    if (!this.state.value_clients) {
+      toast.error('Client is required', { autoClose: 3000 });
       return false;
     }
-    
-    if(!this.state.requestBy || this.state.requestBy == ""){
-      toast.error("Requested by is required", { autoClose: 3000 });       
+
+    if (!this.state.requestBy || this.state.requestBy == '') {
+      toast.error('Requested by is required', { autoClose: 3000 });
       return false;
     }
     return true;
   }
 
-  itemAddition = () =>{
-    if(this.validateForm() == true){
-        
-            this.itemList = this.itemList.filter(el => el.value_item !== this.state.value_item)
-                let list = {
-                    value_item: this.state.value_item,
-                    text_item: this.state.text_item,
-                    sizeType: this.state.sizeType,
-                    workBased: this.state.workBased,
-                    workRequestId: this.state.value_workRequestId,
-                    value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                    text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                    value_scaffoldType : this.state.value_scaffoldType,
-                    text_scaffoldType : this.state.text_scaffoldType,
-                    value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
-                    text_scaffoldSubcategory : this.state.text_scaffoldSubcategory,
-                    L:this.state.L,
-                    H:this.state.H,
-                    W:this.state.W,
-                    Set:this.state.Set,
-                    safety:this.state.safety,
-                    supervisor:this.state.supervisor,
-                    erectors:this.state.erectors,
-                    gworkers:this.state.gworkers,
-                    inTime : this.state.inTime,
-                    outTime: this.state.outTime
-                }
-            
+ itemAddition = () => {
+   if (this.validateForm() == true) {
+     this.addListToItem();
+     this.setState({
+       itemtitle: 'Select Item',
+       locationTitle: 'Select Location',
+       value_item: '',
+       sizeType: '',
+       workBased: '',
+       sizeList: [],
+       manpowerList: [],
+     });
 
-                this.itemList.push(list);
-            
-        
-
-        this.setState({
-            itemtitle: "Select Item",
-            locationTitle: "Select Location",
-            value_item: "",
-            sizeType: "",
-            workBased: "",
-            value_scaffoldWorkType : "",
-            value_scaffoldType : "",
-            text_scaffoldSubcategory : "",
-            scaffoldtypetitle: "Select Scaffold Type",
-            scaffoldSubcategorytitle : "Select Subcatogory",
-            scaffoldworktypetitle: "Select Work",
-            L:"",
-            H:"",
-            W:"",
-            Set:"",
-            safety:"",
-            supervisor:"",
-            erectors:"",
-            gworkers:"",
-            inTime : "",
-            outTime: ""
-        });
-        
-        toast.success("Item added successfully", { autoClose: 3000 }); 
-    }
-  }
-  sizeAddition = () =>{
-        
-    if(this.validateSizeForm() == true){
-
-      
-        this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType)
-       
-      let sizeList = {
-        value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-        text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-        value_scaffoldType : this.state.value_scaffoldType,
-        text_scaffoldType : this.state.text_scaffoldType,
-        value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
-        text_scaffoldSubcategory : this.state.text_scaffoldSubCategory,
-        L:this.state.L,
-        H:this.state.H,
-        W:this.state.W,
-        set:this.state.set
-      }
-      this.sizeList.push(sizeList);
-     
-      this.state.sizeList = this.sizeList;
-      toast.success("Size list added successfully", { autoClose: 3000 }); 
-      this.setState({
-        value_scaffoldWorkType : "",
-        value_scaffoldType : "",
-        value_scaffoldSubcategory : "",
-        text_scaffoldWorkType : "",
-        text_scaffoldType : "",
-        text_scaffoldSubCategory : "",
-        scaffoldtypetitle: "Select Type",
-        scaffoldSubcategorytitle : "Select Sub Category",
-        scaffoldworktypetitle: "Select Work",
-        L:"",
-        H:"",
-        W:"",
-        set:""
-
-    });
-    }
-  }
-  manpowerAddition = () =>{
-    if(this.validateManpowerForm() == true){
-        let manpowerList = {
-            safety:this.state.safety,
-            supervisor:this.state.supervisor,
-            erectors:this.state.erectors,
-            gworkers:this.state.gworkers,
-            inTime : this.state.inTime,
-            outTime: this.state.outTime
-        }
-        this.manpowerList.push(manpowerList);
-        this.state.manpowerList = this.manpowerList;
-        toast.success("Manpower list added successfully", { autoClose: 3000 }); 
-
-        this.setState({
-            safety:"",
-            supervisor:"",
-            erectors:"",
-            gworkers:"",
-            inTime : "",
-            outTime: ""
-
-        });
+     toast.success('Item added successfully', { autoClose: 3000 });
+   }
+ }
 
 
+  validateManpowerForm = () => {
+    if (typeof this.state.safety === 'undefined' || this.state.safety == '') {
+      toast.error("Safety can't be empty", { autoClose: 3000 });
+      return false;
     }
-  }
-  validateManpowerForm = () =>{
-    if(typeof this.state.safety == "undefined" || this.state.safety == ""){
-        toast.error("Safety can't be empty", { autoClose: 3000 });       
-        return false;
+    if (typeof this.state.supervisor === 'undefined' || this.state.supervisor == '') {
+      toast.error("Supervisor can't be empty", { autoClose: 3000 });
+      return false;
     }
-    if(typeof this.state.supervisor == "undefined" || this.state.supervisor == ""){
-        toast.error("Supervisor can't be empty", { autoClose: 3000 });       
-        return false;
+    if (typeof this.state.erectors === 'undefined' || this.state.erectors == '') {
+      toast.error("Erectors can't be empty", { autoClose: 3000 });
+      return false;
     }
-    if(typeof this.state.erectors == "undefined" || this.state.erectors == ""){
-        toast.error("Erectors can't be empty", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.gworkers == "undefined" || this.state.gworkers == ""){
-        toast.error("Go workers can't be empty", { autoClose: 3000 });       
-        return false;
-    }
-    return true;
-  }
-  validateSizeForm =()=>{
-    if(typeof this.state.value_scaffoldWorkType == "undefined" || this.state.value_scaffoldWorkType == ""){
-        toast.error("Please select scaffold work type", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.value_scaffoldType == "undefined" || this.state.value_scaffoldType == ""){
-        toast.error("Please select scaffold type", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.L == "undefined" || this.state.L == "" || this.state.L == 0){
-        toast.error("Length cant be empty", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.H == "undefined" || this.state.H == "" || this.state.H == 0){
-        toast.error("Height cant be empty", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.W == "undefined" || this.state.W == "" || this.state.W == 0){
-        toast.error("Width cant be empty", { autoClose: 3000 });       
-        return false;
-    }
-    if(typeof this.state.set == "undefined" || this.state.set == "" || this.state.set == 0){
-        toast.error("Set cant be empty", { autoClose: 3000 });       
-        return false;
+    if (typeof this.state.gworkers === 'undefined' || this.state.gworkers == '') {
+      toast.error("Go workers can't be empty", { autoClose: 3000 });
+      return false;
     }
     return true;
   }
 
-  goBack = (e) =>{
+
+  goBack = (e) => {
     e.preventDefault();
     this.props.history.goBack();
   }
 
-  setData = ()=>{
-   
-    if(this.state.cType == 1){
-        
-        //remove item if duplicate
-            this.itemList = this.itemList.filter(el => el.value_item !== this.state.value_item)
-            let scaffoldworkSubCategory = getDetailsWithMatchedKey2(this.state.value_scaffoldSubcategory, this.state.subCategoryStore[this.state.value_scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");   
-            this.itemList.push({
-                value_item: this.state.value_item,
-                text_item: this.state.text_item,
-                sizeType: this.state.sizeType,
-                workRequestId: this.state.value_workRequestId,
-                workRequestId_Text: this.state.text_workRequestId,
-                workBased: this.state.workBased,
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
-                text_scaffoldSubcategory : scaffoldworkSubCategory,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                set:this.state.set,
-                safety:this.state.safety,
-                supervisor:this.state.supervisor,
-                erectors:this.state.erectors,
-                gworkers:this.state.gworkers,
-                inTime : this.state.inTime,
-                outTime: this.state.outTime
 
-            });
-            this.state.itemList = this.itemList;
-        
-    } else if(this.state.cType == 2){
-        if(this.state.workBased == 1){ //size
+  addListToItem = () => {
+    const found = this.itemList.some(el => el.value_item === this.state.value_item);
 
-            if(this.state.value_scaffoldWorkType != ""){
+    if (this.state.value_item != '') {
+      if (!found) {
+        const list = {
+          value_item: this.state.value_item,
+          text_item: this.state.text_item,
+          sizeType: this.state.sizeType,
+          workBased: this.state.workBased,
+          workRequestId: this.state.value_workRequestId,
+          sizeList: this.state.sizeList,
+          manpowerList: this.state.manpowerList,
+        };
 
-            this.sizeList = this.sizeList.filter(el => el.value_scaffoldWorkType !== this.state.value_scaffoldWorkType);
-           
-            let scaffoldworkSubCategory = getDetailsWithMatchedKey2(this.state.value_scaffoldSubcategory, this.state.subCategoryStore[this.state.value_scaffoldType],  "scaffoldSubCateId", "scaffoldSubCatName");  
-            this.sizeList.push({
-                value_scaffoldWorkType : this.state.value_scaffoldWorkType,
-                text_scaffoldWorkType : this.state.text_scaffoldWorkType,
-                value_scaffoldType : this.state.value_scaffoldType,
-                text_scaffoldType : this.state.text_scaffoldType,
-                value_scaffoldSubcategory : this.state.value_scaffoldSubcategory,
-                text_scaffoldSubcategory : scaffoldworkSubCategory,
-                L:this.state.L,
-                H:this.state.H,
-                W:this.state.W,
-                set:this.state.set
-            });
-          
-            this.state.sizeList = this.sizeList;
-        }
-            
-        }
-        if(this.state.workBased == 2){ //manpower
-            
-            this.manpowerList= this.manpowerList.filter(el => (el.safety !== this.state.safety && el.supervisor !== this.state.supervisor && el.erectors !== this.state.erectors && el.gworkers !== this.state.gworkers));
-           
-                this.manpowerList.push({
-                    safety:this.state.safety,
-                    supervisor:this.state.supervisor,
-                    erectors:this.state.erectors,
-                    gworkers:this.state.gworkers,
-                    inTime : this.state.inTime,
-                    outTime: this.state.outTime
-                });
-                this.state.manpowerList = this.manpowerList;
-             
-        }
+
+        this.itemList.push(list);
+        this.state.itemList = this.itemList;
+      }
     }
-
-
-      
   }
-  
-  setPreview = ()=>{
-    this.setData();
-    this.setState({show:true});
+
+  setPreview = () => {
+    this.addListToItem();
+    this.setState({ show: true });
   }
-  handleClose = () =>{
-    this.setState({show:false});
+  handleClose = () => {
+    this.setState({ show: false });
+  }
+  displaySizePopup = () => {
+    this.setState({ showSizePopup: true });
+  }
+
+  handleSizePopupClose = () => {
+    this.setState({ showSizePopup: false });
+  }
+
+  handleSizeSubmit = (data) => {
+    this.sizeList.push(data);
+
+    this.setState({ sizeList: this.sizeList });
+    this.handleSizePopupClose();
+  }
+
+  deleteSizeItem = (index) => {
+    delete this.sizeList[index];
+    this.setState({ sizeList: this.sizeList });
+  }
+
+  deleteManPowerItem = (index) => {
+    delete this.manpowerList[index];
+    this.setState({ manpowerList: this.manpowerList });
+  }
+
+  displaySizeList = (itemList) => {
+    return itemList.map((item, index) => {
+      return (<SizePreview index={ index } item={ item } onClose={ this.deleteSizeItem } />);
+    });
+  }
+  displayManPowerList = (itemList) => {
+    return itemList.map((item, index) => {
+      return (<ManPowerPreview index={ index } item={ item } onClose={ this.deleteManPowerItem } />);
+    });
+  }
+
+  displayManPowerPopup= () => {
+    this.setState({ showManPowerPopup: true });
+  }
+
+  handleManPowerPopupClose = () => {
+    this.setState({ showManPowerPopup: false });
+  }
+
+  handleManPowerSubmit = (data) => {
+    this.manpowerList.push(data);
+    this.setState({ manpowerList: this.manpowerList });
+    this.handleManPowerPopupClose();
   }
   /* Render */
   render() {
-    const {headerTitle} = this.state;
-
-   
-    return (
-    <div className="container work-arr-container">
-    <ToastContainer autoClose={8000} />
-    <br />
-    <div className="row">
-        <div className="col-sm-6"><label>Project</label></div>
-          <div className="col-sm-6">
-          <Dropdown
-                  title={this.state.projectTitle}
-                  name="projectName"
-                  keyName="projectId"
-                  stateId="projects"
-                  list={this.state.projects}
-                  value={this.state.value_projects}
-                  resetThenSet={this.onChangeItem}
-            />
-          </div>
-    </div>
-
-    <div className="row">
-        <div className="col-sm-6"><label>Client</label></div>
-          <div className="col-sm-6">
-          <Dropdown
-                  title={this.state.clientTitle}
-                  name="clientName"
-                  keyName="clientId"
-                  stateId="clients"
-                  list={this.state.clients}
-                  value={this.state.value_projects}
-                  resetThenSet={this.onChangeItem}
-            />
-             
-          </div>
-    </div>
     
-    <div className="row">
-        <div className="col-xs-6"><label>Work Request By</label></div>
-          <div className="col-xs-6">
-          <CustInput type="text" name="requestBy" value={this.state.requestBy} onChange={this.onFormChange} />
+    let showSizeAddButton = true;
+    let showManPowerAddButton = true;
+    if (this.state.cType == 1 && this.state.sizeList.length == 1) {
+      showSizeAddButton = false;
+    }
+
+    if (this.state.cType == 1 && this.state.manpowerList.length == 1) {
+      showManPowerAddButton = false;
+    }
+
+    return (
+      <div className="container work-arr-container">
+        <ToastContainer autoClose={ 8000 } />
+        <br />
+        <div className="row">
+          <div className="col-sm-6"><label>Project</label></div>
+          <div className="col-sm-6">
+            <Dropdown
+              title={ this.state.projectTitle }
+              name="projectName"
+              keyName="projectId"
+              stateId="projects"
+              list={ this.state.projects }
+              value={ this.state.value_projects }
+              resetThenSet={ this.onChangeItem }
+            />
           </div>
-    </div>
-
-    <div className="row">
-        <div className="col-xs-1">
-            <label>
-             
-                        <input  type="radio"  name="cType" value="1"  onChange={this.onctypeChange} checked={this.state.cType == "1"} />
-            </label>
         </div>
-        <div className="col-xs-6">
+
+        <div className="row">
+          <div className="col-sm-6"><label>Client</label></div>
+          <div className="col-sm-6">
+            <Dropdown
+              title={ this.state.clientTitle }
+              name="clientName"
+              keyName="clientId"
+              stateId="clients"
+              list={ this.state.clients }
+              value={ this.state.value_projects }
+              resetThenSet={ this.onChangeItem }
+            />
+
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-xs-6"><label>Work Request By</label></div>
+          <div className="col-xs-6">
+            <CustInput type="text" name="requestBy" value={ this.state.requestBy } onChange={ this.onFormChange } />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-xs-1">
+            <label>
+
+              <input type="radio" name="cType" value="1" onChange={ this.onctypeChange } checked={ this.state.cType == '1' } />
+            </label>
+          </div>
+          <div className="col-xs-6">
             <label>Original Contract</label>
+          </div>
         </div>
-    </div>
 
-    <div className="row">
-        <div className="col-xs-1">
+        <div className="row">
+          <div className="col-xs-1">
             <label>
-            
-                <input  type="radio"  name="cType" value="2"  onChange={this.onctypeChange} checked={this.state.cType == "2"} />
+
+              <input type="radio" name="cType" value="2" onChange={ this.onctypeChange } checked={ this.state.cType == '2' } />
             </label>
-        </div>
-        <div className="col-xs-6">
+          </div>
+          <div className="col-xs-6">
             <label>
                 Variation Works
-            
+
             </label>
+          </div>
         </div>
-    </div>
-    
-    {this.state.cType == 1 &&
-    <div className="pull-right" >
-       <div className="col-xs-6">
-        <button type="button" id="Add" onClick={this.itemAddition} className="btn btn-default btn-sm right">
-            <span className="glyphicon glyphicon-plus right"></span>
-        </button>
-        </div>
-     
+
+        {this.state.cType == 1 &&
+        <div className="pull-right" >
+          <div className="col-xs-6">
+            <button type="button" id="Add" onClick={ this.itemAddition } className="btn btn-default btn-sm right">
+              <span className="glyphicon glyphicon-plus right" />
+            </button>
+          </div>
+
         </div>
     }
-       <br />
-    <br />
-    {this.state.contracts.length > 0 &&
-    <div className="orginalContract">
-        <div className="row">
+        <br />
+        <br />
+        {this.state.contracts.length > 0 &&
+        <div className="orginalContract">
+          <div className="row">
             <div className="col-xs-6">
-            <label>Items</label>
-            <Dropdown
-                     title={this.state.itemTitle}
-                    name="item"
-                    keyName="id"
-                    stateId="item"
-                    value={this.state.value_item}
-                    list={this.state.contracts}
-                    resetThenSet={this.onItemChange}
-                />
+              <label>Items</label>
+              <Dropdown
+                title={ this.state.itemTitle }
+                name="item"
+                keyName="id"
+                stateId="item"
+                value={ this.state.value_item }
+                list={ this.state.contracts }
+                resetThenSet={ this.onItemChange }
+              />
             </div>
             <div className="col-xs-6">
-            <label>Locations</label>
-            <Dropdown
-                    title={this.state.locationTitle}
-                    name="location"
-                    keyName="id"
-                    stateId="location"
-                    list={this.state.contracts}
-                    resetThenSet={this.onItemChange}
-                />
+              <label>Locations</label>
+              <Dropdown
+                title={ this.state.locationTitle }
+                name="location"
+                keyName="id"
+                stateId="location"
+                list={ this.state.contracts }
+                resetThenSet={ this.onItemChange }
+              />
             </div>
-        </div>
-        <div className="row">
-            <div className="col-xs-1"><label><input  type="radio"  name="sizeType" value="1"  onChange={this.onChangeSizeType} checked={this.state.sizeType == "1"}/></label></div>
+          </div>
+          <div className="row">
+            <div className="col-xs-1"><label><input type="radio" name="sizeType" value="1" onChange={ this.onChangeSizeType } checked={ this.state.sizeType == '1' } /></label></div>
             <span className="col-xs-3">
                 Full Size
             </span>
-        </div>
-        
-        <div className="row">
-            <div className="col-xs-1"><label><input  type="radio"  name="sizeType" value="2"  onChange={this.onChangeSizeType} checked={this.state.sizeType == "2"}/></label></div>
+          </div>
+
+          <div className="row">
+            <div className="col-xs-1"><label><input type="radio" name="sizeType" value="2" onChange={ this.onChangeSizeType } checked={ this.state.sizeType == '2' } /></label></div>
             <span className="col-xs-3">
                 Partial Size
             </span>
+          </div>
         </div>
-    </div>
     }
-    {this.state.sizeType == 2 && 
-     <div className="description">
-        <div className="row">
+        {this.state.sizeType == 2 &&
+        <div className="description">
+          <div className="row">
             <div className="col-xs-6"><label>Previous WR#</label></div>
             <div className="col-xs-6">
-            <Dropdown
-                    title={this.state.workRequestTitle}
-                    name="workRequestIdStr"
-                    keyName="workRequestId"
-                    stateId="workRequestId"
-                    list={this.state.workRequestList}
-                    resetThenSet={this.callform}
-                />
+              <Dropdown
+                title={ this.state.workRequestTitle }
+                name="workRequestIdStr"
+                keyName="workRequestId"
+                stateId="workRequestId"
+                list={ this.state.workRequestList }
+                resetThenSet={ this.callform }
+              />
             </div>
+          </div>
         </div>
-    </div>
     }
-    <div className="description">
-        <div className="row">
+        <div className="description">
+          <div className="row">
             <div className="col-xs-6"><label>Description</label></div>
             <div className="col-xs-6">
-            <CustInput type="textarea" name="description" value={this.state.description} onChange={this.onFormChange} />
+              <CustInput type="textarea" name="description" value={ this.state.description } onChange={ this.onFormChange } />
             </div>
+          </div>
         </div>
-    </div>
 
-    <div className="workBasedOn">
-        <div className="row">
-        <div className="col-sm-12">Work Based On</div>
-        </div>
-        <div className="row">
+        <div className="workBasedOn">
+          <div className="row">
+            <div className="col-sm-12">Work Based On</div>
+          </div>
+          <div className="row">
             <div className="col-xs-1">
-                <label>
-                <input  type="radio"  name="workBased" value="1"  onChange={this.onFormChange} checked={this.state.workBased == "1"}/>
-                </label>
+              <label>
+                <input type="radio" name="workBased" value="1" onChange={ this.onFormChange } checked={ this.state.workBased == '1' } />
+              </label>
             </div>
             <div className="col-xs-3">
                 Size
             </div>
-        
-        </div>
-        <div className="row">
+
+          </div>
+          <div className="row">
             <div className="col-xs-1">
-                <label>
-                <input  type="radio"  name="workBased" value="2"  onChange={this.onFormChange} checked={this.state.workBased == "2"}/>
-                </label>
+              <label>
+                <input type="radio" name="workBased" value="2" onChange={ this.onFormChange } checked={ this.state.workBased == '2' } />
+              </label>
             </div>
             <div className="col-xs-3">
                 ManPower
             </div>
-        </div>
-    </div>
-  
-{this.state.workBased == 1 && 
-    <div>
-  {this.state.cType == 2 &&
-        <div className="pull-right" >
-        <div className="col-xs-6">
-        <button type="button" id="Add" onClick={this.sizeAddition} className="btn btn-default btn-sm right">
-            <span className="glyphicon glyphicon-plus right"></span>
-        </button>
-        </div>
-        </div>
-
-    }
-    <br></br>
-    <br></br>
-    <div className="row">
-        <div className="col-xs-6"><label>Type of Scaffolding Works</label></div>
-          <div className="col-xs-6">
-            <Dropdown
-                  title={this.state.scaffoldworktypetitle}
-                  name="scaffoldName"
-                  keyName="id"
-                  stateId="scaffoldWorkType"
-                  list={this.state.scaffoldWorkType}
-                  resetThenSet={this.callform}
-            />
           </div>
-    </div>
-    
-    {/*<div className="row">
-        <div className="col-xs-6"><label>Ref# WR</label></div>
-          <div className="col-xs-6">
-            <Dropdown
-                  title="Select Project"
-                  list={this.state.reasons}
-                  resetThenSet={this.resetThenSet}
-            />
-          </div>
-</div>*/}
-
-        <div className="sizeSelection">
-        
-            <div className="row">
-                <div className="col-xs-6"><label>Scaffold Type</label></div>
-                <div className="col-xs-6">
-                    <Dropdown
-                        title={this.state.scaffoldtypetitle}
-                        name="scaffoldName"
-                        keyName="id"
-                        stateId="scaffoldType"
-                        list={this.state.scaffoldType}
-                        resetThenSet={this.populateSubCat}
-                    />
-                </div>
-            </div>
-            <div className="row">
-                <div className="col-xs-6"><label>Scaffold Sub Category</label></div>
-                <div className="col-xs-6">
-                    <Dropdown
-                        title={this.state.scaffoldSubcategorytitle}
-                        name="scaffoldSubCatName"
-                        keyName="scaffoldSubCateId"
-                        stateId="scaffoldSubcategory"
-                        list={this.state.subCategory}
-                        resetThenSet={this.callform}
-                        key="3"
-                    />
-                </div>
-</div>
-
-            <div className="row">
-                <div className="col-sm-12"><label>Size</label></div>
-            </div>
-            <div className="row">
-                <div className="col-xs-3"> <CustInput  size="4" type="number" name="L" value={this.state.L} onChange={this.onFormChange} /> L</div>
-                <div className="col-xs-3"><CustInput size="4" type="number" name="W" value={this.state.W} onChange={this.onFormChange} />W</div>
-                <div className="col-xs-3"><CustInput size="4" type="number" name="H" value={this.state.H} onChange={this.onFormChange} />H</div>
-            
-                <div className="col-xs-3"><CustInput size="4" type="number" name="set" value={this.state.set} onChange={this.onFormChange} />Set</div>
-            </div>
         </div>
-    </div>
+
+        <Popup
+          show={ this.state.showSizePopup }
+          title="Add Size"
+          handleClose={ this.handleSizePopupClose }
+        >
+          <SizeWorkRequest
+            scaffoldWorkType={ this.state.scaffoldWorkType }
+            scaffoldTypeList={ this.state.scaffoldType }
+            subCategory={ this.state.subCategoryStore }
+            handleClose={ this.handleSizePopupClose }
+            handleSubmit={ this.handleSizeSubmit }
+          />
+        </Popup>
+
+        <Popup
+          show={ this.state.showManPowerPopup }
+          title="Add Manpower"
+          handleClose={ this.handleManPowerPopupClose }
+        >
+          <ManPowerWorkRequest
+            handleSubmit={ this.handleManPowerSubmit }
+            handleClose={ this.handleManPowerPopupClose }
+          />
+        </Popup>
+
+        {this.state.workBased == 1 &&
+        <div>
+          { this.state.sizeList.length > 0 &&
+
+          <div>{ this.displaySizeList(this.state.sizeList) } </div>
+
+  }
+          {showSizeAddButton == true &&
+          <CustomButton
+            bsStyle="primary"
+            onClick={ this.displaySizePopup }
+          >Add Size
+          </CustomButton>
+             }
+          <br />
+
+
+        </div>
 }
-{this.state.workBased == 2 &&
-    <div className="manPowerSelection">
-        {this.state.cType == 2 &&
-        <div className="pull-right" >
-        <div className="col-xs-6">
-        <button type="button" id="Add" onClick={this.manpowerAddition} className="btn btn-default btn-sm right">
-            <span className="glyphicon glyphicon-plus right"></span>
-        </button>
-        </div>
-        </div>
+        {this.state.workBased == 2 &&
+        <div className="manPowerSelection">
+          { this.state.manpowerList.length > 0 &&
 
-        }
-        <br></br>
-        <br></br>
-      
-        <div className="row">
-            <div className="col-xs-3"><label>Safety</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="safety" value={this.state.safety} onChange={this.onFormChange}/></div>
-            <div className="col-xs-3"><label>Supervisor</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="supervisor" value={this.state.supervisor} onChange={this.onFormChange}/></div>
-        </div>
+          <div>{ this.displayManPowerList(this.state.manpowerList) } </div>
 
-        <div className="row">
-            <div className="col-xs-3"><label>Erectors</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="erectors" value={this.state.erectors} onChange={this.onFormChange}/></div>
-            <div className="col-xs-3"><label>General Workers</label></div><div className="col-xs-3"><CustInput type="text" size="4" name="gworkers" value={this.state.gworkers} onChange={this.onFormChange}/></div>
-        </div>
-
-        <div className="row">
-            <div className="col-xs-12"><label>ManPower Time</label></div>
-        </div>
-        <div className="row">
-            <div className="col-xs-3">Time IN</div>
-            <div className="col-xs-3"><TimeField  name="inTime" value={this.state.inTime} className="width100" onChange={this.onTimeChange}/></div>
-        </div>
-        <div className="row">
-            <div className="col-xs-3">Time OUT</div>
-            <div className="col-xs-3"><TimeField  name="outTime" value={this.state.outTime} className="width100" onChange={this.onTimeChange}/></div>
-        </div>
-    </div>
 }
-<div className="row">
-            <div className="col-xs-3">Scaffold Register</div>
-            <div className="col-xs-6"> <input type="checkbox" name="scaffoldRegister" checked={this.state.scaffoldRegister == 1} onClick={this.onCheckBoxChecked}/></div>
+
+          {showManPowerAddButton == true &&
+          <CustomButton
+            bsStyle="primary"
+            onClick={ this.displayManPowerPopup }
+          >Add Manpower
+          </CustomButton>
+            }
+
+          <br />
+          <br />
+
+
+        </div>
+}
+        <div className="row">
+          <div className="col-xs-3">Scaffold Register</div>
+          <div className="col-xs-6"> <input type="checkbox" name="scaffoldRegister" checked={ this.state.scaffoldRegister == 1 } onClick={ this.onCheckBoxChecked } /></div>
         </div>
 
-<div className="row">
-            <div className="col-xs-3">Remarks</div>
-            <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={this.state.remarks} onChange={this.onFormChange} /></div>
+        <div className="row">
+          <div className="col-xs-3">Remarks</div>
+          <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={ this.state.remarks } onChange={ this.onFormChange } /></div>
         </div>
-    <div className="row">
-      <div className="col-12">
-      <div className="col-sm-3"><CustomButton  id="draft" bsStyle="secondary" type="submit" onClick={this.goBack}>Back</CustomButton> </div>
-      <div className="col-sm-3">  <CustomButton bsStyle="warning"  id="preview" type="submit"onClick={this.setPreview}>Preview</CustomButton></div>
+        <div className="row">
+          <div className="col-12">
+            <div className="col-sm-3"><CustomButton id="draft" bsStyle="secondary" type="submit" onClick={ this.goBack }>Back</CustomButton> </div>
+            <div className="col-sm-3">  <CustomButton bsStyle="warning" id="preview" type="submit"onClick={ this.setPreview }>Preview</CustomButton></div>
 
-      {this.state.userType == "1" &&
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(this.state.status)}>Update</CustomButton> </div>
+            {this.state.userType == '1' &&
+            <div className="col-sm-3"><CustomButton bsStyle="primary" id="draft" type="submit" onClick={ () => this.submitRequest(this.state.status) }>Update</CustomButton> </div>
     }
 
-      {this.state.status == 2 &&
-      <div className="col-sm-3"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.submitRequest(1)}>Submit</CustomButton> </div>
-    } 
-      </div>
-     
-    </div>
-        
+            {this.state.status == 2 &&
+            <div className="col-sm-3"><CustomButton bsStyle="primary" id="draft" type="submit" onClick={ () => this.submitRequest(1) }>Submit</CustomButton> </div>
+    }
+          </div>
 
-        <Modal show={this.state.show} onHide={this.handleClose} dialogClassName="modallg" >
+        </div>
+
+
+        <Modal show={ this.state.show } onHide={ this.handleClose } dialogClassName="modallg" >
           <Modal.Header closeButton>
             <Modal.Title><strong>Preview</strong></Modal.Title>
           </Modal.Header>
           <Modal.Body >
-          <WorkRequestPreview curState={this.state} />
-           
+            <WorkRequestPreview curState={ this.state } />
+
           </Modal.Body>
           <Modal.Footer>
-            <CustomButton bsStyle="secondary" onClick={this.handleClose}>Close</CustomButton>
+            <CustomButton bsStyle="secondary" onClick={ this.handleClose }>Close</CustomButton>
           </Modal.Footer>
         </Modal>
-    </div>
-    
+      </div>
+
     );
   }
 }
-
 
 
 export default WorkRequestEdit;

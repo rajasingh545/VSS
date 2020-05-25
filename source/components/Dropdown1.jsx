@@ -70,7 +70,7 @@ class Dropdown1 extends Component {
         <select name={ stateId } key={ stateId } className="ComboBox form-control" onChange={ this.selectItem }>
           <option value="" >-Select-</option>
 
-          {list.length > 0 &&
+          {list && list.length > 0 &&
           list.map((item, index) => (
             <option
               style={ { textAlign: 'left' } }

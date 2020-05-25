@@ -5,10 +5,20 @@ import React, { Component } from 'react';
 class WorkRequestPreview extends Component {
   constructor(props) {
     super(props);
+    this.state = {
+      curState: props.curState,
+    };
   }
 
-     setItemList = (itemList, sizeList, manpowerList) => {
+  componentWillReceiveProps(nextProps) {
+    this.setState({ curState: nextProps.curState });
+  }
+
+
+     setItemList = (itemList) => {
        return itemList.map((item) => {
+         const sizeList = (item.sizeList) ? item.sizeList[0] : [];
+         const manpowerList = (item.manpowerList) ? item.manpowerList[0] : [];
          return (
 
            <div className="hrline">
@@ -160,13 +170,8 @@ class WorkRequestPreview extends Component {
      }
 
      render() {
-       const { curState } = this.props;
+       const { curState } = this.state;
 
-
-       const sizeList = (curState.itemList.sizeList) ? curState.itemList.sizeList[0] : [];
-       const manpowerList = (curState.itemList.manpowerList) ? curState.itemList.manpowerList[0] : [];
-
-       console.log('===>', curState.itemList, sizeList, manpowerList);
 
        return (
          <div>
@@ -195,7 +200,7 @@ class WorkRequestPreview extends Component {
              </div>
 
              {curState.cType == 1 &&
-                    this.setItemList(curState.itemList, sizeList, manpowerList)
+                    this.setItemList(curState.itemList)
             }
              {curState.cType == 2 &&
              <div>

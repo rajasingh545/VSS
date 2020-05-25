@@ -172,20 +172,20 @@ resetThenSet(key, list, stateKey, title) {
   }
   onChangeSizeType = (e) => {
     if (e.target.value == 1) {
-      this.setState({
-        L: this.state.filteredArr[0].length,
-        W: this.state.filteredArr[0].width,
-        H: this.state.filteredArr[0].height,
-        set: this.state.filteredArr[0].sets,
+      // this.setState({
+      //   L: this.state.filteredArr[0].length,
+      //   W: this.state.filteredArr[0].width,
+      //   H: this.state.filteredArr[0].height,
+      //   set: this.state.filteredArr[0].sets,
 
-      });
+      // });
     } else {
-      this.setState({
-        L: '',
-        W: '',
-        H: '',
-        set: '',
-      });
+      // this.setState({
+      //   L: '',
+      //   W: '',
+      //   H: '',
+      //   set: '',
+      // });
     }
     this.onFormChange(e);
   }
@@ -201,36 +201,14 @@ resetThenSet(key, list, stateKey, title) {
 
     if (formValidation == true) {
       if (this.state.cType == 1) {
-        const found = this.itemList.some(el => el.value_item === this.state.value_item);
-        if (!found) {
-          this.itemList.push({
-            value_item: this.state.value_item,
-            sizeType: this.state.sizeType,
-            workBased: this.state.workBased,
-            workRequestId: this.state.value_workRequestId,
-            value_scaffoldWorkType: this.state.value_scaffoldWorkType,
-            value_scaffoldType: this.state.value_scaffoldType,
-            value_scaffoldSubcategory: this.state.value_scaffoldSubcategory,
-            L: this.state.L,
-            H: this.state.H,
-            W: this.state.W,
-            set: this.state.set,
-            safety: this.state.safety,
-            supervisor: this.state.supervisor,
-            erectors: this.state.erectors,
-            gworkers: this.state.gworkers,
-            inTime: this.state.inTime,
-            outTime: this.state.outTime,
-
-          });
-          this.state.itemList = this.itemList;
-        }
+        this.addListToItem();
+        
       }
       this.state.requestCode = 14;
       this.state.status = status;
 
 
-      // dispatch(workRequestPost(this.state));
+      dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
 
       if (status == 1) {
