@@ -24,7 +24,7 @@ rules:
   func-names: 0
   function-paren-newline: 0
   indent: 2
-  jsx-quotes: [2, "prefer-single"]
+  jsx-quotes: [1, "prefer-double"]
   max-len: ["error", { "code": 120 }]
   new-cap: 0
   no-plusplus: 0
@@ -44,3 +44,11 @@ rules:
   react/jsx-filename-extension: 0
   react/prefer-stateless-function: 0
   react/require-default-props: 0
+  react/prop-types: 0
+  jsx-a11y/label-has-for: 0
+  jsx-a11y/no-noninteractive-element-interactions: 0
+  jsx-a11y/click-events-have-key-events: 0
+  jsx-a11y/no-static-element-interactions: 0
+  jsx-a11y/anchor-is-valid: 0
+  
+  

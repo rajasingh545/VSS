@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Glyphicon } from 'react-bootstrap';
 import '../css/global.css';
 
-class Dropdown extends Component {
+class Dropdown1 extends Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -50,15 +50,8 @@ class Dropdown extends Component {
     });
   }
 
-  selectItem(title, id, stateKey, value) {
-    const { list } = this.props;
-    list.forEach(item => item.selected = false);
-    list[id].selected = true;
-
-    this.setState({
-      headerTitle: title,
-      listOpen: false,
-    }, this.props.resetThenSet(value, list, stateKey, title, list[id]));
+  selectItem = (e) => {
+    this.props.resetThenSet(e);
   }
 
   toggleList() {
@@ -74,33 +67,25 @@ class Dropdown extends Component {
     return (
 
       <div className="dd-wrapper">
-        <div className="dd-header" onClick={ () => this.toggleList() }>
-          <div className="dd-header-title ellipsis">{headerTitle}</div>
-          {listOpen
-              ? <a href="#"><Glyphicon glyph="menu-up" /></a>
-              : <a href="#"><Glyphicon glyph="menu-down" /></a>
-          }
-        </div>
-        {listOpen && <ul className="dd-list" onClick={ e => e.stopPropagation() }>
+        <select name={ stateId } key={ stateId } className="ComboBox form-control" onChange={ this.selectItem }>
+          <option value="" >-Select-</option>
 
           {list.length > 0 &&
           list.map((item, index) => (
-            <li
+            <option
               style={ { textAlign: 'left' } }
               className="dd-list-item ellipsis"
               key={ item[keyName] }
-              onClick={ () => this.selectItem(item[name], index, stateId, item[keyName]) }
+              value={ item[keyName] }
+              text={ item[name] }
             >{item[name]} {item.selected && <Glyphicon glyph="glyphicon-check" />}
-            </li>
+            </option>
           ))
         }
-
-        </ul>
-
-        }
+        </select>
       </div>
     );
   }
 }
 
-export default Dropdown;
+export default Dropdown1;
