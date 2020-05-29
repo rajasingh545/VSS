@@ -293,7 +293,7 @@ callform = (key, list, stateKey, title) =>{
 
 
     <div className="row">
-        <div className="col-sm-3"><label>Photo is mandatory.</label></div>
+        <div className="col-sm-3"><label>Photo*</label></div>
           <div className="col-sm-6">
             <input type="file" name="photo_1"  onChange={this.photoMandatory} required/>
           </div>
