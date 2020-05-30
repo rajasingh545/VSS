@@ -154,6 +154,24 @@ class DWTRReport extends React.Component {
     this.timeValuesArr[el.name] = el.value;
   }
  
+  /* developer: saravanan, date:27.5.2020, bug: For any size submission, Photo is mandatory. 
+  photo is mandatory*/
+
+  photoMandatory = (event) => {
+    const {dispatch} = this.props;
+     // this.images[event.target.name] = event.target.files[0];
+     // this.setState({ images:this.images });
+     let ext = event.target.files[0].name.split(".");
+     
+     const data = new FormData();
+     data.append("image", event.target.files[0], event.target.files[0].name);
+     data.append("uniqueId", this.state.uniqueId);
+     data.append("requestCode", 20);
+     data.append("imagefor", event.target.name);
+     this.setState({[event.target.name]:"images/"+this.state.uniqueId+"/"+event.target.name+"."+ext[1]});
+ 
+     this.uploadImages(data);
+ }
   
   
   onStartDateChange = (e) =>{
@@ -273,11 +291,21 @@ callform = (key, list, stateKey, title) =>{
           </div>
     </div>
 
+
+    <div className="row">
+        <div className="col-sm-3"><label>Photo*</label></div>
+          <div className="col-sm-6">
+            <input type="file" name="photo_1"  onChange={this.photoMandatory} required/>
+          </div>
+    </div>
+
     
     
     <br/>
    
     <div className="row">
+
+      
       
       <div className="col-sm-3">
         <CustomButton bsStyle="primary" id="submit" onClick={()=>this.onSubmit(1)} className="width50" type="submit">Submit</CustomButton>
