@@ -1,13 +1,11 @@
 /* Module dependencies */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
 import Dropdown from '../components/Dropdown';
 import CustomButton from '../components/CustomButton';
 import CustInput from '../components/CustInput';
 import WorkRequestPreview from '../components/WorkRequestPreview';
 import baseHOC from './baseHoc';
-import TimeField from '../components/TimePicker';
 import { ToastContainer, toast } from 'react-toastify';
 import { requestDetails, workRequestPost } from 'actions/workArrangement.actions';
 import { getDetailsWithMatchedKey2 } from '../common/utility';
@@ -297,17 +295,13 @@ onItemChange = (key, list, stateKey, title) => {
 }
 
 resetThenSet(key, list, stateKey, title) {
-  // let temp = this.state[key];
-  // temp.forEach(item => item.selected = false);
-  // temp[id].selected = true;
-
   this.setState({
     [stateKey]: list,
   });
 
   const valuekey = `value_${ stateKey }`;
   const textKey = `text_${ stateKey }`;
-  //  console.log("inside==", valuekey, key.toString())
+
   this.setState({
     [valuekey]: key.toString(),
     [textKey]: title,
@@ -368,14 +362,12 @@ resetThenSet(key, list, stateKey, title) {
     const { dispatch } = this.props;
 
     const formValidation = this.validateForm();
-    // console.log("validatiing form===", formValidation);
     if (formValidation == true) {
       this.addListToItem();
 
       this.state.requestCode = 21;
       this.state.status = status;
       dispatch(workRequestPost(this.state));
-      // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success('Work Request Updated Successfully', { autoClose: 3000 });
 
       setTimeout(() => {
@@ -447,24 +439,22 @@ resetThenSet(key, list, stateKey, title) {
 
 
   addListToItem = () => {
-    const found = this.itemList.some(el => el.value_item === this.state.value_item);
+    this.itemList = this.itemList.filter(el => el.value_item !== this.state.value_item);
 
     if (this.state.value_item != '') {
-      if (!found) {
-        const list = {
-          value_item: this.state.value_item,
-          text_item: this.state.text_item,
-          sizeType: this.state.sizeType,
-          workBased: this.state.workBased,
-          workRequestId: this.state.value_workRequestId,
-          sizeList: this.state.sizeList,
-          manpowerList: this.state.manpowerList,
-        };
+      const list = {
+        value_item: this.state.value_item,
+        text_item: this.state.text_item,
+        sizeType: this.state.sizeType,
+        workBased: this.state.workBased,
+        workRequestId: this.state.value_workRequestId,
+        sizeList: this.state.sizeList,
+        manpowerList: this.state.manpowerList,
+      };
 
 
-        this.itemList.push(list);
-        this.state.itemList = this.itemList;
-      }
+      this.itemList.push(list);
+      this.state.itemList = this.itemList;
     }
   }
 
@@ -491,12 +481,20 @@ resetThenSet(key, list, stateKey, title) {
   }
 
   deleteSizeItem = (index) => {
-    delete this.sizeList[index];
+    if (this.sizeList.length === 1) {
+      this.sizeList = [];
+    } else {
+      this.sizeList.splice(index, 1);
+    }
     this.setState({ sizeList: this.sizeList });
   }
 
   deleteManPowerItem = (index) => {
-    delete this.manpowerList[index];
+    if (this.manpowerList.length === 1) {
+      this.manpowerList = [];
+    } else {
+      this.manpowerList.splice(index, 1);
+    }
     this.setState({ manpowerList: this.manpowerList });
   }
 
@@ -526,7 +524,6 @@ resetThenSet(key, list, stateKey, title) {
   }
   /* Render */
   render() {
-    
     let showSizeAddButton = true;
     let showManPowerAddButton = true;
     if (this.state.cType == 1 && this.state.sizeList.length == 1) {
