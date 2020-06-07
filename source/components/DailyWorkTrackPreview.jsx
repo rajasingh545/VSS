@@ -3,7 +3,7 @@
 import React, { Component } from 'react';
 
 import * as CONFIG from '../config/api-config';
-import { getDetailsWithMatchedKey2 } from '../common/utility';
+// import { getDetailsWithMatchedKeyObject } from '../common/utility';
 
 import CustomButton from './CustomButton';
 
@@ -55,7 +55,7 @@ class DailyWorkTrackPreview extends Component {
         } else {
           subdivid = curState.value_subdivision;
         }
-        const subdivisionTitle = getDetailsWithMatchedKey2(subdivid, curState.subItem, 'itemId', 'itemName');
+        // const subdivisionTitle = getDetailsWithMatchedKeyObject(subdivid, curState.subItem, 'itemId', 'itemName');
         return (
 
           <div className="hrline">
@@ -68,7 +68,7 @@ class DailyWorkTrackPreview extends Component {
             {curState.cType == 1 &&
             <div className="row">
               <div className="col-sm-3"><label>Sub Division:</label></div>
-              <div className="col-sm-3 strong">{subdivisionTitle}</div>
+              <div className="col-sm-3 strong">{item.text_subdivision}</div>
 
             </div>
                         }
@@ -102,7 +102,7 @@ class DailyWorkTrackPreview extends Component {
         } else {
           subdivid = curState.value_subdivision;
         }
-        const subdivisionTitle = getDetailsWithMatchedKey2(subdivid, curState.subItem, 'itemId', 'itemName');
+        // const subdivisionTitle = getDetailsWithMatchedKeyObject(subdivid, curState.subItem, 'itemId', 'itemName');
         return (
 
           <div className="hrline">
@@ -116,7 +116,7 @@ class DailyWorkTrackPreview extends Component {
             {curState.cType == 1 &&
             <div className="row">
               <div className="col-sm-3"><label>Sub Division:</label></div>
-              <div className="col-sm-3 strong">{subdivisionTitle}</div>
+              <div className="col-sm-3 strong">{item.text_subdivision}</div>
 
             </div>
                         }

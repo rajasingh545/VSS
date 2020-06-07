@@ -91,6 +91,7 @@ class DailyWorkTrack extends React.Component {
       desc: '',
       requestByName: '',
       showManpowerPopup: false,
+      selectedWRId: 0,
     };
 
     this.teamList = [];
@@ -260,6 +261,8 @@ resetThenSet(key, list, stateKey, title) {
     if (formValidation == true) {
       this.state.requestCode = 17;
       this.state.listingstatus = status;
+
+      console.log("===>", this.state)
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success('DWTR Created Successfully', { autoClose: 3000 });
@@ -312,16 +315,17 @@ resetThenSet(key, list, stateKey, title) {
 
   displayManpowerPopup =(workRequestId = 0) => {
     this.setState({ showManpowerPopup: !this.state.showManpowerPopup });
-    this.setState({ selectedWorkRequestId: workRequestId });
+    this.setState({ selectedWRId: workRequestId });
   }
 
   displayMaterialPopup =(workRequestId = 0) => {
     this.setState({ showMaterialPopup: !this.state.showMaterialPopup });
-    this.setState({ selectedWorkRequestId: workRequestId });
+    this.setState({ selectedWRId: workRequestId });
   }
 
   addTeam = (teamList) => {
     this.teamList.push(teamList);
+    console.log("==>", this.teamList)
     this.setState({ teamList: this.teamList });
     this.displayManpowerPopup();
   }
@@ -405,6 +409,7 @@ resetThenSet(key, list, stateKey, title) {
 
   /* Render */
   render() {
+
     return (
       <div className="container work-arr-container">
         <ToastContainer autoClose={ 8000 } />
@@ -506,7 +511,7 @@ resetThenSet(key, list, stateKey, title) {
         <br />
         <Popup
           show={ this.state.showWorkRequestPopup }
-          title="Add Manpower"
+          title="Add Work Request"
           handleClose={ this.displayWorkRequestPopup }
         >
           <WorkRequestDWTR
@@ -550,7 +555,7 @@ resetThenSet(key, list, stateKey, title) {
         >
           <ManpowerDWTR
             team={ this.state.team }
-            workRequestId={ this.state.selectedWorkRequestId }
+            workRequestId={ this.state.selectedWRId }
             handleClose={ this.displayManpowerPopup }
             handleSubmit={ this.addTeam }
           />
@@ -563,7 +568,7 @@ resetThenSet(key, list, stateKey, title) {
         >
           <MaterialDWTR
             materials={ this.state.materials }
-            workRequestId={ this.state.selectedWorkRequestId }
+            workRequestId={ this.state.selectedWRId }
             handleClose={ this.displayMaterialPopup }
             handleSubmit={ this.addMaterial }
           />
@@ -577,7 +582,7 @@ resetThenSet(key, list, stateKey, title) {
             <div className="col-xs-6 strong">
               <CustomButton
                 bsStyle="primary"
-                onClick={ this.displayManpowerPopup }
+                onClick={ () => this.displayManpowerPopup(0) }
               >Add Manpower
               </CustomButton>
             </div>
@@ -596,7 +601,7 @@ resetThenSet(key, list, stateKey, title) {
               <div className="col-xs-6">
                 <CustomButton
                   bsStyle="primary"
-                  onClick={ this.displayMaterialPopup }
+                  onClick={ () => this.displayMaterialPopup(0) }
                 >Add Material
                 </CustomButton>
               </div>

@@ -52,6 +52,21 @@ export function getDetailsWithMatchedKey2(id, lib, key, returnKey) {
   }
   return returnValue;
 }
+
+export function getDetailsWithMatchedKeyObject(id, lib, key, returnKey) {
+  let returnValue = '';
+  if (lib) {
+    for (let k in lib) {
+      const obj = lib[k];
+      console.log("==>", obj[0][returnKey], id, obj[0][key])
+      if (obj[0][key] == id) {
+        console.log("==>", obj[0][returnKey])
+        returnValue = obj[0][returnKey];
+      }
+    };
+  }
+  return returnValue;
+}
 export function getPreviewContent(obj, libArr) {
   const detailsArr = {
     workArrangementId: obj.workArrangementId,
