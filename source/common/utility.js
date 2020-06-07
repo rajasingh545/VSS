@@ -60,7 +60,6 @@ export function getDetailsWithMatchedKeyObject(id, lib, key, returnKey) {
       const obj = lib[k];
       console.log("==>", obj[0][returnKey], id, obj[0][key])
       if (obj[0][key] == id) {
-        console.log("==>", obj[0][returnKey])
         returnValue = obj[0][returnKey];
       }
     };
