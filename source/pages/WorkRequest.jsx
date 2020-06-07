@@ -325,10 +325,22 @@ resetThenSet(key, list, stateKey, title) {
   }
 
   deleteSizeItem = (index) => {
-    delete this.sizeList[index];
+    if (this.sizeList.length === 1) {
+      this.sizeList = [];
+    } else {
+      this.sizeList.splice(index, 1);
+    }
     this.setState({ sizeList: this.sizeList });
   }
 
+  deleteManPowerItem = (index) => {
+    if (this.manpowerList.length === 1) {
+      this.manpowerList = [];
+    } else {
+      this.manpowerList.splice(index, 1);
+    }
+    this.setState({ manpowerList: this.manpowerList });
+  }
   displaySizeList = (itemList) => {
     return itemList.map((item, index) => {
       return (<SizePreview index={ index } item={ item } onClose={ this.deleteSizeItem } />);
@@ -336,7 +348,7 @@ resetThenSet(key, list, stateKey, title) {
   }
   displayManPowerList = (itemList) => {
     return itemList.map((item, index) => {
-      return (<ManPowerPreview index={ index } item={ item } onClose={ this.deleteSizeItem } />);
+      return (<ManPowerPreview index={ index } item={ item } onClose={ this.deleteManPowerItem } />);
     });
   }
 
