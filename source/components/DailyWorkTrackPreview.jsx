@@ -8,11 +8,42 @@ import * as CONFIG from '../config/api-config';
 import CustomButton from './CustomButton';
 
 class DailyWorkTrackPreview extends Component {
+    displayPhotos = (item) => {
+      const imgURL = CONFIG.CONTEXT;
+      item.photo_1 = item.disphoto_1? item.disphoto_1 : item.photo_1;
+      item.photo_2 = item.disphoto_2? item.disphoto_2 : item.photo_2;
+      item.photo_3 = item.disphoto_3? item.disphoto_3 : item.photo_3;
+
+      return (<div>
+        {item.photo_1 &&
+        <div className="row">
+          <div className="col-sm-6"><label>Photo 1:</label></div>
+          <div className="col-sm-6 strong"><a target="_blank" href={ `${ imgURL }/${ item.photo_1 }` }><img src={ `${ imgURL }/${ item.photo_1 }` } height="100px" width="200px" /></a></div>
+        </div>
+    }
+        {item.photo_2 &&
+        <div className="row">
+          <div className="col-sm-6"><label>Photo 2:</label></div>
+          <div className="col-sm-6 strong"><a target="_blank" href={ `${ imgURL }/${ item.photo_2 }` }><img src={ `${ imgURL }/${ item.photo_2 }` } height="100px" width="200px" /></a></div>
+        </div>
+    }
+        {item.photo_3 &&
+        <div className="row">
+          <div className="col-sm-6"><label>Photo 3:</label></div>
+          <div className="col-sm-6 strong"><a target="_blank" href={ `${ imgURL }/${ item.photo_3 }` }><img src={ `${ imgURL }/${ item.photo_3 }` } height="100px" width="200px" /></a></div>
+        </div>
+    }
+      </div>);
+    }
     setItemList = (itemList) => {
       return itemList.map((item) => {
         return (
 
-          <div className="hrline">
+          <div className="hrline" style={{paddingTop:"10px"}}>
+            <div className="row">
+              <div className="col-sm-3"><label>WR #</label></div>
+              <div className="col-sm-3 strong">{item.text_wrno}</div>
+            </div>
             <div className="row">
 
               <div className="col-sm-3"><label>Work Sub Division:</label></div>
@@ -39,7 +70,7 @@ class DailyWorkTrackPreview extends Component {
               <div className="col-xs-3">Set <span className="strong">{item.cset}</span></div>
             </div>
                     }
-
+            {this.displayPhotos(item)}
 
           </div>
 
@@ -58,7 +89,7 @@ class DailyWorkTrackPreview extends Component {
         // const subdivisionTitle = getDetailsWithMatchedKeyObject(subdivid, curState.subItem, 'itemId', 'itemName');
         return (
 
-          <div className="hrline">
+          <div className="hrline" style={{paddingTop:"10px"}}>
 
             <div className="row">
               <div className="col-sm-3"><label>Team/Type Worker:</label></div>
@@ -105,7 +136,7 @@ class DailyWorkTrackPreview extends Component {
         // const subdivisionTitle = getDetailsWithMatchedKeyObject(subdivid, curState.subItem, 'itemId', 'itemName');
         return (
 
-          <div className="hrline">
+          <div className="hrline" style={{paddingTop:"10px"}}>
 
 
             <div className="row">
@@ -174,17 +205,11 @@ class DailyWorkTrackPreview extends Component {
               <div className="col-sm-6"><label>Base Supervisor:</label></div>
               <div className="col-sm-6 strong">{curState.text_basesupervisor}</div>
             </div>
-            <div className="row">
+            <div className="row hrline">
               <div className="col-sm-6"><label>Field Supervisor:</label></div>
               <div className="col-sm-6 strong">{curState.text_supervisor}</div>
             </div>
-            {curState.cType == 1 &&
-            <div className="row">
-              <div className="col-sm-6"><label>WR #</label></div>
-              <div className="col-sm-6 strong">{curState.WRNOTitle || curState.text_wrno}</div>
-            </div>
 
-            }
             {curState.cType == 1 && curState.itemList &&
                    this.setItemList(curState.itemList)
            }
@@ -198,24 +223,7 @@ class DailyWorkTrackPreview extends Component {
               {this.setMaterialList(curState.materialList, curState)}
             </div>
             }
-            {curState.photo_1 &&
-            <div className="row">
-              <div className="col-sm-6"><label>Photo 1</label></div>
-              <div className="col-sm-6 strong"><a href={ `${ imgURL }/${ curState.photo_1 }` } target="_blank"><img src={ `${ imgURL }/${ curState.photo_1 }` } height="100px" width="200px" /></a></div>
-            </div>
-            }
-            {curState.photo_2 &&
-            <div className="row">
-              <div className="col-sm-6"><label>Photo 2</label></div>
-              <div className="col-sm-6 strong"><a href={ `${ imgURL }/${ curState.photo_2 }` } target="_blank"><img src={ `${ imgURL }/${ curState.photo_2 }` } height="100px" width="200px" /></a></div>
-            </div>
-             }
-            {curState.photo_3 &&
-            <div className="row">
-              <div className="col-sm-6"><label>Photo 3</label></div>
-              <div className="col-sm-6 strong"><a href={ `${ imgURL }/${ curState.photo_3 }` } target="_blank"><img src={ `${ imgURL }/${ curState.photo_3 }` } height="100px" width="200px" /></a></div>
-            </div>
-              }
+            {this.displayPhotos(curState)}
             <div className="row">
               <div className="col-sm-6"><label>Mat.Misuse</label></div>
               <div className="col-sm-6 strong">{(curState.matMisuse == 1) ? 'Yes' : 'No'}</div>

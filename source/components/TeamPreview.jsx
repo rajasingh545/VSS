@@ -9,7 +9,7 @@ export default class TeamPreview extends Component {
     return (
       <Alert bsStyle="success" onDismiss={ () => onClose(index) } key={ index }>
         <div>
-          {item.text_team}, Worker Count: {item.workerCount}, In Time: {item.inTime}-Out Time:{item.outTime}
+          {item.text_team}, Worker Count: {item.workerCount}, In Time: {item.inTime}-Out Time:{item.outTime} 
         </div>
       </Alert>);
   }

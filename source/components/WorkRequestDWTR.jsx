@@ -104,6 +104,7 @@ export default class WorkRequestDWTR extends Component {
       if (this.validateWorkRequestForm() === true) {
         const list = {
           uniqueId: this.state.uniqueId,
+          wr_no: this.state.wrno,
           value_subdivision: this.state.subdivision,
           text_subdivision: this.state.subdivision_text,
           L: this.state.L,

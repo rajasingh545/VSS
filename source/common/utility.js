@@ -54,15 +54,18 @@ export function getDetailsWithMatchedKey2(id, lib, key, returnKey) {
 }
 
 export function getDetailsWithMatchedKeyObject(id, lib, key, returnKey) {
-  let returnValue = '';
+  const returnValue = '';
   if (lib) {
-    for (let k in lib) {
-      const obj = lib[k];
-      console.log("==>", obj[0][returnKey], id, obj[0][key])
-      if (obj[0][key] == id) {
-        returnValue = obj[0][returnKey];
+    
+    for (const k in lib) { // eslint-disable-next-line eqeqeq
+      const obj = lib[k].filter((item) => { // eslint-disable-next-line eqeqeq
+        return (item[key] == id);
+      });
+
+      if (obj[0] && obj[0][returnKey]) {
+        return obj[0][returnKey];
       }
-    };
+    }
   }
   return returnValue;
 }

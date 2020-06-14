@@ -1,18 +1,11 @@
 /* Module dependencies */
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { connect } from 'react-redux';
-import Dropdown from '../components/Dropdown';
-import CustomButton from '../components/CustomButton';
 import DailyWorkTrackPreview from '../components/DailyWorkTrackPreview';
-import CustInput from '../components/CustInput';
 import baseHOC from './baseHoc';
-import TimeField from '../components/TimePicker';
-import { ToastContainer, toast } from 'react-toastify';
-import { requestDetails, requestPost, workRequestPost, listigDetails, clearListing } from 'actions/workArrangement.actions';
-import { Modal } from 'react-bootstrap';
+import { requestDetails, workRequestPost } from 'actions/workArrangement.actions';
 import { getDetailsWithMatchedKey2, getDetailsWithMatchedKeyObject } from '../common/utility';
-import * as API from '../config/api-config';
+
 
 @connect(state => ({
   loading: state.request.get('loadingListing'),
@@ -161,6 +154,7 @@ class DWTRPreview extends React.Component {
         photo_2: requestDet.photo_2,
         photo_3: requestDet.photo_3,
         uniqueId: requestDet.uniqueId,
+        remarks: requestDet.remarks,
 
       });
       if (requestDet.type == 1) {
@@ -172,28 +166,26 @@ class DWTRPreview extends React.Component {
       }
       // console.log("==",requestItemsArr);
 
-      console.log("==>", requestDet)
 
       setTimeout(() => {
-      requestMatlistArr = this.populateMaterialText(requestMatlistArr, this.state.items);
-      requestSizeListArr = this.populateTeamText(requestSizeListArr, this.state.items);
+        requestMatlistArr = this.populateMaterialText(requestMatlistArr, this.state.items);
+        requestSizeListArr = this.populateTeamText(requestSizeListArr, this.state.items);
 
-    //   this.itemList = requestItemsArr;
-      this.materialList = requestMatlistArr;
-      this.sizeList = requestSizeListArr;
-      this.teamList = requestSizeListArr;
-    //   this.state.itemList = requestItemsArr;
-      this.state.manpowerList = requestMatlistArr;
-      this.state.materialList = requestMatlistArr;
-      this.state.sizeList = requestSizeListArr;
-      this.state.teamList = requestSizeListArr;
+        this.itemList = this.populateItemText(requestItemsArr, requestDet);
+        this.materialList = requestMatlistArr;
+        this.sizeList = requestSizeListArr;
+        this.teamList = requestSizeListArr;
+        //   this.state.itemList = requestItemsArr;
+        this.state.manpowerList = requestMatlistArr;
+        this.state.materialList = requestMatlistArr;
+        this.state.sizeList = requestSizeListArr;
+        this.state.teamList = requestSizeListArr;
 
-    //   this.setState({itemList: requestItemsArr});
-      this.setState({manpowerList: requestMatlistArr});
-      this.setState({teamList: requestSizeListArr});
+        this.setState({ itemList: this.itemList });
+        this.setState({ manpowerList: requestMatlistArr });
+        this.setState({ teamList: requestSizeListArr });
 
-    //   this.setState({ subItem: this.state.items[requestItemsArr.] });
-
+        //   this.setState({ subItem: this.state.items[requestItemsArr.] });
       }, 1000);
     }
   }
@@ -201,19 +193,22 @@ populateItemText = (requestItemsArr, requestDet) => {
   const items = [];
   if (this.props.requestDet && this.props.requestDet.items) {
     requestItemsArr.map((item) => {
-      const subitem = this.props.requestDet.items[requestDet.workRequestId];
-      const subdivisionTitle = getDetailsWithMatchedKey2(item.subDivisionId, subitem, 'itemId', 'itemName');
+      const subdivisionTitle = getDetailsWithMatchedKeyObject(item.subDivisionId, this.state.items, 'itemId', 'itemName');
       const statusTitle = getDetailsWithMatchedKey2(item.status, this.state.workStatus, 'id', 'value');
       // let subdivisiontype = getDetailsWithMatchedKey2(item.subDivisionId, subitem, "itemId", "type");
 
       const obj = {
         ...item,
+        text_wrno: item.WR_text,
         text_subdivision: subdivisionTitle,
         text_workstatus: statusTitle,
         H: item.height,
         W: item.width,
         L: item.length,
         set: item.setcount,
+        photo_1: item.photo_1,
+        photo_2: item.photo_2,
+        photo_3: item.photo_3,
       };
       items.push(obj);
     });
@@ -227,7 +222,7 @@ populateMaterialText = (requestMatlistArr, subitem) => {
   requestMatlistArr.map((item) => {
     const materialTitle = getDetailsWithMatchedKey2(item.material, this.state.materials, 'id', 'value');
     const subdivisionTitle = getDetailsWithMatchedKeyObject(item.subDevisionId, subitem, 'itemId', 'itemName');
-    
+
     const obj = {
       ...item,
       text_materials: materialTitle,
@@ -249,7 +244,7 @@ populateTeamText= (requestSizeListArr, subitem) => {
   requestSizeListArr.map((item) => {
     const teamTitle = getDetailsWithMatchedKey2(item.teamId, this.state.team, 'teamid', 'teamName');
     const subdivisionTitle = getDetailsWithMatchedKeyObject(item.subDevisionId, subitem, 'itemId', 'itemName');
-   
+
     const obj = {
       ...item,
       text_team: teamTitle,
@@ -277,13 +272,16 @@ requestItems = () => {
 
   /* Render */
 render() {
-  const { headerTitle } = this.state;
 
   return (
     <div className="container work-arr-container">
 
 
-      <DailyWorkTrackPreview curState={ this.state } userType={ this.props.userType } history={ this.props.history } />
+      <DailyWorkTrackPreview
+        curState={ this.state }
+        userType={ this.props.userType }
+        history={ this.props.history }
+      />
 
 
     </div>

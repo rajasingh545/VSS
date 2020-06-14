@@ -256,15 +256,13 @@ resetThenSet(key, list, stateKey, title) {
     const { dispatch } = this.props;
 
     const formValidation = this.validateForm();
-    // this.uploadImages();
-    // console.log("validatiing form===", formValidation);
+    
     if (formValidation == true) {
       this.state.requestCode = 17;
       this.state.listingstatus = status;
 
-      console.log("===>", this.state)
       dispatch(workRequestPost(this.state));
-      // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
+      
       toast.success('DWTR Created Successfully', { autoClose: 3000 });
 
       setTimeout(() => {
@@ -325,7 +323,6 @@ resetThenSet(key, list, stateKey, title) {
 
   addTeam = (teamList) => {
     this.teamList.push(teamList);
-    console.log("==>", this.teamList)
     this.setState({ teamList: this.teamList });
     this.displayManpowerPopup();
   }
