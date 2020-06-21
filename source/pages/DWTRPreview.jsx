@@ -5,7 +5,7 @@ import DailyWorkTrackPreview from '../components/DailyWorkTrackPreview';
 import baseHOC from './baseHoc';
 import { requestDetails, workRequestPost } from 'actions/workArrangement.actions';
 import { getDetailsWithMatchedKey2, getDetailsWithMatchedKeyObject } from '../common/utility';
-
+import CustomButton from '../components/CustomButton';
 
 @connect(state => ({
   loading: state.request.get('loadingListing'),
@@ -269,13 +269,21 @@ requestItems = () => {
   }
 }
 
+edit = () => {
+  this.props.history.push(`/DailyWorkTrack/${ this.state.listingId }`);
+}
+
 
   /* Render */
 render() {
-
+  const {  userType } = this.props;
   return (
     <div className="container work-arr-container">
-
+      <br />
+      {userType == 1 &&
+      <div className="col-sm-6"><CustomButton bsStyle="primary" id="draft" type="submit" onClick={ () => this.edit(1) }>Edit</CustomButton> </div>
+           }
+      <br /><br />
 
       <DailyWorkTrackPreview
         curState={ this.state }
