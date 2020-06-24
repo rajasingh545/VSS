@@ -29,6 +29,7 @@ export function getFormattedDate(dat) {
   }${separator}${year}`;
 }
 export function getDetailsWithLib2(listingDet, libArr) {
+  // console.log(listingDet, libArr);
   let obj = {};
   if (libArr) {
     let supervisors = listingDet.addSupervsor.map(id => {
@@ -61,9 +62,38 @@ export function getDetailsWithLib2(listingDet, libArr) {
         "workerName"
       );
     });
+    if (listingDet.workersteamlist.length > 0) {
+      let { team, workers } = libArr,
+        { workersteamlist } = listingDet,
+        newArrar = [];
+      workersteamlist.map(worker => {
+        for (let i = 0; i < workers.length; i++) {
+          if (worker.worker_id === workers[i].workerIdActual) {
+            workers[i].team_id = worker.team_id;
+            workers[i].team_name = worker.team_name;
+            newArrar.push(workers[i]);
+          }
+        }
+      });
+      let emptyArr = team.map(_x => {
+        return getWorkersDetailsByTeam(
+          _x.teamid,
+          _x.teamName,
+          newArrar,
+          "workerName"
+        );
+      });
+      let text = "";
+      emptyArr.map(_x => {
+        if (_x !== undefined) {
+          t += _x;
+        }
+      });
+      obj.workerNames = text;
+    }
+
     obj.supervisor2 = supervisors.join(",");
     obj.workerCount = listingDet.workers.length;
-    obj.workerNames = workerids.join(",");
     obj.workArrangementId = listingDet.workArrangementId;
     obj.Remarks = listingDet.remarks;
     obj.isNew = listingDet.isNew;
@@ -81,6 +111,21 @@ export function getDetailsWithMatchedKey2(id, lib, key, returnKey) {
     });
   }
   return returnValue;
+}
+export function getWorkersDetailsByTeam(tid, tna, nArr, returnKey) {
+  let returnValue = "",
+    nameArr = [];
+  if (nArr) {
+    nArr.map(value => {
+      if (value.team_id == tid && value.team_name == tna) {
+        nameArr.push(value[returnKey]);
+        returnValue = value[returnKey];
+      }
+    });
+  }
+  if (nameArr.length > 0) {
+    return tna + " ( " + nameArr.join() + " ) ";
+  }
 }
 export function getPreviewContent(obj, libArr) {
   let detailsArr = {
