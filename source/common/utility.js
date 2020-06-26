@@ -86,7 +86,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
       let text = "";
       emptyArr.map(_x => {
         if (_x !== undefined) {
-          t += _x;
+          text += " + " + _x;
         }
       });
       obj.workerNames = text;
@@ -124,7 +124,7 @@ export function getWorkersDetailsByTeam(tid, tna, nArr, returnKey) {
     });
   }
   if (nameArr.length > 0) {
-    return tna + " ( " + nameArr.join() + " ) ";
+    return tna + ": " + nameArr.length + "pax  ( " + nameArr.join() + " ) ";
   }
 }
 export function getPreviewContent(obj, libArr) {

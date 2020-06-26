@@ -56,8 +56,8 @@ class PreviewTemplate extends React.Component {
           &amp; {detailsArr.supervisor2}{" "}
           {detailsArr.workerCount > 0 && (
             <span>
-              +{detailsArr.workerCount}pax (
-              {truncate(detailsArr.workerNames, 100)})
+              {/* +{detailsArr.workerCount}pax */}
+              {truncate(detailsArr.workerNames, 100)}
             </span>
           )}
         </span>
