@@ -4,6 +4,9 @@ import PreviewTemplate from "../components/PreviewTemplate";
 import Dropdown from "../components/Dropdown";
 import { DOMAIN_NAME } from "../config/api-config";
 import baseHOC from "./baseHoc";
+// import Collapsible from "react-collapsible";
+import CollapsiblePanel from "../components/CollapsiblePanel";
+import "./style.css";
 import {
   requestDetails,
   requestPost,
@@ -57,7 +60,7 @@ export default class AttendanceList extends React.Component {
     const { requestDet } = nextProps;
     this.setState({ listingDetails: nextProps.listingDetails });
     if (requestDet) {
-      this.setState({ requestDet: requestDet });
+      this.setState({ requestDet: requestDet }, () => this.prdata(this.state));
     }
   }
   componentWillUnmount() {
@@ -72,15 +75,16 @@ export default class AttendanceList extends React.Component {
   };
 
   Listings = listings => {
-    let { listingDetails, requestDet } = this.props;
-    let response = "";
-    let requestDetails = {};
+    let { listingDetails, requestDet } = this.props,
+      response = "",
+      requestDetails = {};
 
     if (listingDetails && listingDetails.length > 0) {
       response = listings.map((data, index) => {
         // requestDetails = getDetailsWithLib2(data, this.state.requestDet);
-
-        let projectName = "";
+        let projectName = "",
+          projectStartTime = "",
+          projectEndTime = "";
         if (this.state.requestDet) {
           projectName = getDetailsWithMatchedKey2(
             data.projectId,
@@ -89,6 +93,24 @@ export default class AttendanceList extends React.Component {
             "projectName"
           );
         }
+        this.state.requestDet.projects.map(project => {
+          if (data.projectId == project.projectId) {
+            projectStartTime = project.startTime;
+            projectEndTime = project.endTime;
+          }
+        });
+        // let { supervisorlist, workerlist } = data.attendancelist,
+        //   { supervisorsList, availableWorkers, team } = requestDet;
+        // console.log(
+        //   supervisorlist,
+        //   workerlist,
+        //   supervisorsList,
+        //   availableWorkers,
+        //   team
+        // );
+        //   if (supervisorlist.length > 0) {
+
+        //   }
         // let createdby = getDetailsWithMatchedKey2(data.createdBy, this.state.requestDet.projects, "projectId", "projectName");
         let createdon = moment(data.createdOn);
         let createdondate = createdon.format("DD/MM/YYYY");
@@ -101,7 +123,14 @@ export default class AttendanceList extends React.Component {
               this.redirectView(data.workArrangementId, data.projectId)
             }
           >
-            <strong>{projectName}</strong> created on {createdondate}
+            <strong>{projectName}</strong> created on {createdondate}{" "}
+            <label>
+              {" "}
+              Start Time: {projectStartTime} / End Time: {projectEndTime}{" "}
+              Supervisor:
+              (Amirthalingam-06:41:00-00:00:00,T.Arulmurugan-06:41:00-00:00:00)
+              Worker: CW (Vellaisamy-06:41:00-00:00:00,Babu-06:41:00-00:00:00)
+            </label>
           </div>
         );
       });
@@ -151,6 +180,109 @@ export default class AttendanceList extends React.Component {
     this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
     this.handleRequestType(e.format("YYYY/MM/DD"));
   };
+  prdata = state => {
+    let { projects, availableWorkers, supervisorsList } = state.requestDet,
+      { listingDetails } = state;
+    // console.log("predata 1", availableWorkers, supervisorsList);
+    if (Array.isArray(listingDetails) && listingDetails.length > 0) {
+      listingDetails.map((wl, i) => {
+        wl.index = i;
+        wl.createdOn = moment(wl.createdOn).format("YYYY/MM/DD");
+        for (let i = 0; i < projects.length; i++) {
+          if (wl.projectId == projects[i].projectId) {
+            wl.projectName = projects[i].projectName;
+            wl.startTime = projects[i].startTime;
+            wl.endTime = projects[i].endTime;
+            wl.Title =
+              projects[i].projectName +
+              " -  Created on: " +
+              wl.createdOn +
+              " - Start Time: (" +
+              wl.startTime +
+              ") - End Time: (" +
+              wl.endTime +
+              ")";
+          }
+        }
+        wl.supervisorlist = wl.attendancelist.supervisorlist;
+        wl.workerlist = wl.attendancelist.workerlist;
+        wl.finalRenderList = [];
+        wl.paragraph = "";
+        for (let j = 0; j < wl.supervisorlist.length; j++) {
+          for (let k = 0; k < supervisorsList.length; k++) {
+            if (wl.supervisorlist[j].workerId == supervisorsList[k].userId) {
+              let jsonValue = {
+                name: supervisorsList[k].Name,
+                inTime: wl.supervisorlist[j].inTime,
+                outTime: wl.supervisorlist[j].outTime
+              };
+              if (wl.supervisorlist[j].reason == 1) {
+                jsonValue.reason = "MC";
+              } else if (wl.supervisorlist[j].reason == 2) {
+                jsonValue.reason = "Leave";
+              } else if (wl.supervisorlist[j].reason == 3) {
+                jsonValue.reason = "Absent";
+              } else if (wl.supervisorlist[j].reason == 4) {
+                jsonValue.reason = "Home Leave";
+              } else if (wl.supervisorlist[j].reason == 5) {
+                jsonValue.reason = "Late";
+              } else {
+                jsonValue.reason = "Others";
+              }
+              wl.paragraph +=
+                "<p>  Name: " +
+                supervisorsList[k].Name +
+                " -  In Time: " +
+                wl.supervisorlist[j].inTime +
+                " -  Out Time: " +
+                wl.supervisorlist[j].outTime +
+                " -  Reason: " +
+                jsonValue.reason +
+                "</p> </br> ";
+              wl.finalRenderList.push(jsonValue);
+            }
+          }
+        }
+        for (let j = 0; j < wl.workerlist.length; j++) {
+          for (let k = 0; k < availableWorkers.length; k++) {
+            if (
+              wl.workerlist[j].workerId == availableWorkers[k].workerIdActual
+            ) {
+              let jsonValue = {
+                name: availableWorkers[k].workerName,
+                inTime: wl.workerlist[j].inTime,
+                outTime: wl.workerlist[j].outTime
+              };
+              if (wl.workerlist[j].reason == 1) {
+                jsonValue.reason = "MC";
+              } else if (wl.workerlist[j].reason == 2) {
+                jsonValue.reason = "Leave";
+              } else if (wl.workerlist[j].reason == 3) {
+                jsonValue.reason = "Absent";
+              } else if (wl.workerlist[j].reason == 4) {
+                jsonValue.reason = "Home Leave";
+              } else if (wl.workerlist[j].reason == 5) {
+                jsonValue.reason = "Late";
+              } else {
+                jsonValue.reason = "Others";
+              }
+              wl.paragraph +=
+                "<p>  Name: " +
+                availableWorkers[k].workerName +
+                " -  In Time: " +
+                wl.workerlist[j].inTime +
+                " -  Out Time: " +
+                wl.workerlist[j].outTime +
+                " -  Reason: " +
+                jsonValue.reason +
+                "</p> </br> ";
+              wl.finalRenderList.push(jsonValue);
+            }
+          }
+        }
+      });
+    }
+  };
   setPreview = () => {
     let contArr = [];
     this.selectedIds.map(ind => {
@@ -195,7 +327,6 @@ export default class AttendanceList extends React.Component {
     const { listingDetails, requestType } = this.state;
     const { loading } = this.props;
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
-    // console.log("this.props.", userType);
     return (
       <div>
         <ToastContainer autoClose={8000} />
@@ -217,14 +348,20 @@ export default class AttendanceList extends React.Component {
           </div>
           <div className="col-xs-2">&nbsp;</div>
         </div>
-
         <div className="padding15" id="divRequestListing">
           {loading == true && (
             <div className="center-div">
               <img src={loadingurl} />
             </div>
           )}
-          {listingDetails && loading == false && this.Listings(listingDetails)}
+
+          {listingDetails && loading == false && (
+            <CollapsiblePanel
+              listingDetails={listingDetails}
+              redirectView={this.redirectView}
+            />
+          )}
+          {/* {listingDetails && loading == false && this.Listings(listingDetails)} */}
         </div>
         <div>
           {this.state.showSubButton && (

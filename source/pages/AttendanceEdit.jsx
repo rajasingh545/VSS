@@ -1,5 +1,6 @@
 /* Module dependencies */
 import React from "react";
+import { withRouter } from "react-router-dom";
 import Dropdown from "../components/Dropdown";
 import CustomButton from "../components/CustomButton";
 import { connect } from "react-redux";
@@ -30,10 +31,17 @@ class AttedenceEdit extends React.Component {
     super(props);
     this.state = {
       selectedOption: "option1",
-      projectTitle: "Select Project",
+      projectTitle: "",
+      projectName: "",
+      startTime: "",
+      endTime: "",
       showSubButton: false,
       team: [],
-      startDate1: moment()
+      startDate1: moment(),
+      workersList: [],
+      supervisorsList: [],
+      projectId: "",
+      projects: []
     };
     this.selectedIds = [];
     this.timeValuesArr = [];
@@ -47,7 +55,7 @@ class AttedenceEdit extends React.Component {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
-    dispatch(requestDetails(this.state));
+    // dispatch(requestDetails(this.state));
     //get details of listing
     if (
       this.props.match.params &&
@@ -63,12 +71,13 @@ class AttedenceEdit extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
+    let projectId = "";
     if (nextProps.requestDet) {
       if (this.props.userType == 1) {
         this.state.projects = nextProps.requestDet.projects;
       }
       if (this.props.userType == 5) {
-        let projectId = this.props.project;
+        projectId = this.props.project;
         let projectName = getDetailsWithMatchedKey2(
           projectId,
           nextProps.requestDet.projects,
@@ -81,19 +90,24 @@ class AttedenceEdit extends React.Component {
       this.state.workers = nextProps.requestDet.workers;
       this.state.team = nextProps.requestDet.team;
     }
-
-    if (nextProps.listingDetails) {
-      this.setState({
-        workersList: nextProps.listingDetails.workerlist,
-        supervisorsList: nextProps.listingDetails.supervisorlist
-      });
-      if (nextProps.listingDetails[0]) {
-        this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
+    if (typeof nextProps.listingDetails === "object") {
+      if (
+        nextProps.listingDetails.workerlist &&
+        Array.isArray(nextProps.listingDetails.workerlist)
+      ) {
+        this.setState({
+          workersList: nextProps.listingDetails.workerlist,
+          supervisorsList: nextProps.listingDetails.supervisorlist
+        });
+        if (nextProps.listingDetails[0]) {
+          this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
+        }
       }
     }
   }
   getWorkers = (key, list, stateKey) => {
     const { dispatch } = this.props;
+    dispatch(requestDetails(this.state));
     this.state.requestCode = 6;
     this.state.projectId = key;
     this.selectedIds = [];
@@ -320,163 +334,124 @@ class AttedenceEdit extends React.Component {
   setRemarks = e => {
     this.setState({ remarks: e.target.value });
   };
+  getTime = (projects, name, pid) => {
+    projects.map(element => {
+      if (element.projectId === pid) {
+        return element[name];
+      }
+    });
+  };
   /* Render */
   render() {
-    const {
-      headerTitle,
-      workersList,
-      supervisorsList,
-      projectId,
-      projects
-    } = this.state;
-    let cDate = getCurrentDate();
+    // eslint-disable-next-line no-unused-vars
+    const { workersList, supervisorsList, projectId, projects } = this.state;
+    // let { supervisorlist, workerlist } = this.props.listingDetails;
+    // let { projects } = this.props.requestDet;
+    // let cDate = getCurrentDate();
     // let cTime = getCurrentTime();
-    let readonly = false,
-      selectedProject = {},
-      startTime = "",
-      endTime = "";
-    selectedProject = projects.find(element => element.projectId === projectId);
-    startTime = selectedProject.startTime;
-    endTime = selectedProject.endTime;
-    if (this.props.userType == 5) {
-      readonly = true;
+    // eslint-disable-next-line one-var
+    // let readonly = false;
+    let startTime = "",
+      endTime = "",
+      projectTitle = "";
+    if (this.props.match.params.pid && projectId && projects.length > 0) {
+      projects.map(element => {
+        if (element.projectId === projectId) {
+          startTime = element.startTime;
+          endTime = element.endTime;
+          projectTitle = element.projectName;
+        }
+      });
+      // selectedProject = projects.find(element => element.projectId === projectId);
     }
-    let projectTitle = "";
-    if (this.props.match.params.pid && this.props.requestDet) {
-      projectTitle = getDetailsWithMatchedKey2(
-        this.props.match.params.pid,
-        this.props.requestDet.projects,
-        "projectId",
-        "projectName"
-      );
-    }
-
+    // if (this.props.userType == 5) {
+    //   readonly = true;
+    // }
+    console.log(this.state);
+    // eslint-disable-next-line no-unreachable
     return (
       <div className="work-arr-container">
         <br />
         <ToastContainer autoClose={8000} />
-        {/*<div className="row">
-        <div className="col-sm-3"><label>Date</label></div>
-
-        <div className="col-sm-3"> <DatePicker
-                      selected={this.state.startDate1}
-
-                      className=" form-control"
-                      isClearable={false}
-                      onChange={this.onStartDateChange}
-                      name="startDate"
-                      dateFormat="DD-MM-YYYY"
-                      locale="UTC"
-                      readOnly={readonly}
-                  /></div>
-
-    </div>*/}
         <div className="row">
-          {startTime !== "" && endTime !== "" && (
-            <div className="col-sm-12" style={{ textAlign: "right" }}>
-              <label>
-                Start Time: {startTime} / End Time: {endTime}
-              </label>
-            </div>
-          )}
+          <div className="col-sm-12" style={{ textAlign: "right" }}>
+            <label>
+              Start Time: {startTime} / End Time: {endTime}
+            </label>
+          </div>
           <div className="col-sm-3">
             <label>Site</label>
           </div>
           <div className="col-sm-6">
-            {/*<Dropdown
-                  title={this.state.projectTitle}
-                  name="projectName"
-                  keyName="projectId"
-                  stateId="projects"
-                  list={this.state.projects}
-                  value={this.state.value_projects}
-                  resetThenSet={this.getWorkers}
-         />*/}
             <strong>{projectTitle}</strong>
           </div>
         </div>
         {/* map mutiple workers 8*/}
         <div className="companyWorksList">
-          <div className="row">
-            <div className="col-xs-1" style={{ width: "10px" }}>
-              <span>&nbsp;</span>
-            </div>
-            <div className="col-xs-3 ">
-              <span>
-                <strong>Supervisors</strong>
-              </span>
-            </div>
+          {supervisorsList.length > 0 ? (
+            <div>
+              <div className="row">
+                <div className="col-xs-1" style={{ width: "10px" }}>
+                  <span>&nbsp;</span>
+                </div>
+                <div className="col-xs-3 ">
+                  <span>
+                    <strong>Supervisors</strong>
+                  </span>
+                </div>
 
-            <div className="col-xs-2">
-              <span>
-                {/* &nbsp;<input type="radio" value="option1"
-                        checked={this.state.selectedOption === 'option1'}
-    onChange={this.handleOptionChange} />*/}
-                &nbsp;IN
-              </span>
-            </div>
-            <div className="col-xs-2">
-              <span>
-                {/*<input type="radio" value="option2"
-                        checked={this.state.selectedOption === 'option2'}
-                        onChange={this.handleOptionChange} />*/}
-                &nbsp;OUT
-              </span>
-            </div>
-            <div className="col-xs-3">
-              <span>
-                {/*<input type="radio" value="option2"
-                        checked={this.state.selectedOption === 'option2'}
-                        onChange={this.handleOptionChange} />*/}
-                &nbsp;Reason
-              </span>
-            </div>
-          </div>
+                <div className="col-xs-2">
+                  <span>&nbsp;IN</span>
+                </div>
+                <div className="col-xs-2">
+                  <span>&nbsp;OUT</span>
+                </div>
+                <div className="col-xs-3">
+                  <span>&nbsp;Reason</span>
+                </div>
+              </div>
 
-          {supervisorsList && this.renderWorkers(supervisorsList)}
-          {supervisorsList && supervisorsList.length > 0 && this.teamDisplay()}
-          <br />
-          <div className="row">
-            <div className="col-xs-1" style={{ width: "10px" }}>
-              <span>&nbsp;</span>
+              {this.renderWorkers(supervisorsList)}
+              {/* {this.teamDisplay()} */}
             </div>
-            <div className="col-xs-3 ">
-              <span>
-                <strong>Workers</strong>
-              </span>
-            </div>
+          ) : (
+            ""
+          )}
 
-            <div className="col-xs-2">
-              <span>
-                {/* &nbsp;<input type="radio" value="option1"
-                        checked={this.state.selectedOption === 'option1'}
-    onChange={this.handleOptionChange} />*/}
-                &nbsp;IN
-              </span>
-            </div>
-            <div className="col-xs-2">
-              <span>
-                {/*<input type="radio" value="option2"
-                        checked={this.state.selectedOption === 'option2'}
-                        onChange={this.handleOptionChange} />*/}
-                &nbsp;OUT
-              </span>
-            </div>
-            <div className="col-xs-3">
-              <span>
-                {/*<input type="radio" value="option2"
-                        checked={this.state.selectedOption === 'option2'}
-                        onChange={this.handleOptionChange} />*/}
-                &nbsp;Reason
-              </span>
-            </div>
-          </div>
+          {workersList.length > 0 ? (
+            <div>
+              <br></br>
+              <div className="row">
+                <div className="col-xs-1" style={{ width: "10px" }}>
+                  <span>&nbsp;</span>
+                </div>
+                <div className="col-xs-3 ">
+                  <span>
+                    <strong>Workers</strong>
+                  </span>
+                </div>
 
-          {workersList && this.renderWorkers(workersList)}
-          {workersList && workersList.length > 0 && this.teamDisplay()}
+                <div className="col-xs-2">
+                  <span>&nbsp;IN</span>
+                </div>
+                <div className="col-xs-2">
+                  <span>&nbsp;OUT</span>
+                </div>
+                <div className="col-xs-3">
+                  <span>&nbsp;Reason</span>
+                </div>
+              </div>
+
+              {this.renderWorkers(workersList)}
+              {this.teamDisplay()}
+            </div>
+          ) : (
+            ""
+          )}
+
           <br />
         </div>
-        <div className="row">
+        {/* <div className="row">
           <div className="col-sm-3">
             <label>Remark</label>
           </div>
@@ -488,27 +463,7 @@ class AttedenceEdit extends React.Component {
               value={this.state.remarks}
             />
           </div>
-        </div>
-        {/* map mutiple site name with count of workers
-    <div className="row">
-        <div className="col-xs-6"><label>Site Name1</label></div>
-          <div className="col-xs-6">
-          <TimeField colon=":" className="width100" onChange={this.onTimeChange}/>
-        </div>
-
-    </div>
-    <div className="row">
-    <div className="col-xs-6"><label>Site Name2</label></div>
-          <div className="col-xs-6">
-          <TimeField colon=":" onChange={this.onTimeChange}/>
-        </div>
-    </div>
-    <div className="row">
-    <div className="col-xs-6"><label>Site Name3</label></div>
-          <div className="col-xs-6">
-          <TimeField colon=":" onChange={this.onTimeChange}/>
-        </div>
-    </div>*/}
+        </div> */}
         <br />
         {this.state.showSubButton === true && (
           <div className="row">
@@ -541,4 +496,4 @@ class AttedenceEdit extends React.Component {
   }
 }
 
-export default AttedenceEdit;
+export default withRouter(AttedenceEdit);
