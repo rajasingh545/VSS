@@ -29,22 +29,22 @@ loading: state.request.get('loadingListing'),
 }))
 @baseHOC
 export default class AttendanceList extends React.Component {
- 
+
   constructor(props) {
     super(props);
-   
+
     this.state = {
         requestCode:2,
         requestStatus:2,
         projectId:"",
-       
+
         startDate1: moment(),
         startDate: moment().format("YYYY/MM/DD"),
         show:false,
         modalCont : '',
         requestTypeTitle : "Select Status"
     };
-    
+
     this.selectedIds = [];
     }
   componentWillMount(){
@@ -52,12 +52,12 @@ export default class AttendanceList extends React.Component {
 
     dispatch(requestPostClear());
     this.state.userType = this.props.userType;
-    this.state.userId = this.props.userId;    
+    this.state.userId = this.props.userId;
     //  if(!this.props.requestDet){
       dispatch(requestDetails(this.state));
     //  }
-    
-    
+
+
   }
   componentWillReceiveProps(nextProps){
     const { requestDet } = nextProps;
@@ -65,25 +65,23 @@ export default class AttendanceList extends React.Component {
     if (requestDet) {
       this.setState({ requestDet: requestDet }, () => this.prdata(this.state));
     }
-    
+
   }
   componentWillUnmount(){
     const { dispatch } = this.props;
     dispatch(clearListing());
   }
   componentDidMount(){
-    
-    
+
+
       this.handleRequestType('');
-    
-  
+
+
   }
-  redirectView = (requestId, pid) =>{        
+  redirectView = (requestId, pid) =>{
       this.props.history.push('/Attendance/'+requestId+"/"+pid);
-                  
+
   }
-  
-  
 
   Listings = listings => {
     let { listingDetails, requestDet } = this.props,
@@ -163,7 +161,7 @@ export default class AttendanceList extends React.Component {
     return response;
   }
   onCheckBoxClickCallBack = (id, checked)=>{
-    
+
     if(checked === true){
      this.selectedIds.push(id);
     }
@@ -292,22 +290,17 @@ export default class AttendanceList extends React.Component {
   };
 
 
-  });
-  this.setState({show:true, modalCont:contArr.join("")});
-  
-}
-
   handleRequestType = (date) => {
     const { dispatch, userType, userId} = this.props;
-    
-   
+
+
     this.state.requestCode = 8;
     this.state.userType = userType;
     this.state.userId = userId;
     this.state.startDate = date;
     dispatch(listigDetails(this.state));
   }
-  
+
 setProjectId = (e) =>{
     this.state.projectId = e.target.value;
     this.setState({cboProjects:"0",listingDetails:{}});
@@ -323,11 +316,11 @@ handleSubmit = () =>{
   param.requestCode = 4;
   param.ids = this.selectedIds;
   dispatch(requestPost(param));
-  toast.success("Updated Successfully", { autoClose: 2000 }); 
+  toast.success("Updated Successfully", { autoClose: 2000 });
   setTimeout(()=>{
     this.props.history.push('/Home');
   }, 2000)
-  
+
 }
   render() {
     const { userType, requestDet } = this.props;
@@ -337,19 +330,19 @@ handleSubmit = () =>{
     return (
       <div>
         <ToastContainer autoClose={8000} /><br />
-        
+
         <div className="row">
           <div className="col-xs-8">
             <DatePicker
                       selected={this.state.startDate1}
-                    
+
                       className=" form-control"
                       isClearable={false}
                       onChange={this.onStartDateChange}
                       name="startDate"
                       dateFormat="DD-MM-YYYY"
                       locale="UTC"
-              
+
                   />
                    </div>
                 <div className="col-xs-2">
@@ -372,7 +365,7 @@ handleSubmit = () =>{
           )}
           {/* {listingDetails && loading == false && this.Listings(listingDetails)} */}
         </div>
-        <div>
+
           {this.state.showSubButton && (
             <div className="col-sm-3">
               <br />{" "}
@@ -386,24 +379,23 @@ handleSubmit = () =>{
               </CustomButton>
             </div>
 
-            <Modal show={this.state.show} onHide={this.handleClose}>
+    )}
+        <Modal show={this.state.show} onHide={this.handleClose}>
           <Modal.Header closeButton>
             <Modal.Title><strong>Preview</strong></Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            
-            
+
+
             <div id="showContent" dangerouslySetInnerHTML={{ __html: this.state.modalCont }}></div>
-            
+
           </Modal.Body>
           <Modal.Footer>
           <div className="col-sm-3"> <CustomButton bsStyle="primary" onClick={this.handleSubmit}>Submit</CustomButton></div>
           <div className="col-sm-3"> <CustomButton bsStyle="secondary" onClick={this.handleClose}>Close</CustomButton></div>
           </Modal.Footer>
         </Modal>
-  
+
       </div>
-      
-    );
   }
 }

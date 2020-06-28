@@ -5,21 +5,28 @@ import Dropdown from "../components/Dropdown";
 import CustomButton from "../components/CustomButton";
 import { connect } from "react-redux";
 import baseHOC from "./baseHoc";
-import CustInput from '../components/CustInput';
-import TimeField from '../components/TimePicker';
-import {getCurrentDate, getReasons, getDetailsWithMatchedKey2} from '../common/utility';
-import { requestDetails, requestPost, listigDetails } from 'actions/workArrangement.actions';
-import { ToastContainer, toast } from 'react-toastify';
-import DatePicker from 'react-datepicker';
+import CustInput from "../components/CustInput";
+import TimeField from "../components/TimePicker";
+import {
+  getCurrentDate,
+  getReasons,
+  getDetailsWithMatchedKey2
+} from "../common/utility";
+import {
+  requestDetails,
+  requestPost,
+  listigDetails
+} from "actions/workArrangement.actions";
+import { ToastContainer, toast } from "react-toastify";
+import DatePicker from "react-datepicker";
 import moment from "moment";
 
 @connect(state => ({
-  listingDetails: state.request.get('listingDetails'),
-  requestDet: state.request.get('requestDet'),
+  listingDetails: state.request.get("listingDetails"),
+  requestDet: state.request.get("requestDet")
 }))
 @baseHOC
 class AttedenceEdit extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
@@ -40,13 +47,11 @@ class AttedenceEdit extends React.Component {
     this.timeValuesArr = [];
     this.teamArr = [];
     this.WAId = "";
-    this.resetThenSet = this.resetThenSet.bind(this);   //this is required to bind the dispatch
+    this.resetThenSet = this.resetThenSet.bind(this); //this is required to bind the dispatch
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.reasonsList = getReasons();
-
-  
   }
-  componentWillMount(){
+  componentWillMount() {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
@@ -61,11 +66,9 @@ class AttedenceEdit extends React.Component {
       this.state.requestType = 1;
       //    this.state.projectTitle = getDetailsWithMatchedKey2(this.props.match.params.pid, this.props.requestDet.projects, "projectId", "projectName");
       this.getWorkers(this.props.match.params.pid);
-     }
-     else{
+    } else {
       this.state.requestType = 0;
-     }
-    
+    }
   }
   componentWillReceiveProps(nextProps) {
     let projectId = "";
@@ -84,9 +87,8 @@ class AttedenceEdit extends React.Component {
         this.setState({ projects: [{ projectId, projectName }] });
         this.state.projects = [{ projectId, projectName }];
       }
-      this.state.workers =nextProps.requestDet.workers; 
+      this.state.workers = nextProps.requestDet.workers;
       this.state.team = nextProps.requestDet.team;
-          
     }
     if (typeof nextProps.listingDetails === "object") {
       if (
@@ -102,21 +104,20 @@ class AttedenceEdit extends React.Component {
         }
       }
     }
-  
   }
-  getWorkers = (key, list, stateKey) =>{
+  getWorkers = (key, list, stateKey) => {
     const { dispatch } = this.props;
     dispatch(requestDetails(this.state));
     this.state.requestCode = 6;
     this.state.projectId = key;
     this.selectedIds = [];
-     dispatch(listigDetails(this.state));
+    dispatch(listigDetails(this.state));
     //  this.resetThenSet(key, stateKey);
-  }
-  
-  resetThenSet(id, key){
+  };
+
+  resetThenSet(id, key) {
     let temp = JSON.parse(JSON.stringify(this.state[key]));
-    temp.forEach(item => item.selected = false);
+    temp.forEach(item => (item.selected = false));
     temp[id].selected = true;
     this.setState({
       [key]: temp
@@ -127,163 +128,182 @@ class AttedenceEdit extends React.Component {
       selectedOption: changeEvent.target.value
     });
   }
-  onSubmit = (type) =>{
-    const {dispatch} = this.props;
+  onSubmit = type => {
+    const { dispatch } = this.props;
     let finalValuesArr = [];
-    if(this.selectedIds.length == 0){
+    if (this.selectedIds.length == 0) {
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
     }
-    let error=0;
-    this.selectedIds.map((id)=>{
-      
-
-      if(this.timeValuesArr["in_"+id]){
+    let error = 0;
+    this.selectedIds.map(id => {
+      if (this.timeValuesArr["in_" + id]) {
         finalValuesArr[id] = {
-
-          "IN":this.timeValuesArr["in_"+id]
-        }
+          IN: this.timeValuesArr["in_" + id]
+        };
       }
-      if(this.timeValuesArr["out_"+id]){
+      if (this.timeValuesArr["out_" + id]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
-          "OUT":this.timeValuesArr["out_"+id]
-        }
+          OUT: this.timeValuesArr["out_" + id]
+        };
       }
-      if(this.timeValuesArr["reason_"+id]){
+      if (this.timeValuesArr["reason_" + id]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
-          "reason":this.timeValuesArr["reason_"+id]
-        }
+          reason: this.timeValuesArr["reason_" + id]
+        };
       }
-
-
-
     });
-    if(finalValuesArr.length == 0){
+    if (finalValuesArr.length == 0) {
       toast.error("Please make any one change to submit", { autoClose: 3000 });
       return false;
     }
-    let param={
+    let param = {
       ...this.state,
-      requestCode:7,
+      requestCode: 7,
       finalValuesArr,
-      WAId:this.WAId,
-      type,
-      
-
-    }
-    
+      WAId: this.WAId,
+      type
+    };
 
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
-  }
-  onCheckBoxClick = (e)=>{
+  };
+  onCheckBoxClick = e => {
     e.stopPropagation();
     let id = e.target.value;
     let checked = e.target.checked;
-  
-    if(checked === true){
+
+    if (checked === true) {
       this.selectedIds.push(id);
-     }
-     else{
-       let index = this.selectedIds.indexOf(id);
-       this.selectedIds.splice(index, 1);
-     }
-     if(this.selectedIds.length > 0){
-       this.setState({showSubButton:true});
-     }else{
-       this.setState({showSubButton:false});
-     }
-
-  }
-  setReason = (key, list, stateKey) =>{
+    } else {
+      let index = this.selectedIds.indexOf(id);
+      this.selectedIds.splice(index, 1);
+    }
+    if (this.selectedIds.length > 0) {
+      this.setState({ showSubButton: true });
+    } else {
+      this.setState({ showSubButton: false });
+    }
+  };
+  setReason = (key, list, stateKey) => {
     this.timeValuesArr[stateKey] = key;
-  }
-  onTimeChange = (el)=>{
-
+  };
+  onTimeChange = el => {
     this.timeValuesArr[el.name] = el.value;
-  }
-  renderWorkers = (workers)=>{
-    if(workers.length > 0){
-      this.teamArr= [];
-      return workers.map((worker, ind)=>{
-        let workerName= getDetailsWithMatchedKey2(worker.workerId, this.state.workers, "workerIdActual", "workerName");
-        let InName= "in_"+worker.workerId;
-        let OutName= "out_"+worker.workerId;
-        let reasonId = "reason_"+worker.workerId;
+  };
+  renderWorkers = workers => {
+    if (workers.length > 0) {
+      this.teamArr = [];
+      return workers.map((worker, ind) => {
+        let workerName = getDetailsWithMatchedKey2(
+          worker.workerId,
+          this.state.workers,
+          "workerIdActual",
+          "workerName"
+        );
+        let InName = "in_" + worker.workerId;
+        let OutName = "out_" + worker.workerId;
+        let reasonId = "reason_" + worker.workerId;
         this.WAId = worker.workArrangementId;
-        let workerTeam= worker.workerTeam
-        
-        let title = "Select.."
-        if(worker.reason != 0){
-          title = getDetailsWithMatchedKey2(worker.reason, this.reasonsList, "id", "reason");
+        let workerTeam = worker.workerTeam;
+
+        let title = "Select..";
+        if (worker.reason != 0) {
+          title = getDetailsWithMatchedKey2(
+            worker.reason,
+            this.reasonsList,
+            "id",
+            "reason"
+          );
         }
-        if(this.teamArr[workerTeam]) {
-          
-          this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam])+1
-        }else{
-         
+        if (this.teamArr[workerTeam]) {
+          this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam]) + 1;
+        } else {
           this.teamArr[workerTeam] = 1;
         }
 
-        return(
+        return (
           <div className="row" key={ind}>
-          <div className="col-xs-1" style={{width:"10px"}}>
-            <span><input value={worker.workerId} type="checkbox" onClick={this.onCheckBoxClick}/></span>
-          </div>
-          <div className="col-xs-3 ellipsis">
-            <span>{workerName}</span>
-          </div>
+            <div className="col-xs-1" style={{ width: "10px" }}>
+              <span>
+                <input
+                  value={worker.workerId}
+                  type="checkbox"
+                  onClick={this.onCheckBoxClick}
+                />
+              </span>
+            </div>
+            <div className="col-xs-3 ellipsis">
+              <span>{workerName}</span>
+            </div>
 
-          <div className="col-xs-2" style={{textAlign:"center"}}>
-          <TimeField value={worker.inTime} name={InName} className="width100" onChange={this.onTimeChange}/>
+            <div className="col-xs-2" style={{ textAlign: "center" }}>
+              <TimeField
+                value={worker.inTime}
+                name={InName}
+                className="width100"
+                onChange={this.onTimeChange}
+              />
+            </div>
+            <div className="col-xs-2" style={{ textAlign: "center" }}>
+              <TimeField
+                value={worker.outTime}
+                name={OutName}
+                className="width100"
+                onChange={this.onTimeChange}
+              />
+            </div>
+            <div className="col-xs-3" style={{ textAlign: "center" }}>
+              <Dropdown
+                title={title}
+                name="reason"
+                keyName="id"
+                stateId={reasonId}
+                list={this.reasonsList}
+                value={worker.reason}
+                resetThenSet={this.setReason}
+              />
+            </div>
           </div>
-          <div className="col-xs-2" style={{textAlign:"center"}}>
-          <TimeField value={worker.outTime} name={OutName} className="width100" onChange={this.onTimeChange}/>
-          </div>
-          <div className="col-xs-3" style={{textAlign:"center"}}>
-          <Dropdown
-                  title={title}
-                  name="reason"
-                  keyName="id"
-                  stateId={reasonId}
-                  list={this.reasonsList}
-                  value={worker.reason}
-                  resetThenSet={this.setReason}
-            />
-          </div>
-        </div>
-        )
+        );
       });
-    }
-    else{
-      return(<div className="row">
-      <div className="col-xs-1">
+    } else {
+      return (
+        <div className="row">
+          <div className="col-xs-1">
             <span>&nbsp;</span>
           </div>
-      <div lassName="col-xs-6" style={{color:"red"}}> No Records Found</div>
-      </div>
+          <div lassName="col-xs-6" style={{ color: "red" }}>
+            {" "}
+            No Records Found
+          </div>
+        </div>
       );
     }
-  }
-  teamDisplay = ()=>{
-   
+  };
+  teamDisplay = () => {
     let stateArr = this.state;
-    return this.teamArr.map((teamCount, teamId)=>{
-      
-      let teamName = getDetailsWithMatchedKey2(teamId, stateArr.team, "teamid", "teamName");
-      return(
+    return this.teamArr.map((teamCount, teamId) => {
+      let teamName = getDetailsWithMatchedKey2(
+        teamId,
+        stateArr.team,
+        "teamid",
+        "teamName"
+      );
+      return (
         <div>
-        <div className="col-xs-3">
-         <span><strong>{teamName}</strong>:</span>
-        
+          <div className="col-xs-3">
+            <span>
+              <strong>{teamName}</strong>:
+            </span>
+          </div>
+          <div className="col-xs-3">
+            <span> {teamCount}</span>
+          </div>
+          <br />
         </div>
-        <div className="col-xs-3" >
-        
-        <span> {teamCount}</span>
-       </div><br />
-       </div>
       );
     });
   };
@@ -457,11 +477,6 @@ class AttedenceEdit extends React.Component {
           </div>
         )}
       </div>
-    </div>
-    }
-        
-    </div>
-    
     );
   }
 }
