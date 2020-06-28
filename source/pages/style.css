@@ -1,0 +1,18 @@
+.Collapsible {
+  cursor: pointer;
+  transition: 0.3s;
+  padding: 2px 16px;
+  border: 1px solid #ddd;
+}
+span.Collapsible__trigger {
+  font-weight: bold;
+}
+hr {
+  margin-top: 10px;
+  margin-bottom: 10px;
+  border: 0;
+  border-top: 1px solid #eee;
+}
+div.Collapsible__contentInner {
+  margin-bottom: 10px;
+}

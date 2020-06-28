@@ -1,26 +1,26 @@
-const webpack = require('webpack');
-const path = require('path');
+const webpack = require("webpack");
+const path = require("path");
 
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 const paths = {
-  source: path.join(__dirname, '../source'),
-  assets: path.join(__dirname, '../source/assets/'),
-  css: path.join(__dirname, '../source/css/'),
-  fonts: path.join(__dirname, '../source/assets/fonts/'),
-  images: path.join(__dirname, '../source/assets/img'),
-  javascript: path.join(__dirname, '../source'),
-  svg: path.join(__dirname, '../source/assets/svg'),
-  build: path.join(__dirname, '../build'),
+  source: path.join(__dirname, "../source"),
+  assets: path.join(__dirname, "../source/assets/"),
+  css: path.join(__dirname, "../source/css/"),
+  fonts: path.join(__dirname, "../source/assets/fonts/"),
+  images: path.join(__dirname, "../source/assets/img"),
+  javascript: path.join(__dirname, "../source"),
+  svg: path.join(__dirname, "../source/assets/svg"),
+  build: path.join(__dirname, "../build")
 };
 
-const outputFiles = require('./output-files').outputFiles;
+const outputFiles = require("./output-files").outputFiles;
 
-const NODE_ENV = process.env.NODE_ENV || 'development';
-const SERVER_RENDER = process.env.SERVER_RENDER === 'true';
-const HYDRATE = process.env.HYDRATE === 'true';
-const IS_DEVELOPMENT = NODE_ENV === 'development';
-const IS_PRODUCTION = NODE_ENV === 'production';
+const NODE_ENV = process.env.NODE_ENV || "development";
+const SERVER_RENDER = process.env.SERVER_RENDER === "true";
+const HYDRATE = process.env.HYDRATE === "true";
+const IS_DEVELOPMENT = NODE_ENV === "development";
+const IS_PRODUCTION = NODE_ENV === "production";
 
 // ----------
 // PLUGINS
@@ -32,12 +32,12 @@ const plugins = [
   new ExtractTextPlugin(outputFiles.css),
   // Injects env variables to our app
   new webpack.DefinePlugin({
-    'process.env': {
+    "process.env": {
       NODE_ENV: JSON.stringify(NODE_ENV),
-      SERVER_RENDER: JSON.stringify(SERVER_RENDER) === 'true',
-      HYDRATE: JSON.stringify(HYDRATE) === 'true',
-    },
-  }),
+      SERVER_RENDER: JSON.stringify(SERVER_RENDER) === "true",
+      HYDRATE: JSON.stringify(HYDRATE) === "true"
+    }
+  })
 ];
 
 if (IS_PRODUCTION) {
@@ -56,11 +56,11 @@ if (IS_PRODUCTION) {
         screw_ie8: true,
         sequences: true,
         unused: true,
-        warnings: false,
+        warnings: false
       },
       output: {
-        comments: false,
-      },
+        comments: false
+      }
     })
   );
 } else {
@@ -81,30 +81,30 @@ const rules = [
   {
     test: /\.(js|jsx)$/,
     exclude: /node_modules/,
-    use: ['babel-loader'],
+    use: ["babel-loader"]
   },
   // SVG are imported as react components
   {
     test: /\.svg$/,
     use: [
       {
-        loader: 'babel-loader',
+        loader: "babel-loader"
       },
       {
-        loader: 'react-svg-loader',
+        loader: "react-svg-loader",
         options: {
           svgo: {
             plugins: [
               {
-                removeTitle: true,
-              },
+                removeTitle: true
+              }
             ],
-            floatPrecision: 3,
-          },
-        },
-      },
+            floatPrecision: 3
+          }
+        }
+      }
     ],
-    include: paths.svg,
+    include: paths.svg
   },
   // Images
   {
@@ -112,12 +112,12 @@ const rules = [
     include: paths.images,
     use: [
       {
-        loader: 'file-loader',
+        loader: "file-loader",
         options: {
-          name: 'client/assets/[name]-[hash].[ext]',
-        },
-      },
-    ],
+          name: "client/assets/[name]-[hash].[ext]"
+        }
+      }
+    ]
   },
   // Fonts
   {
@@ -125,60 +125,55 @@ const rules = [
     include: paths.fonts,
     use: [
       {
-        loader: 'file-loader',
+        loader: "file-loader",
         options: {
-          name: 'client/fonts/[name]-[hash].[ext]',
-        },
-      },
-    ],
-  },
+          name: "client/fonts/[name]-[hash].[ext]"
+        }
+      }
+    ]
+  }
 ];
-
 
 // For both production and server ExtractTextPlugin is used
 if (IS_PRODUCTION || SERVER_RENDER) {
-  rules.push(
-    {
-      test: /\.css$/,
-      loader: ExtractTextPlugin.extract({
-        fallback: 'style-loader',
-        use: [
-          {
-            loader: 'css-loader',
-            options: {
-              importLoaders: 1,
-              minimize: true,
-            },
-          },
-          'postcss-loader',
-        ],
-      }),
-    }
-  );
-} else {
-  rules.push(
-    {
-      test: /\.css$/,
-      exclude: /node_modules/,
+  rules.push({
+    test: /\.css$/,
+    loader: ExtractTextPlugin.extract({
+      fallback: "style-loader",
       use: [
         {
-          loader: 'style-loader',
-          options: { sourceMap: true },
-        },
-        {
-          loader: 'css-loader',
+          loader: "css-loader",
           options: {
             importLoaders: 1,
-            sourceMap: true,
-          },
+            minimize: true
+          }
         },
-        {
-          loader: 'postcss-loader',
-          options: { sourceMap: true },
-        },
-      ],
-    }
-  );
+        "postcss-loader"
+      ]
+    })
+  });
+} else {
+  rules.push({
+    test: /\.css$/,
+    exclude: /node_modules/,
+    use: [
+      {
+        loader: "style-loader",
+        options: { sourceMap: true }
+      },
+      {
+        loader: "css-loader",
+        options: {
+          importLoaders: 1,
+          sourceMap: true
+        }
+      },
+      {
+        loader: "postcss-loader",
+        options: { sourceMap: true }
+      }
+    ]
+  });
 }
 
 // ----------
@@ -186,13 +181,19 @@ if (IS_PRODUCTION || SERVER_RENDER) {
 // ----------
 
 const resolve = {
-  extensions: ['.webpack-loader.js', '.web-loader.js', '.loader.js', '.js', '.jsx'],
+  extensions: [
+    ".webpack-loader.js",
+    ".web-loader.js",
+    ".loader.js",
+    ".js",
+    ".jsx"
+  ],
   modules: [
-    path.join(__dirname, '../node_modules'),
+    path.join(__dirname, "../node_modules"),
     paths.javascript,
     paths.assets,
-    paths.css,
-  ],
+    paths.css
+  ]
 };
 
 // ----------
@@ -209,7 +210,7 @@ const stats = {
   publicPath: false,
   timings: true,
   version: false,
-  warnings: true,
+  warnings: true
 };
 
 module.exports = {
@@ -222,5 +223,5 @@ module.exports = {
   plugins,
   resolve,
   rules,
-  stats,
+  stats
 };

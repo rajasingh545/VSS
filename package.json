@@ -59,7 +59,6 @@
     "prop-types": "^15.6.0",
     "rc-time-picker": "^3.7.2",
     "react": "^16.2.0",
-    "react-accessible-accordion": "^3.0.0",
     "react-bootstrap": "^0.32.1",
     "react-csv": "^1.1.1",
     "react-datepicker": "^1.7.0",
@@ -74,6 +73,7 @@
     "redux": "^3.7.2",
     "redux-saga": "^0.16.0",
     "redux-thunk": "^2.2.0",
+    "semantic-ui-react": "^0.88.2",
     "transit-immutable-js": "^0.7.0",
     "transit-js": "^0.8.846"
   },

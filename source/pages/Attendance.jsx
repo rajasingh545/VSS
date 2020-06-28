@@ -294,7 +294,8 @@ class Attedence extends React.Component {
       <div lassName="col-xs-6" style={ { color: 'red' } }> No Records Found</div>
     </div>
     );
-  }
+  };
+
   teamDisplay = () => {
     const stateArr = this.state;
     return this.teamArr.map((teamCount, teamId) => {
