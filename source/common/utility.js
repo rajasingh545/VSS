@@ -14,6 +14,9 @@ export function getCurrentTime(separator = ':') {
 
   return `${ hour }${ separator }${ minute }`;
 }
+export function addDays(now, add) {
+  return now.setDate(now.getDate() + add);
+}
 export function getFormattedDate(dat) {
   const separator = '-';
   const newDate = new Date(dat);
