@@ -616,11 +616,12 @@ resetThenSet(key, list, stateKey, title) {
 
         </div>
 }
+{this.state.workBased == '1' && 
         <div className="row">
           <div className="col-xs-3">Scaffold Register</div>
           <div className="col-xs-6"> <input type="checkbox" name="scaffoldRegister" onClick={ this.onCheckBoxChecked } checked={ this.state.scaffoldRegister == 1 } /></div>
         </div>
-
+}
         <div className="row">
           <div className="col-xs-3">Remarks</div>
           <div className="col-xs-6"> <CustInput type="textarea" name="remarks" value={ this.state.remarks } onChange={ this.onFormChange } /></div>
