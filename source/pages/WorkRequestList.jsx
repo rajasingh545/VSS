@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Button } from "react-bootstrap";
 import PreviewTemplate from "../components/PreviewTemplate";
 import Dropdown from "../components/Dropdown";
 import { DOMAIN_NAME } from "../config/api-config";
@@ -12,7 +13,7 @@ import {
   clearListing
 } from "actions/workArrangement.actions";
 import CustomButton from "../components/CustomButton";
-import { getDetailsWithMatchedKey2 } from "../common/utility";
+import { getDetailsWithMatchedKey2, addDays } from "../common/utility";
 
 import DatePicker from "react-datepicker";
 import moment from "moment";
@@ -38,6 +39,7 @@ export default class WorkRequestList extends React.Component {
       requestStatus: 2,
       projectId: "",
       projects: [],
+      clients: [],
       options: arr,
       startDate1: moment(),
       show: false,
@@ -49,7 +51,19 @@ export default class WorkRequestList extends React.Component {
         endDate: "",
         endDate1: moment(new Date()),
         requestData: {},
-        selectedProjectData: {}
+        selectedProjectData: {
+          endTime: "",
+          projectId: "0",
+          projectName: "Select All",
+          selected: true,
+          startTime: ""
+        },
+        selectedClientData: {
+          clientId: "0",
+          clientName: "Select All",
+          projects: "0",
+          selected: true
+        }
       }
     };
     this.initialItems = [];
@@ -67,9 +81,27 @@ export default class WorkRequestList extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const { requestDet } = nextProps;
+    let projects = [...requestDet.projects],
+      clients = [...requestDet.clients],
+      defaultProject = {
+        endTime: "",
+        projectId: "0",
+        projectName: "Select All",
+        selected: true,
+        startTime: ""
+      },
+      defaultClient = {
+        clientId: "0",
+        clientName: "Select All",
+        projects: "0",
+        selected: true
+      };
+    projects.splice(0, 0, defaultProject);
+    clients.splice(0, 0, defaultClient);
     this.setState({ listingDetails: nextProps.listingDetails });
     this.setState({ requestDet: requestDet });
-    this.setState({ projects: requestDet.projects });
+    this.setState({ projects: projects });
+    this.setState({ clients: clients });
     if (nextProps.workRequestData) {
       this.setState({ workRequestData: nextProps.workRequestData });
     }
@@ -81,6 +113,8 @@ export default class WorkRequestList extends React.Component {
   componentDidMount() {
     let requestType = sessionStorage.getItem("requestType");
     let requestTypeTitle = sessionStorage.getItem("requestTypeTitle");
+    console.log(requestType, requestTypeTitle);
+
     let selectedDate = moment();
     if (sessionStorage.getItem("dateSelected")) {
       selectedDate = sessionStorage.getItem("dateSelected");
@@ -230,11 +264,40 @@ export default class WorkRequestList extends React.Component {
     this.setState({ requestJsonData });
   };
   onSelectDropdownProject = (key, list, stateKey, title, selectedData) => {
-    const { dispatch } = this.props;
     let { requestJsonData } = this.state;
     requestJsonData.selectedProjectData = selectedData;
     this.setState({ requestJsonData });
-    dispatch(workRequestPost(this.state));
+  };
+  onSelectDropdownClient = (key, list, stateKey, title, selectedData) => {
+    let { requestJsonData } = this.state;
+    requestJsonData.selectedClientData = selectedData;
+    this.setState({ requestJsonData });
+  };
+  onSearchHandle = () => {
+    const { dispatch } = this.props;
+    let {
+        requestCode,
+        requestJsonData,
+        startDate1,
+        userId,
+        userType
+      } = this.state,
+      JSONData = {};
+    JSONData.requestCode = 23;
+    JSONData.requestJsonData = requestJsonData;
+    JSONData.startDate1 = startDate1;
+    JSONData.userId = userId;
+    JSONData.userType = userType;
+    if (JSONData.requestJsonData.startDate === "") {
+      JSONData.requestJsonData.startDate = moment(new Date()).format(
+        "YYYY/MM/DD"
+      );
+    }
+    if (JSONData.requestJsonData.requestData.id === undefined) {
+      toast.error("Please select Status", { autoClose: 2000 });
+    } else {
+      dispatch(workRequestPost(JSONData));
+    }
   };
   setPreview = () => {
     let contArr = [];
@@ -282,7 +345,7 @@ export default class WorkRequestList extends React.Component {
   };
   render() {
     const { userType, requestDet, workRequestData } = this.props;
-    const { requestType, requestJsonData, projects } = this.state;
+    const { requestType, requestJsonData, projects, clients } = this.state;
     // console.log("options", options);
     const { loading } = this.props;
 
@@ -294,29 +357,32 @@ export default class WorkRequestList extends React.Component {
         <ToastContainer autoClose={8000} />
         <br />
         <div className="row">
-          <div className="col-xs-3">
+          <div className="col-xs-2">
             <DatePicker
               selected={requestJsonData.startDate1}
               className=" form-control"
               isClearable={false}
               onChange={this.onStartDateChange}
+              maxDate={new Date()}
               name="startDate"
               dateFormat="DD-MM-YYYY"
               locale="UTC"
             />
           </div>
-          <div className="col-xs-3">
+          <div className="col-xs-2">
             <DatePicker
               selected={requestJsonData.endDate1}
               className=" form-control"
               isClearable={false}
               onChange={this.onEndDateChange}
+              minDate={new Date()}
+              maxDate={addDays(new Date(), 1)}
               name="startDate"
               dateFormat="DD-MM-YYYY"
               locale="UTC"
             />
           </div>
-          <div className="col-xs-3">
+          <div className="col-xs-2">
             <Dropdown
               title={this.state.requestTypeTitle}
               name="name"
@@ -327,7 +393,20 @@ export default class WorkRequestList extends React.Component {
               resetThenSet={this.onSelectDropdown}
             />
           </div>
-          <div className="col-xs-3">
+
+          <div className="col-xs-2">
+            <Dropdown
+              title="Select Client"
+              name="clientName"
+              keyName="clientId"
+              stateId="status"
+              list={clients}
+              value={requestType}
+              resetThenSet={this.onSelectDropdownClient}
+            />
+          </div>
+
+          <div className="col-xs-2">
             <Dropdown
               title="Select Project"
               name="projectName"
@@ -338,6 +417,26 @@ export default class WorkRequestList extends React.Component {
               resetThenSet={this.onSelectDropdownProject}
             />
           </div>
+
+          <div className="col-xs-4">
+            <Button
+              bsStyle="primary"
+              type="submit"
+              onClick={this.onSearchHandle}
+            >
+              {loading === true ? "Loading ..." : "Search"}
+            </Button>
+          </div>
+          {workRequestData && loading == false && (
+            <div>
+              <div style={{ zIndex: 0 }}>
+                <InputSearch
+                  initialItems={this.initialItems}
+                  FilterData={this.FilterDataCallBackfun}
+                />
+              </div>
+            </div>
+          )}
         </div>
         <div className="row">
           <div className="col-xs-8">
@@ -349,15 +448,7 @@ export default class WorkRequestList extends React.Component {
               )}
 
               {workRequestData && loading == false && (
-                <div>
-                  <div style={{ zIndex: 0 }}>
-                    <InputSearch
-                      initialItems={this.initialItems}
-                      FilterData={this.FilterDataCallBackfun}
-                    />
-                  </div>
-                  {this.Listings(this.state.workRequestData)}
-                </div>
+                <div>{this.Listings(this.state.workRequestData)}</div>
               )}
             </div>
           </div>
