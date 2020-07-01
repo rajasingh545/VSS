@@ -156,7 +156,7 @@ export default class WorkRequestList extends React.Component {
           );
           clientname = getDetailsWithMatchedKey2(
             data.clientId,
-            [this.props.requestDet.clients],
+            this.props.requestDet.clients,
             "clientId",
             "clientName"
           );
@@ -170,9 +170,18 @@ export default class WorkRequestList extends React.Component {
           projectName,
           clientname
         });
+        let PName = [...projectName].join(""),
+          CName = [...clientname].join("");
+        PName = PName.slice(0, 3).toUpperCase();
+        CName = CName.slice(0, 3).toUpperCase();
+
         let elmId = "elm_" + requestDetails.workArrangementId;
         let wrstr =
-          "WR" +
+          "VSS-" +
+          CName +
+          "-" +
+          PName +
+          "-WR-" +
           ("0000" + data.workRequestId).substring(data.workRequestId.length);
         return (
           <div

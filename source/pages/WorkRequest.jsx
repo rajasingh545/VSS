@@ -576,6 +576,37 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         )}
+        <div className="location">
+          <div className="row">
+            <div className="col-xs-2">
+              <label>Location</label>
+            </div>
+            <div className="col-xs-4">
+              <CustInput
+                type="textarea"
+                name="location"
+                value={this.state.location}
+                onChange={this.onFormChange}
+              />
+            </div>
+
+            <div className="col-xs-3">
+              <input
+                type="checkbox"
+                name="drawingAttached"
+                onClick={this.onCheckBoxChecked}
+                checked={this.state.drawingAttached == 1}
+                style={{
+                  marginRight: "11px"
+                }}
+              />
+              <label>Drawing Attached</label>
+            </div>
+            {/* <div className="col-xs-3">
+              <label>Drawing Attached</label>
+            </div> */}
+          </div>
+        </div>
         <div className="description">
           <div className="row">
             <div className="col-xs-6">
