@@ -10,7 +10,7 @@ import CustInput from "../components/CustInput";
 import baseHOC from "./baseHoc";
 import {
   requestDetails,
-  workRequestPost
+  workRequestPost,
 } from "actions/workArrangement.actions";
 
 import SizeWorkRequest from "../components/SizeWorkRequest";
@@ -19,11 +19,11 @@ import SizePreview from "../components/SizePreview";
 import ManPowerPreview from "../components/ManPowerPreview";
 import ManPowerWorkRequest from "../components/ManPowerWorkRequest";
 
-@connect(state => ({
+@connect((state) => ({
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
   workRequestPost: state.request.get("workRequestPost"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 class WorkRequest extends React.Component {
@@ -39,7 +39,7 @@ class WorkRequest extends React.Component {
       scaffoldTypetitle: "Select Type",
       scaffoldWorkTypetitle: "Select Work Type",
       scaffoldSubcategorytitle: "Select Category",
-
+      drawingAttachedFile: [],
       contracts: [],
       filteredArr: [],
       scaffoldWorkType: [],
@@ -48,8 +48,9 @@ class WorkRequest extends React.Component {
       sizeList: [],
       manpowerList: [],
       clientsStore: [],
-      showSizePopup: false
+      showSizePopup: false,
     };
+    this.drawingAttachedFile = [];
     this.itemList = [];
     this.sizeList = [];
     this.manpowerList = [];
@@ -82,16 +83,16 @@ class WorkRequest extends React.Component {
       }
     }
   }
-  onFormChange = e => {
+  onFormChange = (e) => {
     if (e) {
       //   console.log("e", e, e.target.name, e.target.value);
       this.setState({ [e.target.name]: e.target.value });
-    }
-    if (e.target.value == 2) {
-      this.setState({ scaffoldRegister: "" });
+      if (e.target.value == 2) {
+        this.setState({ scaffoldRegister: "" });
+      }
     }
   };
-  onCheckBoxChecked = e => {
+  onCheckBoxChecked = (e) => {
     if (e.target.checked == true) {
       this.setState({ [e.target.name]: 1 });
     } else {
@@ -106,31 +107,44 @@ class WorkRequest extends React.Component {
   populateSubCat = (key, list, stateKey, title) => {
     this.setState({
       subCategory: this.state.subCategoryStore[key],
-      scaffoldSubcategorytitle: "Select Category"
+      scaffoldSubcategorytitle: "Select Category",
     });
 
     this.resetThenSet(key, list, stateKey, title);
   };
   onItemChange = (key, list, stateKey, title) => {
-    this.state.filteredArr = this.state.contracts.filter(list => {
+    console.log(key, list, stateKey, title);
+
+    this.state.filteredArr = this.state.contracts.filter((list) => {
       return list.id == key;
     });
     let LocTitle = "";
     let itemTitle = "";
     let desc = "";
-    list.map(item => {
+    let description = "";
+    list.map((item) => {
       if (item.id == key) {
         LocTitle = item.location;
         itemTitle = item.item;
-        desc = item.desc;
+        description = item.description;
+        desc =
+          "Size: " +
+          item["length"] +
+          "mL x " +
+          item["width"] +
+          "mW x " +
+          item["height"] +
+          "mH, Set:" +
+          item["sets"];
       }
     });
     this.resetThenSet(key, list, "location", LocTitle);
     this.resetThenSet(key, list, "item", itemTitle);
     this.setState({
+      description,
       itemtitle: this.state.text_item,
       locationTitle: this.state.text_location,
-      desc
+      desc,
     });
   };
 
@@ -140,7 +154,7 @@ class WorkRequest extends React.Component {
     // temp[id].selected = true;
 
     this.setState({
-      [stateKey]: list
+      [stateKey]: list,
     });
 
     const valuekey = `value_${stateKey}`;
@@ -149,7 +163,7 @@ class WorkRequest extends React.Component {
     //  console.log("inside==", valuekey, key.toString())
     this.setState({
       [valuekey]: key.toString(),
-      [textKey]: title
+      [textKey]: title,
     });
     this.state[valuekey] = key.toString();
     this.state[textKey] = title;
@@ -182,7 +196,7 @@ class WorkRequest extends React.Component {
     }
   };
 
-  onctypeChange = e => {
+  onctypeChange = (e) => {
     if (e.target.value == 1) {
       this.state.cType = 1;
       this.requestItems();
@@ -191,7 +205,7 @@ class WorkRequest extends React.Component {
     }
     this.onFormChange(e);
   };
-  onChangeSizeType = e => {
+  onChangeSizeType = (e) => {
     if (e.target.value == 1) {
       // this.setState({
       //   L: this.state.filteredArr[0].length,
@@ -210,11 +224,14 @@ class WorkRequest extends React.Component {
     this.onFormChange(e);
   };
 
-  onTimeChange = el => {
+  onTimeChange = (el) => {
     this.setState({ [el.name]: el.value });
   };
-
-  submitRequest = status => {
+  filepload = (e) => {
+    const fileUpload = e.target.files;
+    this.setState({ drawingAttachedFile: fileUpload });
+  };
+  submitRequest = (status) => {
     const { dispatch } = this.props;
 
     const formValidation = this.validateForm();
@@ -225,20 +242,27 @@ class WorkRequest extends React.Component {
       }
       this.state.requestCode = 14;
       this.state.status = status;
-
-      dispatch(workRequestPost(this.state));
-      // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-
-      if (status == 1) {
-        toast.success("Work Request Created Successfully", { autoClose: 3000 });
+      console.log(this.state);
+      const data = new FormData();
+      for (var x = 0; x < this.state.drawingAttachedFile.length; x++) {
+        data.append("file", this.state.drawingAttachedFile[x]);
       }
-      if (status == 2) {
-        toast.success("Work Request Drafted Successfully", { autoClose: 3000 });
-      }
+      const allRules = { ...this.state, ...data };
+      console.log(allRules, data);
 
-      setTimeout(() => {
-        this.props.history.push("/WorkRequestList");
-      }, 3000);
+      // dispatch(workRequestPost(Object.assign(this.state, data)));
+      // // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
+
+      // if (status == 1) {
+      //   toast.success("Work Request Created Successfully", { autoClose: 3000 });
+      // }
+      // if (status == 2) {
+      //   toast.success("Work Request Drafted Successfully", { autoClose: 3000 });
+      // }
+
+      // setTimeout(() => {
+      //   this.props.history.push("/WorkRequestList");
+      // }, 3000);
     }
   };
   validateForm = () => {
@@ -280,7 +304,7 @@ class WorkRequest extends React.Component {
 
   addListToItem = () => {
     const found = this.itemList.some(
-      el => el.value_item === this.state.value_item
+      (el) => el.value_item === this.state.value_item
     );
 
     if (this.state.value_item != "") {
@@ -292,7 +316,7 @@ class WorkRequest extends React.Component {
           workBased: this.state.workBased,
           workRequestId: this.state.value_workRequestId,
           sizeList: this.state.sizeList,
-          manpowerList: this.state.manpowerList
+          manpowerList: this.state.manpowerList,
         };
 
         this.itemList.push(list);
@@ -311,7 +335,7 @@ class WorkRequest extends React.Component {
         sizeType: "",
         workBased: "",
         sizeList: [],
-        manpowerList: []
+        manpowerList: [],
       });
 
       toast.success("Item added successfully", { autoClose: 3000 });
@@ -335,32 +359,44 @@ class WorkRequest extends React.Component {
     this.setState({ showSizePopup: false });
   };
 
-  handleSizeSubmit = data => {
+  handleSizeSubmit = (data) => {
     this.sizeList.push(data);
 
     this.setState({ sizeList: this.sizeList });
     this.handleSizePopupClose();
   };
 
-  deleteSizeItem = index => {
-    delete this.sizeList[index];
+  deleteSizeItem = (index) => {
+    if (this.sizeList.length === 1) {
+      this.sizeList = [];
+    } else {
+      this.sizeList.splice(index, 1);
+    }
     this.setState({ sizeList: this.sizeList });
   };
 
-  displaySizeList = itemList => {
+  deleteManPowerItem = (index) => {
+    if (this.manpowerList.length === 1) {
+      this.manpowerList = [];
+    } else {
+      this.manpowerList.splice(index, 1);
+    }
+    this.setState({ manpowerList: this.manpowerList });
+  };
+  displaySizeList = (itemList) => {
     return itemList.map((item, index) => {
       return (
         <SizePreview index={index} item={item} onClose={this.deleteSizeItem} />
       );
     });
   };
-  displayManPowerList = itemList => {
+  displayManPowerList = (itemList) => {
     return itemList.map((item, index) => {
       return (
         <ManPowerPreview
           index={index}
           item={item}
-          onClose={this.deleteSizeItem}
+          onClose={this.deleteManPowerItem}
         />
       );
     });
@@ -374,7 +410,7 @@ class WorkRequest extends React.Component {
     this.setState({ showManPowerPopup: false });
   };
 
-  handleManPowerSubmit = data => {
+  handleManPowerSubmit = (data) => {
     this.manpowerList.push(data);
     this.setState({ manpowerList: this.manpowerList });
     this.handleManPowerPopupClose();
@@ -481,7 +517,7 @@ class WorkRequest extends React.Component {
           </div>
         </div>
 
-        {this.state.cType == 1 && (
+        {this.state.cType == 1 ? (
           <div className="pull-right">
             <div className="col-xs-6">
               <button
@@ -494,6 +530,8 @@ class WorkRequest extends React.Component {
               </button>
             </div>
           </div>
+        ) : (
+          ""
         )}
         <br />
         <br />
@@ -576,37 +614,50 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         )}
-        <div className="location">
-          <div className="row">
-            <div className="col-xs-2">
-              <label>Location</label>
-            </div>
-            <div className="col-xs-4">
-              <CustInput
-                type="textarea"
-                name="location"
-                value={this.state.location}
-                onChange={this.onFormChange}
-              />
-            </div>
+        {this.state.cType == 2 ? (
+          <div className="location">
+            <div className="row">
+              <div className="col-xs-2">
+                <label>Location</label>
+              </div>
+              <div className="col-xs-4">
+                <CustInput
+                  type="textarea"
+                  name="location1"
+                  value={this.state.location1}
+                  onChange={this.onFormChange}
+                />
+              </div>
 
-            <div className="col-xs-3">
-              <input
-                type="checkbox"
-                name="drawingAttached"
-                onClick={this.onCheckBoxChecked}
-                checked={this.state.drawingAttached == 1}
-                style={{
-                  marginRight: "11px"
-                }}
-              />
-              <label>Drawing Attached</label>
+              <div className="col-xs-3">
+                <input
+                  type="checkbox"
+                  name="drawingAttached"
+                  onClick={this.onCheckBoxChecked}
+                  checked={this.state.drawingAttached == 1}
+                  style={{
+                    marginRight: "11px",
+                  }}
+                />
+                <label>Drawing Attached</label>
+              </div>
+              {this.state.drawingAttached == 1 && (
+                <div className="col-xs-3">
+                  <input
+                    type="file"
+                    ref="file"
+                    id="drawingAttachedFile"
+                    name="drawingAttachedFile"
+                    onChange={this.filepload()}
+                  />
+                </div>
+              )}
             </div>
-            {/* <div className="col-xs-3">
-              <label>Drawing Attached</label>
-            </div> */}
           </div>
-        </div>
+        ) : (
+          ""
+        )}
+
         <div className="description">
           <div className="row">
             <div className="col-xs-6">
@@ -618,6 +669,7 @@ class WorkRequest extends React.Component {
                 name="description"
                 value={this.state.description}
                 onChange={this.onFormChange}
+                readOnly={this.state.cType == "1" ? "readOnly" : ""}
               />
             </div>
           </div>
@@ -728,6 +780,7 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         )}
+
         <div className="row">
           <div className="col-xs-3">Remarks</div>
           <div className="col-xs-6">

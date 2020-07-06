@@ -10,7 +10,7 @@ import {
   workRequestPost,
   requestPostClear,
   listigDetails,
-  clearListing
+  clearListing,
 } from "actions/workArrangement.actions";
 import CustomButton from "../components/CustomButton";
 import { getDetailsWithMatchedKey2, addDays } from "../common/utility";
@@ -21,10 +21,10 @@ import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import InputSearch from "../components/InputSearch";
 
-@connect(state => ({
+@connect((state) => ({
   loading: state.request.get("loadingListing"),
   workRequestData: state.request.get("workRequestData"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 export default class WorkRequestList extends React.Component {
@@ -56,15 +56,15 @@ export default class WorkRequestList extends React.Component {
           projectId: "0",
           projectName: "Select All",
           selected: true,
-          startTime: ""
+          startTime: "",
         },
         selectedClientData: {
           clientId: "0",
           clientName: "Select All",
           projects: "0",
-          selected: true
-        }
-      }
+          selected: true,
+        },
+      },
     };
     this.initialItems = [];
     this.selectedIds = [];
@@ -88,13 +88,13 @@ export default class WorkRequestList extends React.Component {
         projectId: "0",
         projectName: "Select All",
         selected: true,
-        startTime: ""
+        startTime: "",
       },
       defaultClient = {
         clientId: "0",
         clientName: "Select All",
         projects: "0",
-        selected: true
+        selected: true,
       };
     projects.splice(0, 0, defaultProject);
     clients.splice(0, 0, defaultClient);
@@ -126,17 +126,22 @@ export default class WorkRequestList extends React.Component {
       this.setState({
         requestType,
         requestTypeTitle,
-        startDate1: dateSelected
+        startDate1: dateSelected,
       });
       this.state.startDate = actualDate;
       this.handleRequestType(requestType, [], "", requestTypeTitle);
     }
   }
-  redirectView = requestId => {
-    this.props.history.push("/WorkRequest/" + requestId);
+  // redirectView = (requestId) => {
+  //   this.props.history.push(`/WorkRequestPreview/${requestId}`);
+  // };
+  redirectView = (requestId) => {
+    if (this.props.userType == 1) {
+      this.props.history.push("/WorkRequestPreview/" + requestId);
+      // this.props.history.push(`/WorkRequestPreview/${requestId}`);
+    }
   };
-
-  Listings = listings => {
+  Listings = (listings) => {
     let { workRequestData, requestDet } = this.props;
     let response = "";
     let requestDetails = {};
@@ -168,7 +173,7 @@ export default class WorkRequestList extends React.Component {
         this.initialItems.push({
           ...data,
           projectName,
-          clientname
+          clientname,
         });
         let PName = [...projectName].join(""),
           CName = [...clientname].join("");
@@ -203,7 +208,7 @@ export default class WorkRequestList extends React.Component {
             width: "80%",
             textAlign: "center",
             textWeight: "bold",
-            paddingTop: "100px"
+            paddingTop: "100px",
           }}
         >
           No Listings Found
@@ -226,20 +231,20 @@ export default class WorkRequestList extends React.Component {
       this.setState({ showSubButton: false });
     }
   };
-  onStartDateChange1 = e => {
+  onStartDateChange1 = (e) => {
     const { dispatch } = this.props;
     if (e != null) {
       let { requestJsonData } = this.state;
       requestJsonData.startDate = e.format("YYYY/MM/DD");
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
-        startDate1: e
+        startDate1: e,
       });
       sessionStorage.setItem("dateSelected", e.format("YYYY/MM/DD"));
     } else {
       this.setState({
         startDate: "",
-        startDate1: ""
+        startDate1: "",
       });
     }
     this.state.startDate = e.format("YYYY/MM/DD");
@@ -247,23 +252,23 @@ export default class WorkRequestList extends React.Component {
       dispatch(workRequestPost(this.state));
     }
   };
-  onStartDateChange = e => {
+  onStartDateChange = (e) => {
     if (e != null) {
       let { requestJsonData } = this.state;
       requestJsonData.startDate = e.format("YYYY/MM/DD");
       requestJsonData.startDate1 = e;
       this.setState({
-        requestJsonData
+        requestJsonData,
       });
     }
   };
-  onEndDateChange = e => {
+  onEndDateChange = (e) => {
     if (e != null) {
       let { requestJsonData } = this.state;
       requestJsonData.endDate = e.format("YYYY/MM/DD");
       requestJsonData.endDate1 = e;
       this.setState({
-        requestJsonData
+        requestJsonData,
       });
     }
   };
@@ -289,7 +294,7 @@ export default class WorkRequestList extends React.Component {
         requestJsonData,
         startDate1,
         userId,
-        userType
+        userType,
       } = this.state,
       JSONData = {};
     JSONData.requestCode = 23;
@@ -310,7 +315,7 @@ export default class WorkRequestList extends React.Component {
   };
   setPreview = () => {
     let contArr = [];
-    this.selectedIds.map(ind => {
+    this.selectedIds.map((ind) => {
       contArr.push(document.getElementById("elm_" + ind).innerHTML + "<br />");
     });
     this.setState({ show: true, modalCont: contArr.join("") });
@@ -328,7 +333,7 @@ export default class WorkRequestList extends React.Component {
     dispatch(workRequestPost(this.state));
   };
 
-  setProjectId = e => {
+  setProjectId = (e) => {
     this.state.projectId = e.target.value;
     this.setState({ cboProjects: "0", listingDetails: {} });
   };
@@ -349,7 +354,7 @@ export default class WorkRequestList extends React.Component {
     }, 2000);
   };
 
-  FilterDataCallBackfun = result => {
+  FilterDataCallBackfun = (result) => {
     this.setState({ workRequestData: result });
   };
   render() {

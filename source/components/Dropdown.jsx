@@ -74,14 +74,21 @@ class Dropdown extends Component {
   }
 
   render() {
-    const { keyName, name, stateId, disabled = false } = this.props;
+    const {
+      keyName,
+      name,
+      stateId,
+      disabled = false,
+      error = false
+    } = this.props;
     const { list, listOpen, headerTitle } = this.state;
 
     return (
       <div
         className="dd-wrapper"
         style={{
-          pointerEvents: disabled ? "none" : ""
+          pointerEvents: disabled ? "none" : "",
+          border: error ? "1px solid red" : "1px solid #dfdfdf"
         }}
       >
         <div className="dd-header" onClick={() => this.toggleList()}>
