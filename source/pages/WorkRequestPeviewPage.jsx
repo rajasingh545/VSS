@@ -35,6 +35,7 @@ class WorkRequestPreviewPage extends React.Component {
       itemList: [],
       sizeList: [],
       manpowerList: [],
+      images: [],
     };
     this.itemList = [];
     this.sizeList = [];
@@ -52,7 +53,7 @@ class WorkRequestPreviewPage extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    // console.log(nextProps);
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
       this.state.clients = nextProps.requestDet.clients;
@@ -145,8 +146,9 @@ class WorkRequestPreviewPage extends React.Component {
         "clientId",
         "clientName"
       );
-
+      let images = this.props.workRequestData.requestDetails.completionImages;
       this.setState({
+        images: images,
         projectTitle: proTitle,
         clientTitle: clientname,
         cType: requestDet.contractType,
@@ -360,6 +362,8 @@ class WorkRequestPreviewPage extends React.Component {
   /* Render */
   render() {
     const { userType } = this.props;
+    // console.log(this.props.workRequestData.requestDetails.completionImages);
+
     return (
       <div>
         <br />
@@ -381,7 +385,7 @@ class WorkRequestPreviewPage extends React.Component {
         )}
 
         <br />
-        <WorkRequestPreview curState={this.state} />
+        <WorkRequestPreview curState={this.state} images={this.state.images} />
       </div>
     );
   }

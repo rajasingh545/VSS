@@ -18,7 +18,7 @@ import Popup from "../components/Popup";
 import SizePreview from "../components/SizePreview";
 import ManPowerPreview from "../components/ManPowerPreview";
 import ManPowerWorkRequest from "../components/ManPowerWorkRequest";
-
+import * as API from "../config/api-config";
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
@@ -49,6 +49,7 @@ class WorkRequest extends React.Component {
       manpowerList: [],
       clientsStore: [],
       showSizePopup: false,
+      drawingimage: "",
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -228,12 +229,26 @@ class WorkRequest extends React.Component {
     this.setState({ [el.name]: el.value });
   };
   filepload = (e) => {
-    const fileUpload = e.target.files;
-    this.setState({ drawingAttachedFile: fileUpload });
+    // const { dispatch } = this.props;
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("uniqueId", this.state.userId);
+    formData.append("requestCode", 24);
+    formData.append("drawingimage", e.target.files[0]);
+    fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.state.drawingimage = res.imageurl;
+          this.setState({ drawingimage: res.imageurl });
+        }
+      });
   };
   submitRequest = (status) => {
     const { dispatch } = this.props;
-
     const formValidation = this.validateForm();
 
     if (formValidation == true) {
@@ -242,27 +257,20 @@ class WorkRequest extends React.Component {
       }
       this.state.requestCode = 14;
       this.state.status = status;
-      console.log(this.state);
-      const data = new FormData();
-      for (var x = 0; x < this.state.drawingAttachedFile.length; x++) {
-        data.append("file", this.state.drawingAttachedFile[x]);
+
+      dispatch(workRequestPost(Object.assign(this.state)));
+      // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
+
+      if (status == 1) {
+        toast.success("Work Request Created Successfully", { autoClose: 3000 });
       }
-      const allRules = { ...this.state, ...data };
-      console.log(allRules, data);
+      if (status == 2) {
+        toast.success("Work Request Drafted Successfully", { autoClose: 3000 });
+      }
 
-      // dispatch(workRequestPost(Object.assign(this.state, data)));
-      // // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
-
-      // if (status == 1) {
-      //   toast.success("Work Request Created Successfully", { autoClose: 3000 });
-      // }
-      // if (status == 2) {
-      //   toast.success("Work Request Drafted Successfully", { autoClose: 3000 });
-      // }
-
-      // setTimeout(() => {
-      //   this.props.history.push("/WorkRequestList");
-      // }, 3000);
+      setTimeout(() => {
+        this.props.history.push("/WorkRequestList");
+      }, 3000);
     }
   };
   validateForm = () => {
@@ -648,7 +656,7 @@ class WorkRequest extends React.Component {
                     ref="file"
                     id="drawingAttachedFile"
                     name="drawingAttachedFile"
-                    onChange={this.filepload()}
+                    onChange={this.filepload}
                   />
                 </div>
               )}

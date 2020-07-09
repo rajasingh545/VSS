@@ -21,6 +21,7 @@ import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import InputSearch from "../components/InputSearch";
 
+import { Image, Icon, Label, Menu, Table } from "semantic-ui-react";
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
   workRequestData: state.request.get("workRequestData"),
@@ -468,6 +469,7 @@ export default class WorkRequestList extends React.Component {
           </div>
           <div className="col-xs-2">&nbsp;</div>
         </div>
+
         {/* <div className="row">
           <div className="col-xs-8">
             <Dropdown

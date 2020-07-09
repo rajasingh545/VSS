@@ -1,16 +1,18 @@
 import React, { Component } from "react";
 import { Grid, Image } from "semantic-ui-react";
-
+import * as API from "../config/api-config";
+import { ToastContainer, toast } from "react-toastify";
 class WorkRequestPreview extends Component {
   constructor(props) {
     super(props);
     this.state = {
       curState: props.curState,
+      images: props.images,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ curState: nextProps.curState });
+    this.setState({ curState: nextProps.curState, images: nextProps.images });
   }
 
   setItemList = (itemList) => {
@@ -235,12 +237,44 @@ class WorkRequestPreview extends Component {
   click = () => {
     console.log("working");
   };
+  // filepload = (e) => {
+  //   const fileUpload = e.target.files;
+  //   this.setState({ drawingAttachedFile: fileUpload });
+  // };
   filepload = (e) => {
-    const fileUpload = e.target.files;
-    this.setState({ drawingAttachedFile: fileUpload });
+    const { dispatch } = this.props;
+    const { curState } = this.state;
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("uniqueId", curState.userId);
+    formData.append("requestCode", 25);
+    formData.append("workrequestid", curState.listingId);
+    let images = [];
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("images[]", e.target.files[i]);
+      // images.push(e.target.files[i]);
+    }
+    // formData.append("images[]", images);
+    // formData.append("drawingimage", e.target.files);
+    fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.state.drawingimage = res.imageurl;
+          this.setState({ images: this.state.images.concat(res.imageurl) });
+        } else {
+          console.log(res.response);
+          // toast.error(res.response, { autoClose: 3000 });
+        }
+      });
+    // console.log(this.state.drawingimage);
   };
   render() {
-    const { curState } = this.state;
+    const { curState, images } = this.state;
+    console.log(curState);
 
     return (
       <div>
@@ -319,27 +353,25 @@ class WorkRequestPreview extends Component {
                 type="file"
                 id="drawingAttachedFile"
                 name="drawingAttachedFile"
+                multiple
                 onChange={this.filepload}
               />
             </div>
-            <div className="col-sm-12">
-              <Grid>
-                <Grid.Row columns={8}>
-                  <Grid.Column>
-                    <Image
-                      src="https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png"
-                      onClick={this.click}
-                    />
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Image src="https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png" />
-                  </Grid.Column>
-                  <Grid.Column>
-                    <Image src="https://media.sproutsocial.com/uploads/2017/02/10x-featured-social-media-image-size.png" />
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </div>
+            {images.length > 0 ? (
+              <div className="col-sm-12">
+                <Grid>
+                  <Grid.Row columns={8}>
+                    {images.map((_x) => (
+                      <Grid.Column>
+                        <Image src={_x} onClick={this.click} />
+                      </Grid.Column>
+                    ))}
+                  </Grid.Row>
+                </Grid>
+              </div>
+            ) : (
+              ""
+            )}
           </div>
         </div>
       </div>
