@@ -229,7 +229,6 @@ class WorkRequest extends React.Component {
     this.setState({ [el.name]: el.value });
   };
   filepload = (e) => {
-    // const { dispatch } = this.props;
     e.preventDefault();
     const formData = new FormData();
     formData.append("uniqueId", this.state.userId);
