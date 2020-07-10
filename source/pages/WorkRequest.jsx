@@ -192,8 +192,25 @@ resetThenSet(key, list, stateKey, title) {
 
   onTimeChange = (el) => {
     this.setState({ [el.name]: el.value });
-  }
-
+  };
+  filepload = (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("uniqueId", this.state.userId);
+    formData.append("requestCode", 24);
+    formData.append("drawingimage", e.target.files[0]);
+    fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.state.drawingimage = res.imageurl;
+          this.setState({ drawingimage: res.imageurl });
+        }
+      });
+  };
   submitRequest = (status) => {
     const { dispatch } = this.props;
 
