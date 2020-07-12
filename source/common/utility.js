@@ -170,3 +170,19 @@ export function truncate(string, length) {
   if (string.length > length) return string.substring(0, length) + "...";
   else return string;
 }
+
+export function getDetailsWithMatchedKeyObject(id, lib, key, returnKey) {
+  const returnValue = '';
+  if (lib) {
+    for (const k in lib) { // eslint-disable-next-line eqeqeq
+      const obj = lib[k].filter((item) => { // eslint-disable-next-line eqeqeq
+        return (item[key] == id);
+      });
+
+      if (obj[0] && obj[0][returnKey]) {
+        return obj[0][returnKey];
+      }
+    }
+  }
+  return returnValue;
+}
