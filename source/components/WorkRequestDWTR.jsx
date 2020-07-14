@@ -156,7 +156,7 @@ export default class WorkRequestDWTR extends Component {
         photo_2: this.state.photo_2,
         photo_3: this.state.photo_3,
       };
-      // this.props.handleSubmit(list);
+      this.props.handleSubmit(list);
     }
   };
 
