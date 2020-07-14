@@ -106,6 +106,30 @@ export default class WorkRequestDWTR extends Component {
       toast.error("Please select work status", { autoClose: 3000 });
       return false;
     }
+    let totalTodayWork =
+        Number(this.state.L) * Number(this.state.H) * Number(this.state.W),
+      totalWork = this.state.selectedArr.totalset,
+      workDone = this.state.selectedArr.workdonetotal,
+      pendingWork = totalWork - workDone,
+      msg = "",
+      msg1 = "";
+    if (pendingWork < totalTodayWork) {
+      msg = "Available volume is " + pendingWork;
+      toast.error(msg, { autoClose: 3000 });
+      return false;
+    }
+
+    if (this.state.selectedArrWR.workRequestsizebased == "yes") {
+      if (
+        typeof this.state.photo_1 === "undefined" ||
+        typeof this.state.photo_2 === "undefined" ||
+        typeof this.state.photo_3 === "undefined"
+      ) {
+        msg1 = "Required upload photos";
+        toast.error(msg1, { autoClose: 3000 });
+        return false;
+      }
+    }
 
     return true;
   };
@@ -132,14 +156,16 @@ export default class WorkRequestDWTR extends Component {
         photo_2: this.state.photo_2,
         photo_3: this.state.photo_3,
       };
-
-      this.props.handleSubmit(list);
+      // this.props.handleSubmit(list);
     }
   };
 
   onItemChange = (e) => {
     const key = e.target.value;
-    // console.log(this.state.items, this.state.items[key]);
+    const selectedArrWR = this.props.workRequests.filter(
+      (item) => key === item.workRequestId
+    )[0];
+    this.setState({ selectedArrWR: selectedArrWR });
     this.setState({ subItem: this.props.items[key] });
     this.onFormChange(e);
   };
@@ -151,7 +177,7 @@ export default class WorkRequestDWTR extends Component {
     )[0];
 
     this.setState({ desc: selectedArr.desc });
-
+    this.setState({ selectedArr: selectedArr });
     this.setState({ requestByName: selectedArr.requestBy });
     this.setState({ workType: selectedArr.type });
     this.onFormChange(e);

@@ -491,7 +491,6 @@ export default class WorkRequestList extends React.Component {
               <img src={loadingurl} />
             </div>
           )}
-
           {workRequestData && loading == false && (
             <div>
               <div style={{ zIndex: 0 }}>
