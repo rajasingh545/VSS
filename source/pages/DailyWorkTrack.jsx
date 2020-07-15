@@ -552,7 +552,7 @@ class DailyWorkTrack extends React.Component {
               reset={this.state.supervisorResetFlag}
               list={this.state.basesupervisor}
               resetThenSet={this.callform}
-              disabled={false}
+              disabled={true}
             />
           </div>
         </div>

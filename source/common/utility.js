@@ -32,7 +32,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
   // console.log(listingDet, libArr);
   let obj = {};
   if (libArr) {
-    let supervisors = listingDet.addSupervsor.map(id => {
+    let supervisors = listingDet.addSupervsor.map((id) => {
       return getDetailsWithMatchedKey2(
         id,
         libArr.supervisorsList,
@@ -54,7 +54,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
     );
 
     obj.createdOn = getFormattedDate(listingDet.createdOn);
-    let workerids = listingDet.workers.map(id => {
+    let workerids = listingDet.workers.map((id) => {
       return getDetailsWithMatchedKey2(
         id,
         libArr.workers,
@@ -66,7 +66,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
       let { team, workers } = libArr,
         { workersteamlist } = listingDet,
         newArrar = [];
-      workersteamlist.map(worker => {
+      workersteamlist.map((worker) => {
         for (let i = 0; i < workers.length; i++) {
           if (worker.worker_id === workers[i].workerIdActual) {
             workers[i].team_id = worker.team_id;
@@ -75,7 +75,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
           }
         }
       });
-      let emptyArr = team.map(_x => {
+      let emptyArr = team.map((_x) => {
         return getWorkersDetailsByTeam(
           _x.teamid,
           _x.teamName,
@@ -84,7 +84,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
         );
       });
       let text = "";
-      emptyArr.map(_x => {
+      emptyArr.map((_x) => {
         if (_x !== undefined) {
           text += " + " + _x;
         }
@@ -104,7 +104,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
 export function getDetailsWithMatchedKey2(id, lib, key, returnKey) {
   let returnValue = "";
   if (lib) {
-    lib.map(value => {
+    lib.map((value) => {
       if (value[key] == id) {
         returnValue = value[returnKey];
       }
@@ -112,11 +112,25 @@ export function getDetailsWithMatchedKey2(id, lib, key, returnKey) {
   }
   return returnValue;
 }
+export function getFieldSupervisorName(id, lib, key, returnKey) {
+  let returnValue = [];
+  if (lib) {
+    for (let i = 0; i < id.length; i++) {
+      const element = id[i];
+      lib.map((value) => {
+        if (value[key] == element) {
+          returnValue.push(value[returnKey]);
+        }
+      });
+    }
+  }
+  return returnValue;
+}
 export function getWorkersDetailsByTeam(tid, tna, nArr, returnKey) {
   let returnValue = "",
     nameArr = [];
   if (nArr) {
-    nArr.map(value => {
+    nArr.map((value) => {
       if (value.team_id == tid && value.team_name == tna) {
         nameArr.push(value[returnKey]);
         returnValue = value[returnKey];
@@ -150,7 +164,7 @@ export function getPreviewContent(obj, libArr) {
     ),
     workerCount: obj.workerName.length,
     workerNames: obj.workerName.join(","),
-    Remarks: obj.remarks
+    Remarks: obj.remarks,
   };
 
   return detailsArr;
@@ -163,7 +177,7 @@ export function getReasons() {
     { id: 3, reason: "Absent" },
     { id: 4, reason: "Home Leave" },
     { id: 5, reason: "Late" },
-    { id: 99, reason: "Others" }
+    { id: 99, reason: "Others" },
   ];
 }
 export function truncate(string, length) {
@@ -172,11 +186,13 @@ export function truncate(string, length) {
 }
 
 export function getDetailsWithMatchedKeyObject(id, lib, key, returnKey) {
-  const returnValue = '';
+  const returnValue = "";
   if (lib) {
-    for (const k in lib) { // eslint-disable-next-line eqeqeq
-      const obj = lib[k].filter((item) => { // eslint-disable-next-line eqeqeq
-        return (item[key] == id);
+    for (const k in lib) {
+      // eslint-disable-next-line eqeqeq
+      const obj = lib[k].filter((item) => {
+        // eslint-disable-next-line eqeqeq
+        return item[key] == id;
       });
 
       if (obj[0] && obj[0][returnKey]) {
