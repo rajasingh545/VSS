@@ -172,7 +172,6 @@ class DailyWorkTrackEdit extends React.Component {
           "type"
         );
       }
-
       this.setState({
         divisionTitle: subdivisionTitle,
         value_wrno: requestDet.workRequestId,
@@ -749,6 +748,7 @@ class DailyWorkTrackEdit extends React.Component {
   render() {
     const imgURL = API.CONTEXT;
     let { headerTitle } = this.state;
+
     return (
       <div className="container work-arr-container">
         <ToastContainer autoClose={8000} />

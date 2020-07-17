@@ -412,7 +412,10 @@ class DailyWorkTrack extends React.Component {
 
   addWorkRequest = (list) => {
     this.itemList.push(list);
-    this.setState({ itemList: this.itemList });
+    this.setState({
+      itemList: this.itemList,
+      value_wrno: this.itemList[0].wr_no,
+    });
     this.displayWorkRequestPopup();
   };
 
