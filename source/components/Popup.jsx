@@ -1,7 +1,5 @@
-
-import React, { Component } from 'react';
-import { Modal } from 'react-bootstrap';
-
+import React, { Component } from "react";
+import { Modal } from "react-bootstrap";
 
 export default class Popup extends Component {
   constructor() {
@@ -17,14 +15,18 @@ export default class Popup extends Component {
 
   render() {
     return (
-      <Modal show={ this.state.show } onHide={ this.props.handleClose } dialogClassName="modallg">
+      <Modal
+        show={this.state.show}
+        onHide={this.props.handleClose}
+        dialogClassName="modallg"
+      >
         <Modal.Header closeButton>
-          <Modal.Title><strong>{this.props.title}</strong></Modal.Title>
+          <Modal.Title>
+            <strong>{this.props.title}</strong>
+          </Modal.Title>
         </Modal.Header>
-        <Modal.Body>
-          {this.props.children}
-
-        </Modal.Body>
-      </Modal>);
+        <Modal.Body>{this.props.children}</Modal.Body>
+      </Modal>
+    );
   }
 }
