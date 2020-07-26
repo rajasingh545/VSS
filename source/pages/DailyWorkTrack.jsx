@@ -114,6 +114,12 @@ class DailyWorkTrack extends React.Component {
     dispatch(requestDetails(this.state));
   }
   componentWillReceiveProps(nextProps) {
+    if (
+      nextProps.requestDet &&
+      nextProps.requestDet.assignedbasesupervisors == "no"
+    ) {
+      this.setState({ show1: true });
+    }
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
       this.state.clients = nextProps.requestDet.clients;
@@ -342,6 +348,12 @@ class DailyWorkTrack extends React.Component {
   };
   handleClose = () => {
     this.setState({ show: false });
+  };
+  handleClose1 = () => {
+    this.setState({ show1: false });
+  };
+  handleClose2 = () => {
+    window.location.reload();
   };
 
   displayManpowerPopup = (workRequestId = 0) => {
@@ -900,6 +912,25 @@ class DailyWorkTrack extends React.Component {
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>
               Close
+            </CustomButton>
+          </Modal.Footer>
+        </Modal>
+        <Modal show={this.state.show1} onHide={this.handleClose}>
+          <Modal.Header closeButton>
+            <Modal.Title>
+              <strong>Assigned Base Supervisor</strong>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            Are you sure want to continue?
+            {/* <DailyWorkTrackPreview curState={this.state} /> */}
+          </Modal.Body>
+          <Modal.Footer>
+            <CustomButton bsStyle="secondary" onClick={this.handleClose2}>
+              No
+            </CustomButton>
+            <CustomButton bsStyle="primary" onClick={this.handleClose1}>
+              Yes
             </CustomButton>
           </Modal.Footer>
         </Modal>

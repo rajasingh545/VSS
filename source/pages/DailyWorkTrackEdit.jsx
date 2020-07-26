@@ -182,6 +182,7 @@ class DailyWorkTrackEdit extends React.Component {
         workType: subdivisiontype,
       });
       requestItemsArr = this.populateItemText(requestItemsArr, requestDet);
+
       this.itemList = requestItemsArr;
       this.state.itemList = requestItemsArr;
     } else if (
@@ -557,6 +558,9 @@ class DailyWorkTrackEdit extends React.Component {
     const formValidation = this.validateForm();
     // console.log("validatiing form===", formValidation);
     if (formValidation == true) {
+      this.state.itemList.map((_x) => {
+        _x.wr_no = this.state.value_wrno;
+      });
       this.state.requestCode = 22;
       this.state.listingstatus = status;
       dispatch(workRequestPost(this.state));
@@ -697,6 +701,8 @@ class DailyWorkTrackEdit extends React.Component {
   };
 
   addWorkRequest = (list) => {
+    console.log("list======>>>>>", list);
+
     this.itemList.push(list);
     this.setState({ itemList: this.itemList });
     this.displayWorkRequestPopup();

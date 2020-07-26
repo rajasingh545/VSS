@@ -7,7 +7,7 @@ export default class AccordionExampleFluid extends Component {
   componentWillReceiveProps(nextprops) {
     // console.log(nextprops);
     this.setState({
-      workArrangementList: nextprops.listingDetails
+      workArrangementList: nextprops.listingDetails,
     });
   }
 
@@ -33,7 +33,7 @@ export default class AccordionExampleFluid extends Component {
               width: "80%",
               textAlign: "center",
               textWeight: "bold",
-              paddingTop: "100px"
+              paddingTop: "100px",
             }}
           >
             No Listings Found
@@ -56,7 +56,11 @@ export default class AccordionExampleFluid extends Component {
                   active={activeIndex === index}
                   onClick={() =>
                     this.handleClick1(
-                      listData.workArrangementId,
+                      listData.workArrangementId
+                        ? listData.workArrangementId
+                        : listData.worktrackId
+                        ? listData.worktrackId
+                        : listData.workRequestId,
                       listData.projectId
                     )
                   }
