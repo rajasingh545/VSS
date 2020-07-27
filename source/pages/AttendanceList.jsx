@@ -12,7 +12,7 @@ import {
   requestPost,
   requestPostClear,
   listigDetails,
-  clearListing
+  clearListing,
 } from "actions/workArrangement.actions";
 import CustomButton from "../components/CustomButton";
 import { getDetailsWithMatchedKey2, addDays } from "../common/utility";
@@ -22,10 +22,10 @@ import moment from "moment";
 import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 
-@connect(state => ({
+@connect((state) => ({
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 export default class AttendanceList extends React.Component {
@@ -41,7 +41,7 @@ export default class AttendanceList extends React.Component {
       startDate: moment().format("YYYY/MM/DD"),
       show: false,
       modalCont: "",
-      requestTypeTitle: "Select Status"
+      requestTypeTitle: "Select Status",
     };
 
     this.selectedIds = [];
@@ -74,7 +74,7 @@ export default class AttendanceList extends React.Component {
     this.props.history.push("/Attendance/" + requestId + "/" + pid);
   };
 
-  Listings = listings => {
+  Listings = (listings) => {
     let { listingDetails, requestDet } = this.props,
       response = "",
       requestDetails = {};
@@ -93,7 +93,7 @@ export default class AttendanceList extends React.Component {
             "projectName"
           );
         }
-        this.state.requestDet.projects.map(project => {
+        this.state.requestDet.projects.map((project) => {
           if (data.projectId == project.projectId) {
             projectStartTime = project.startTime;
             projectEndTime = project.endTime;
@@ -142,7 +142,7 @@ export default class AttendanceList extends React.Component {
             width: "80%",
             textAlign: "center",
             textWeight: "bold",
-            paddingTop: "100px"
+            paddingTop: "100px",
           }}
         >
           No Listings Found
@@ -165,22 +165,22 @@ export default class AttendanceList extends React.Component {
       this.setState({ showSubButton: false });
     }
   };
-  onStartDateChange = e => {
+  onStartDateChange = (e) => {
     if (e != null) {
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
-        startDate1: e
+        startDate1: e,
       });
     } else {
       this.setState({
         startDate: "",
-        startDate1: ""
+        startDate1: "",
       });
     }
     this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
     this.handleRequestType(e.format("YYYY/MM/DD"));
   };
-  prdata = state => {
+  prdata = (state) => {
     let { projects, availableWorkers, supervisorsList } = state.requestDet,
       { listingDetails } = state;
     // console.log("predata 1", availableWorkers, supervisorsList);
@@ -214,7 +214,7 @@ export default class AttendanceList extends React.Component {
               let jsonValue = {
                 name: supervisorsList[k].Name,
                 inTime: wl.supervisorlist[j].inTime,
-                outTime: wl.supervisorlist[j].outTime
+                outTime: wl.supervisorlist[j].outTime,
               };
               if (wl.supervisorlist[j].reason == 1) {
                 jsonValue.reason = "MC";
@@ -251,7 +251,7 @@ export default class AttendanceList extends React.Component {
               let jsonValue = {
                 name: availableWorkers[k].workerName,
                 inTime: wl.workerlist[j].inTime,
-                outTime: wl.workerlist[j].outTime
+                outTime: wl.workerlist[j].outTime,
               };
               if (wl.workerlist[j].reason == 1) {
                 jsonValue.reason = "MC";
@@ -285,13 +285,13 @@ export default class AttendanceList extends React.Component {
   };
   setPreview = () => {
     let contArr = [];
-    this.selectedIds.map(ind => {
+    this.selectedIds.map((ind) => {
       contArr.push(document.getElementById("elm_" + ind).innerHTML + "<br />");
     });
     this.setState({ show: true, modalCont: contArr.join("") });
   };
 
-  handleRequestType = date => {
+  handleRequestType = (date) => {
     const { dispatch, userType, userId } = this.props;
 
     this.state.requestCode = 8;
@@ -301,7 +301,7 @@ export default class AttendanceList extends React.Component {
     dispatch(listigDetails(this.state));
   };
 
-  setProjectId = e => {
+  setProjectId = (e) => {
     this.state.projectId = e.target.value;
     this.setState({ cboProjects: "0", listingDetails: {} });
   };

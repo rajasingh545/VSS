@@ -9,7 +9,7 @@ import {
   requestPost,
   requestPostClear,
   listigDetails,
-  clearListing
+  clearListing,
 } from "actions/workArrangement.actions";
 import CustomButton from "../components/CustomButton";
 import { getDetailsWithLib2, addDays } from "../common/utility";
@@ -19,10 +19,10 @@ import moment from "moment";
 import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 
-@connect(state => ({
+@connect((state) => ({
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 export default class WorkArrangementList extends React.Component {
@@ -41,7 +41,7 @@ export default class WorkArrangementList extends React.Component {
       show: false,
       modalCont: "",
       requestTypeTitle: "Select Status",
-      selectAll: false
+      selectAll: false,
     };
 
     this.selectedIds = [];
@@ -83,26 +83,26 @@ export default class WorkArrangementList extends React.Component {
       this.setState({
         requestType,
         requestTypeTitle,
-        startDate1: dateSelected
+        startDate1: dateSelected,
       });
       this.state.startDate = actualDate;
       this.handleRequestType(requestType, [], "", requestTypeTitle);
     }
   };
-  redirectView = requestId => {
+  redirectView = (requestId) => {
     if (this.props.userType == 1) {
       // this.props.history.push("/WorkArrangment/" + requestId);
       this.props.history.push({
         pathname: "/WorkArrangment/" + requestId,
         state: {
           ["requestType_Title"]:
-            this.state.requestType == 1 ? "Submitted" : "Draft"
-        }
+            this.state.requestType == 1 ? "Submitted" : "Draft",
+        },
       });
     }
   };
 
-  Listings = listings => {
+  Listings = (listings) => {
     let { listingDetails, requestDet } = this.props;
     let response = "";
     let requestDetails = {};
@@ -145,7 +145,7 @@ export default class WorkArrangementList extends React.Component {
             width: "80%",
             textAlign: "center",
             textWeight: "bold",
-            paddingTop: "100px"
+            paddingTop: "100px",
           }}
         >
           No Listings Found
@@ -169,18 +169,18 @@ export default class WorkArrangementList extends React.Component {
       this.setState({ showSubButton: false });
     }
   };
-  onStartDateChange = e => {
+  onStartDateChange = (e) => {
     const { dispatch } = this.props;
     if (e != null) {
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
-        startDate1: e
+        startDate1: e,
       });
       sessionStorage.setItem("dateSelected", e.format("YYYY/MM/DD"));
     } else {
       this.setState({
         startDate: "",
-        startDate1: ""
+        startDate1: "",
       });
     }
     this.state.startDate = e.format("YYYY/MM/DD");
@@ -190,17 +190,17 @@ export default class WorkArrangementList extends React.Component {
   };
   setPreview = () => {
     let contArr = [];
-    this.selectedIds.map(ind => {
+    this.selectedIds.map((ind) => {
       contArr.push(document.getElementById("elm_" + ind).innerHTML + "<br />");
     });
     this.setState({ show: true, modalCont: contArr.join("") });
   };
-  onDelete = Ids => {
+  onDelete = (Ids) => {
     const { dispatch } = this.props;
     this.setState(
       {
         requestCode: 16,
-        deleteWorkArrangementIds: Ids
+        deleteWorkArrangementIds: Ids,
       },
       () => {
         dispatch(requestPost(this.state));
@@ -218,14 +218,14 @@ export default class WorkArrangementList extends React.Component {
     sessionStorage.setItem("requestType", key);
     sessionStorage.setItem("requestTypeTitle", title);
     this.setState({
-      showSubButton: false
+      showSubButton: false,
     });
     this.selectedIds = [];
     // console.log("this.state", this.state)
     dispatch(listigDetails(this.state));
   };
 
-  setProjectId = e => {
+  setProjectId = (e) => {
     this.state.projectId = e.target.value;
     this.setState({ cboProjects: "0", listingDetails: {} });
   };
@@ -247,15 +247,15 @@ export default class WorkArrangementList extends React.Component {
     }, 2000);
   };
 
-  handleSelectAll = e => {
+  handleSelectAll = (e) => {
     if (e.target.checked) {
       this.setState({ selectAll: true });
-      this.state.listingDetails.map(item => {
+      this.state.listingDetails.map((item) => {
         this.onCheckBoxClickCallBack(item.workArrangementId, true);
       });
     } else {
       this.setState({ selectAll: false });
-      this.state.listingDetails.map(item => {
+      this.state.listingDetails.map((item) => {
         this.onCheckBoxClickCallBack(item.workArrangementId, false);
       });
     }

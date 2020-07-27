@@ -20,7 +20,7 @@ import moment from "moment";
 import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
 import InputSearch from "../components/InputSearch";
-
+import CollapsiblePanel from "../components/CollapsiblePanel";
 import { Image, Icon, Label, Menu, Table } from "semantic-ui-react";
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
@@ -81,7 +81,7 @@ export default class WorkRequestList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
-    const { requestDet } = nextProps;
+    const { requestDet, workRequestData } = nextProps;
     let projects = [...requestDet.projects],
       clients = [...requestDet.clients],
       defaultProject = {
@@ -189,18 +189,54 @@ export default class WorkRequestList extends React.Component {
           PName +
           "-WR-" +
           ("0000" + data.workRequestId).substring(data.workRequestId.length);
-        return (
-          <div
-            className="row Listing1 hrline hoverColor"
-            style={{ cursor: "pointer" }}
-            key={data.workRequestId}
-            onClick={() => this.redirectView(data.workRequestId)}
-          >
-            <strong>{wrstr} : </strong>
-            {projectName} : {clientname} Requested By : {data.requestedBy}
-          </div>
-        );
+
+        data.Title =
+          wrstr +
+          " " +
+          projectName +
+          " : " +
+          clientname +
+          "  Requested By :  " +
+          data.requestedBy;
+        // console.log(data.title, data.requestSizeList, data.requestmanpower);
+        if (data.requestSizeList.length > 0) {
+          let text = "";
+          data.requestSizeList.map((_x, i) => {
+            let title = _x.scaffoldsubcategory,
+              size = _x.size;
+            text +=
+              "<p>" +
+              title +
+              "</p> </br>  <p> Size-" +
+              (i + 1) +
+              " :" +
+              size +
+              ";</p> </br>";
+          });
+          data.paragraph = text;
+        } else {
+          data.paragraph = "<p>No Record</p>";
+        }
+        // console.log(data);
+
+        // return (
+        //   <div
+        //     className="row Listing1 hrline hoverColor"
+        //     style={{ cursor: "pointer" }}
+        //     key={data.workRequestId}
+        //     onClick={() => this.redirectView(data.workRequestId)}
+        //   >
+        //     <strong>{wrstr} : </strong>
+        //     {projectName} : {clientname} Requested By : {data.requestedBy}
+        //   </div>
+        // );
       });
+      return (
+        <CollapsiblePanel
+          listingDetails={listings}
+          redirectView={this.redirectView}
+        />
+      );
     } else {
       response = (
         <div
@@ -462,6 +498,12 @@ export default class WorkRequestList extends React.Component {
                 </div>
               )}
 
+              {/* {workRequestData && loading == false && (
+            <CollapsiblePanel
+              listingDetails={listingDetails}
+              redirectView={this.redirectView}
+            />
+          )} */}
               {workRequestData && loading == false && (
                 <div>{this.Listings(this.state.workRequestData)}</div>
               )}
