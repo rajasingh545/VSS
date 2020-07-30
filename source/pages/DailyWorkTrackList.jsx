@@ -315,10 +315,10 @@ export default class DailyWorkTrackList extends React.Component {
           {this.state.workRequestData && loading == false && (
             <div className="row">
               <div className="col-xs-8">
-                <InputSearch
+                {/* <InputSearch
                   initialItems={this.initialItems}
                   FilterData={this.FilterDataCallBackfun}
-                />
+                /> */}
                 {this.Listings(this.state.workRequestData)}
               </div>
             </div>

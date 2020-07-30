@@ -146,7 +146,15 @@ class WorkRequestPreviewPage extends React.Component {
         "clientId",
         "clientName"
       );
-      let images = this.props.workRequestData.requestDetails.completionImages;
+      let images = "";
+      if (
+        nextProps.workRequestData &&
+        nextProps.workRequestData.requestDetails.completionImages &&
+        typeof nextProps.workRequestData.requestDetails.completionImages !==
+          "undefined"
+      ) {
+        images = nextProps.workRequestData.requestDetails.completionImages;
+      }
       this.setState({
         images: images,
         projectTitle: proTitle,
@@ -362,7 +370,6 @@ class WorkRequestPreviewPage extends React.Component {
   /* Render */
   render() {
     const { userType } = this.props;
-    // console.log(this.props.workRequestData.requestDetails.completionImages);
 
     return (
       <div>
