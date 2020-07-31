@@ -478,7 +478,7 @@ export default class WorkRequestList extends React.Component {
               {loading === true ? "Loading ..." : "Search"}
             </Button>
           </div>
-          {workRequestData && loading == false && (
+          {/* {workRequestData && loading == false && (
             <div>
               <div style={{ zIndex: 0 }}>
                 <InputSearch
@@ -487,7 +487,7 @@ export default class WorkRequestList extends React.Component {
                 />
               </div>
             </div>
-          )}
+          )} */}
         </div>
         <div className="row">
           <div className="col-xs-8">
