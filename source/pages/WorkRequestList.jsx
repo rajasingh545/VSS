@@ -401,7 +401,7 @@ export default class WorkRequestList extends React.Component {
     const { loading } = this.props;
 
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
-    console.log(requestJsonData);
+    console.log(userType);
 
     return (
       <div>
@@ -426,7 +426,7 @@ export default class WorkRequestList extends React.Component {
               className=" form-control"
               isClearable={false}
               onChange={this.onEndDateChange}
-              minDate={new Date()}
+              minDate={userType == 1 ? "" : new Date()}
               maxDate={addDays(new Date(), 1)}
               name="startDate"
               dateFormat="DD-MM-YYYY"
