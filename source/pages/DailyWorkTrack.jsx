@@ -116,7 +116,7 @@ class DailyWorkTrack extends React.Component {
   componentWillReceiveProps(nextProps) {
     if (
       nextProps.requestDet &&
-      nextProps.requestDet.assignedbasesupervisors == "no"
+      nextProps.requestDet.assignedbasesupervisors == "yes"
     ) {
       this.setState({ show1: true });
     }
