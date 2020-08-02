@@ -847,7 +847,7 @@ class WorkRequest extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <WorkRequestPreview curState={this.state} />
+            <WorkRequestPreview curState={this.state} images={[]} />
           </Modal.Body>
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>

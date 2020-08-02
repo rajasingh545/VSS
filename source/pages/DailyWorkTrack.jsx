@@ -114,12 +114,12 @@ class DailyWorkTrack extends React.Component {
     dispatch(requestDetails(this.state));
   }
   componentWillReceiveProps(nextProps) {
-    if (
-      nextProps.requestDet &&
-      nextProps.requestDet.assignedbasesupervisors == "no"
-    ) {
-      this.setState({ show1: true });
-    }
+    // if (
+    //   nextProps.requestDet &&
+    //   nextProps.requestDet.assignedbasesupervisors == "yes"
+    // ) {
+    //   this.setState({ show1: true });
+    // }
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
       this.state.clients = nextProps.requestDet.clients;

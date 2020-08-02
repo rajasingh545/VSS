@@ -345,6 +345,12 @@ export default class WorkRequestList extends React.Component {
         "YYYY/MM/DD"
       );
     }
+    if (
+      Number(moment(new Date(requestJsonData.startDate1)).format("YYYYMMDD")) >
+      Number(moment(new Date(requestJsonData.endDate1)).format("YYYYMMDD"))
+    ) {
+      toast.error("Please select correct date", { autoClose: 2000 });
+    }
     if (JSONData.requestJsonData.requestData.id === undefined) {
       toast.error("Please select Status", { autoClose: 2000 });
     } else {
@@ -402,8 +408,12 @@ export default class WorkRequestList extends React.Component {
     const { loading } = this.props;
 
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
-    console.log(requestJsonData);
-
+    if (
+      Number(moment(new Date(requestJsonData.startDate1)).format("YYYYMMDD")) >
+      Number(moment(new Date(requestJsonData.endDate1)).format("YYYYMMDD"))
+    ) {
+      toast.error("Please select correct date", { autoClose: 2000 });
+    }
     return (
       <div>
         <ToastContainer autoClose={8000} />
@@ -427,7 +437,7 @@ export default class WorkRequestList extends React.Component {
               className=" form-control"
               isClearable={false}
               onChange={this.onEndDateChange}
-              minDate={new Date()}
+              minDate={userType == 1 ? "" : new Date()}
               maxDate={addDays(new Date(), 1)}
               name="startDate"
               dateFormat="DD-MM-YYYY"
