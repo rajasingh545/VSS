@@ -119,6 +119,8 @@ export default class WorkArrangementList extends React.Component {
         }
 
         let elmId = "elm_" + requestDetails.workArrangementId;
+        // console.log(requestDetails);
+
         return (
           <div
             className="row Listing1 hrline hoverColor"
@@ -170,7 +172,7 @@ export default class WorkArrangementList extends React.Component {
     }
   };
   onStartDateChange = (e) => {
-    const { dispatch } = this.props;
+    const { dispatch, userType } = this.props;
     if (e != null) {
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
@@ -184,8 +186,13 @@ export default class WorkArrangementList extends React.Component {
       });
     }
     this.state.startDate = e.format("YYYY/MM/DD");
-    if (this.state.requestType) {
-      dispatch(listigDetails(this.state));
+
+    if (userType != 1) {
+      this.handleRequestType(1, [], {}, "Submitted");
+    } else {
+      if (this.state.requestType) {
+        dispatch(listigDetails(this.state));
+      }
     }
   };
   setPreview = () => {
@@ -267,41 +274,63 @@ export default class WorkArrangementList extends React.Component {
     const { loading } = this.props;
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
     // console.log(this.state.requestType);
+
     return (
       <div>
         <ToastContainer autoClose={8000} />
         <br />
-
-        <div className="row">
-          <div className="col-xs-8">
-            <DatePicker
-              selected={this.state.startDate1}
-              className=" form-control"
-              isClearable={false}
-              minDate={new Date()}
-              maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
-              onChange={this.onStartDateChange}
-              name="startDate"
-              dateFormat="DD-MM-YYYY"
-              locale="UTC"
-            />
+        {this.props.userType != 1 && (
+          <div className="row">
+            <div className="col-xs-8">
+              <DatePicker
+                selected={this.state.startDate1}
+                className=" form-control"
+                isClearable={false}
+                minDate={new Date()}
+                maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
+                onChange={this.onStartDateChange}
+                name="startDate"
+                dateFormat="DD-MM-YYYY"
+                locale="UTC"
+              />
+            </div>
+            <div className="col-xs-2">&nbsp;</div>
           </div>
-          <div className="col-xs-2">&nbsp;</div>
-        </div>
-        <div className="row">
-          <div className="col-xs-8">
-            <Dropdown
-              title={this.state.requestTypeTitle}
-              name="name"
-              keyName="id"
-              stateId="status"
-              list={this.state.options}
-              value={requestType}
-              resetThenSet={this.handleRequestType}
-            />
+        )}
+        {this.props.userType == 1 && (
+          <div className="row">
+            <div className="col-xs-8">
+              <DatePicker
+                selected={this.state.startDate1}
+                className=" form-control"
+                isClearable={false}
+                minDate={new Date()}
+                maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
+                onChange={this.onStartDateChange}
+                name="startDate"
+                dateFormat="DD-MM-YYYY"
+                locale="UTC"
+              />
+            </div>
+            <div className="col-xs-2">&nbsp;</div>
           </div>
-          <div className="col-xs-2">&nbsp;</div>
-        </div>
+        )}
+        {this.props.userType == 1 && (
+          <div className="row">
+            <div className="col-xs-8">
+              <Dropdown
+                title={this.state.requestTypeTitle}
+                name="name"
+                keyName="id"
+                stateId="status"
+                list={this.state.options}
+                value={requestType}
+                resetThenSet={this.handleRequestType}
+              />
+            </div>
+            <div className="col-xs-2">&nbsp;</div>
+          </div>
+        )}
 
         <div className="padding15" id="divRequestListing">
           {this.state.requestType == 2 &&

@@ -390,9 +390,25 @@ class WorkRequestPreviewPage extends React.Component {
             <div className="col-xs-6"> &nbsp;</div>
           </div>
         )}
+        <div className="row">
+          <div className="col-xs-6">
+            <br />
+            <CustomButton bsStyle="secondary">
+              <a
+                href={`http://productivity-api.macinc.in/productivity-api/workrequestpdf.php?workrequestid=${this.state.listingId}`}
+                target="_blank"
+              >
+                {" "}
+                preview{" "}
+              </a>
+            </CustomButton>
+          </div>
+          <div className="col-xs-6"> &nbsp;</div>
+        </div>
 
         <br />
         <WorkRequestPreview curState={this.state} images={this.state.images} />
+        <br />
       </div>
     );
   }

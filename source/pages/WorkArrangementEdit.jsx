@@ -12,22 +12,22 @@ import {
   requestDetails,
   requestPost,
   listigDetails,
-  clearListing
+  clearListing,
 } from "actions/workArrangement.actions";
 import { Modal } from "react-bootstrap";
 import {
   getPreviewContent,
-  getDetailsWithMatchedKey2
+  getDetailsWithMatchedKey2,
 } from "../common/utility";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 import { DOMAIN_NAME } from "../config/api-config";
 
-@connect(state => ({
+@connect((state) => ({
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 class WorkArrangementEdit extends React.Component {
@@ -44,10 +44,12 @@ class WorkArrangementEdit extends React.Component {
       supervisorTitle: "Select Supervisor",
       addsupervisorTitle: "Select Supervisor",
       partialWorkers: [],
-      partialAddSup: []
+      partialAddSup: [],
+      partialBaseSupervisors: [],
     };
     this.partialWorkers = [];
     this.partialAddSup = [];
+    this.partialBaseSupervisors = [];
     this.resetThenSet = this.resetThenSet.bind(this); //this is required to bind the dispatch
     this.toggleSelected = this.toggleSelected.bind(this);
   }
@@ -55,7 +57,7 @@ class WorkArrangementEdit extends React.Component {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
-    console.log("next props", this.props);
+    // console.log("next props", this.props);
     //get details of listing
     if (this.props.match.params && this.props.match.params.id) {
       this.state.listingId = this.props.match.params.id;
@@ -100,7 +102,7 @@ class WorkArrangementEdit extends React.Component {
         toast.error(
           "Worker or Supervisor Already Assigned to another Project",
           {
-            autoClose: 3000
+            autoClose: 3000,
           }
         );
         // this.resetForm();
@@ -116,7 +118,7 @@ class WorkArrangementEdit extends React.Component {
         this.setState({
           supervisors: nextProps.requestDet.supervisors,
           value_supervisors: "",
-          value_supervisors2: ""
+          value_supervisors2: "",
         });
       } else if (nextProps.requestDet && nextProps.listingDetails) {
         // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
@@ -124,8 +126,12 @@ class WorkArrangementEdit extends React.Component {
         this.state.supervisors = [...listingDetails.availablesupervisor];
         this.state.workers = [...listingDetails.availableworker];
         this.state.addSupervisors = [...listingDetails.availablesupervisor];
+        this.state.baseSupervsor = [...listingDetails.availablesupervisor];
         this.state.addSupervisors = this.state.addSupervisors.filter(
-          addSup => addSup.userId !== listingDetails.baseSupervsor
+          (addSup) => addSup.userId !== listingDetails.baseSupervsor
+        );
+        this.state.baseSupervsor = this.state.baseSupervsor.filter(
+          (addSup) => addSup.userId === listingDetails.baseSupervsor
         );
       }
     }
@@ -147,6 +153,8 @@ class WorkArrangementEdit extends React.Component {
         "Name"
       );
       this.state.supervisorTitle = superTitle;
+      console.log(this.state.supervisorTitle);
+
       this.setState({ value_supervisors: listingDetails.baseSupervsor });
       let addsuperTitle = getDetailsWithMatchedKey2(
         listingDetails.addSupervsor,
@@ -158,15 +166,18 @@ class WorkArrangementEdit extends React.Component {
       this.setState({ value_supervisors2: listingDetails.addSupervsor });
       this.setState({ remarks: listingDetails.remarks });
       let selectedWorkerIds = [],
-        selectedSupIds = [];
+        selectedSupIds = [],
+        selectedBasSupId = [];
       let selectedWorkerNames = [],
-        selectedSupervisorNames = [];
+        selectedSupervisorNames = [],
+        selectedBaseSupervisorName = [];
       let dateSelected = moment(listingDetails.createdOn, "YYYY-MM-DD");
       let actualDate = dateSelected.format("YYYY/MM/DD");
       this.setState({ startDate1: dateSelected, startDate: actualDate });
       let selectedItemsWorkers = [],
-        selectedItemsAddSup = [];
-      let workerListArr = this.state.workers.map(val => {
+        selectedItemsAddSup = [],
+        selectedItemsBaseSup = [];
+      let workerListArr = this.state.workers.map((val) => {
         let selected = false;
         this.state.partialWorkerIds = listingDetails.partialWorkers;
         if (
@@ -185,10 +196,10 @@ class WorkArrangementEdit extends React.Component {
         }
         return {
           ...val,
-          selected
+          selected,
         };
       });
-      let supListArr = this.state.addSupervisors.map(val => {
+      let supListArr = this.state.addSupervisors.map((val) => {
         let selected = false;
         this.state.partialSupIds = listingDetails.partialsupervisor;
         if (
@@ -207,7 +218,31 @@ class WorkArrangementEdit extends React.Component {
         }
         return {
           ...val,
-          selected
+          selected,
+        };
+      });
+      // console.log(this.state.baseSupervsor);
+
+      let BaseSupListArr = this.state.baseSupervsor.map((val) => {
+        let selected = false;
+        this.state.partialBaseSupId = listingDetails.partialBaseSupervisors;
+        if (
+          listingDetails.baseSupervsor &&
+          listingDetails.baseSupervsor === val.userId.toString()
+        ) {
+          selected = true;
+          selectedBasSupId.push(val.userId);
+          selectedItemsBaseSup.push(val);
+          if (
+            this.state.partialBaseSupId &&
+            this.state.partialBaseSupId.includes(val.userId.toString())
+          ) {
+            this.partialBaseSupervisors.push(val.userId);
+          }
+        }
+        return {
+          ...val,
+          selected,
         };
       });
       this.setState({
@@ -221,7 +256,13 @@ class WorkArrangementEdit extends React.Component {
         supervisorIds: selectedSupIds,
         supervisorName: selectedSupervisorNames,
         selectedItemsAddSup: selectedItemsAddSup,
-        partialSupervisors: this.partialAddSup
+        partialSupervisors: this.partialAddSup,
+
+        baseSupervisors: BaseSupListArr,
+        baseSupervisorIds: selectedBasSupId,
+        baseSupervisorName: selectedBaseSupervisorName,
+        selectedItemsBaseSup: selectedItemsBaseSup,
+        partialBaseSupervisors: this.partialBaseSupervisors,
       });
 
       // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
@@ -230,7 +271,7 @@ class WorkArrangementEdit extends React.Component {
       const obj = {
         requestCode: 1,
         projectId: this.state.projectId,
-        workArrangement: this.props.match.params.id
+        workArrangement: this.props.match.params.id,
       };
 
       dispatch(requestDetails(obj));
@@ -270,14 +311,14 @@ class WorkArrangementEdit extends React.Component {
   // }
   toggleSelected(list, stateKey, selectedIds, selectedList) {
     this.setState({
-      [stateKey]: list
+      [stateKey]: list,
     });
 
-    let selectedItems = list.filter(function(obj) {
+    let selectedItems = list.filter(function (obj) {
       return obj.selected;
     });
     if (stateKey == "AdditionalSupervisors") {
-      let nameArr = selectedItems.map(function(obj) {
+      let nameArr = selectedItems.map(function (obj) {
         return obj.Name;
       });
 
@@ -286,10 +327,10 @@ class WorkArrangementEdit extends React.Component {
         Name: nameArr,
         selectedItemsAddSup: selectedItems,
         selectedListSup: selectedList,
-        value_supervisors2: selectedIds
+        value_supervisors2: selectedIds,
       });
     } else {
-      let nameArr = selectedItems.map(function(obj) {
+      let nameArr = selectedItems.map(function (obj) {
         return obj.workerName;
       });
 
@@ -297,22 +338,22 @@ class WorkArrangementEdit extends React.Component {
         workerIds: selectedIds,
         workerName: nameArr,
         selectedItemsWorkers: selectedItems,
-        selectedListWork: selectedList
+        selectedListWork: selectedList,
       });
     }
   }
   resetThenSet(key, list, stateKey) {
     this.setState({
-      [stateKey]: list
+      [stateKey]: list,
     });
 
     let valuekey = `value_${stateKey}`;
 
     this.setState({
-      [valuekey]: key.toString()
+      [valuekey]: key.toString(),
     });
   }
-  setRemarks = e => {
+  setRemarks = (e) => {
     let remarks = e.target.value;
     this.setState({ remarks });
   };
@@ -340,13 +381,13 @@ class WorkArrangementEdit extends React.Component {
     }
     if (this.state.value_supervisors == this.state.value_supervisors2) {
       toast.error("Base & Additional Supervisors can not be same", {
-        autoClose: 3000
+        autoClose: 3000,
       });
       return false;
     }
     return true;
   };
-  submitRequest = status => {
+  submitRequest = (status) => {
     const { dispatch } = this.props;
 
     let formValidation = this.validateForm();
@@ -357,7 +398,7 @@ class WorkArrangementEdit extends React.Component {
       dispatch(requestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success("Work Arrangement updated Successfully", {
-        autoClose: 3000
+        autoClose: 3000,
       });
       setTimeout(() => {
         this.props.history.push("/WorkArrangmentList");
@@ -370,34 +411,46 @@ class WorkArrangementEdit extends React.Component {
   };
   setPreview = () => {
     if (this.validateForm() == true) {
-      let detailArr = getPreviewContent(this.state, this.state);
-      let cont = <PreviewTemplate detailsArr={detailArr} />;
+      this.state.workArrangementId = this.state.listingId;
+      this.state.workerName = this.state.selectedListWork.map(
+        (_x) => _x.workerName
+      );
+      this.state.supervisor = this.state.supervisorTitle;
+      this.state.supervisor2 = this.state.selectedItemsAddSup.map(
+        (_x) => _x.Name
+      );
+      this.state.supervisor2 = this.state.supervisor2.join(", ");
 
+      let detailArr = getPreviewContent(this.state, this.state);
+      detailArr.supervisor = this.state.supervisor;
+      detailArr.supervisor2 = this.state.supervisor2;
+
+      let cont = <PreviewTemplate detailsArr={detailArr} />;
       this.setState({ show: true, modalTitle: "Preview", modalMsg: cont });
     }
   };
-  goBack = e => {
+  goBack = (e) => {
     e.preventDefault();
     this.props.history.goBack();
   };
-  onStartDateChange = e => {
+  onStartDateChange = (e) => {
     // console.log("===",e);
     if (e != null) {
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
-        startDate1: e
+        startDate1: e,
       });
     } else {
       this.setState({
         startDate: "",
-        startDate1: ""
+        startDate1: "",
       });
     }
   };
-  displayPartialWorkers = workers => {
+  displayPartialWorkers = (workers) => {
     let self = this;
     // console.log("log", workers, this.state.partialWorkers);
-    return workers.map(name => {
+    return workers.map((name) => {
       let flag = false;
       if (
         this.state.partialWorkers &&
@@ -420,10 +473,10 @@ class WorkArrangementEdit extends React.Component {
       );
     });
   };
-  displayPartialAddSup = AddSup => {
+  displayPartialAddSup = (AddSup) => {
     // let self = this;
     // console.log("log", AddSup, this.state.partialSupervisors);
-    return AddSup.map(name => {
+    return AddSup.map((name) => {
       let flag = false;
       if (
         this.state.partialSupervisors &&
@@ -445,13 +498,67 @@ class WorkArrangementEdit extends React.Component {
       );
     });
   };
-  selectPartialAddSupervisors = e => {
+  displayPartialBaseSup = (AddSup) => {
+    // let self = this;
+    // console.log("log", AddSup, this.state.partialSupervisors);
+    return AddSup.map((name) => {
+      let flag = false;
+      if (
+        this.state.partialBaseSupervisors &&
+        this.state.partialBaseSupervisors.includes(name.userId.toString())
+      ) {
+        flag = true;
+      }
+      return (
+        <div>
+          {" "}
+          <input
+            value={name.userId}
+            type="checkbox"
+            checked={flag}
+            onClick={this.selectPartialBaseSupervisors}
+          />
+          &nbsp;{name.Name}
+        </div>
+      );
+    });
+  };
+  selectPartialBaseSupervisors = (e) => {
+    e.stopPropagation();
+    // console.log("==", e.target);
+    const { selectedListSup, selectedItemsBaseSup } = this.state;
+    if (e.target.checked == true) {
+      this.partialBaseSupervisors.push(e.target.value);
+      selectedItemsBaseSup.map((SupList) => {
+        if (e.target.value == SupList.userId) {
+          SupList.isPartial = true;
+        }
+      });
+    } else {
+      var index = this.partialBaseSupervisors.indexOf(e.target.value);
+      if (index !== -1) {
+        this.partialBaseSupervisors.splice(index, 1);
+      }
+      selectedItemsBaseSup.map((SupList) => {
+        if (e.target.value == SupList.userId) {
+          SupList.isPartial = false;
+        }
+      });
+    }
+    this.setState({
+      partialBaseSupervisors: this.partialBaseSupervisors,
+      value_Base_supervisors2: this.partialBaseSupervisors,
+      partialBaseSupervisors: this.partialBaseSupervisors,
+      selectedItemsBaseSup,
+    });
+  };
+  selectPartialAddSupervisors = (e) => {
     e.stopPropagation();
     // console.log("==", e.target);
     const { selectedListSup, selectedItemsAddSup } = this.state;
     if (e.target.checked == true) {
       this.partialAddSup.push(e.target.value);
-      selectedItemsAddSup.map(SupList => {
+      selectedItemsAddSup.map((SupList) => {
         if (e.target.value == SupList.userId) {
           SupList.isPartial = true;
         }
@@ -461,7 +568,7 @@ class WorkArrangementEdit extends React.Component {
       if (index !== -1) {
         this.partialAddSup.splice(index, 1);
       }
-      selectedItemsAddSup.map(SupList => {
+      selectedItemsAddSup.map((SupList) => {
         if (e.target.value == SupList.userId) {
           SupList.isPartial = false;
         }
@@ -471,10 +578,10 @@ class WorkArrangementEdit extends React.Component {
       partialAddSup: this.partialAddSup,
       value_supervisors2: this.partialAddSup,
       partialSupervisors: this.partialAddSup,
-      selectedItemsAddSup
+      selectedItemsAddSup,
     });
   };
-  selectPartialWorkers = e => {
+  selectPartialWorkers = (e) => {
     e.stopPropagation();
 
     // console.log("==",e.target)
@@ -491,7 +598,8 @@ class WorkArrangementEdit extends React.Component {
   };
   /* Render */
   render() {
-    const { headerTitle, listingId } = this.state;
+    const { headerTitle, listingId, selectedItemsBaseSup } = this.state;
+    // console.log(selectedItemsBaseSup);
 
     const { loading } = this.props;
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
@@ -554,6 +662,19 @@ class WorkArrangementEdit extends React.Component {
               list={this.state.supervisors}
               resetThenSet={this.resetThenSet}
             />
+          </div>
+        </div>
+
+        <div className="row">
+          <div className="col-sm-6">
+            <label>Partial Base Supervisor</label>
+          </div>
+          <div className="col-sm-6">
+            {this.state.selectedItemsAddSup && (
+              <div>
+                {this.displayPartialBaseSup(this.state.selectedItemsBaseSup)}
+              </div>
+            )}
           </div>
         </div>
 

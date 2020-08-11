@@ -7,7 +7,7 @@ class PreviewTemplate extends React.Component {
     super(props);
 
     this.state = {
-      checked: false
+      checked: false,
     };
   }
 
@@ -28,16 +28,16 @@ class PreviewTemplate extends React.Component {
       list,
       elementId,
       checkBoxChecked,
-      onClickList
+      onClickList,
     } = this.props;
     let checkedValue = checkBoxChecked == true ? true : this.state.checked;
-    // console.log(detailsArr);
+    console.log(detailsArr);
 
     return (
       <div
         style={{
           pointerEvents: detailsArr.isNew ? "" : "none",
-          color: detailsArr.isNew ? "green" : "red"
+          color: detailsArr.isNew ? "green" : "red",
         }}
       >
         {list === true && (
@@ -57,7 +57,7 @@ class PreviewTemplate extends React.Component {
           {detailsArr.workerCount > 0 && (
             <span>
               {/* +{detailsArr.workerCount}pax */}
-              {truncate(detailsArr.workerNames, 100)}
+              {truncate(detailsArr.workerNames, 100000)}
             </span>
           )}
         </span>
