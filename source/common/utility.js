@@ -177,6 +177,7 @@ export function getReasons() {
     { id: 3, reason: "Absent" },
     { id: 4, reason: "Home Leave" },
     { id: 5, reason: "Late" },
+    { id: 6, reason: "Early Start" },
     { id: 99, reason: "Others" },
   ];
 }

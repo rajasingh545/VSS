@@ -114,9 +114,9 @@ export default class WorkArrangementList extends React.Component {
         // console.log(requestDetails);
 
         let checkBox = true;
-        if (this.state.requestType == 1 || this.props.userType == 5) {
-          checkBox = false;
-        }
+        // if (this.state.requestType == 1 || this.props.userType == 5) {
+        //   checkBox = false;
+        // }
 
         let elmId = "elm_" + requestDetails.workArrangementId;
         // console.log(requestDetails);
@@ -204,15 +204,27 @@ export default class WorkArrangementList extends React.Component {
   };
   onDelete = (Ids) => {
     const { dispatch } = this.props;
-    this.setState(
-      {
-        requestCode: 16,
-        deleteWorkArrangementIds: Ids,
-      },
-      () => {
-        dispatch(requestPost(this.state));
-      }
-    );
+    if (this.state.requestType == 2) {
+      this.setState(
+        {
+          requestCode: 16,
+          deleteWorkArrangementIds: Ids,
+        },
+        () => {
+          dispatch(requestPost(this.state));
+        }
+      );
+    } else if (this.state.requestType == 1) {
+      this.setState(
+        {
+          requestCode: 17,
+          deleteWorkArrangementIds: Ids,
+        },
+        () => {
+          dispatch(requestPost(this.state));
+        }
+      );
+    }
   };
 
   handleRequestType = (key, list, stateKey, title) => {
@@ -333,20 +345,22 @@ export default class WorkArrangementList extends React.Component {
         )}
 
         <div className="padding15" id="divRequestListing">
-          {this.state.requestType == 2 &&
+          {
+            //this.state.requestType == 2 &&
             this.props.userType == 1 &&
-            listingDetails &&
-            listingDetails.length > 0 && (
-              <div className="row" style={{ paddingLeft: "17px" }}>
-                <input
-                  type="checkbox"
-                  checked={this.state.selectAll}
-                  name="select"
-                  onClick={this.handleSelectAll}
-                />{" "}
-                <strong>Select All</strong>
-              </div>
-            )}
+              listingDetails &&
+              listingDetails.length > 0 && (
+                <div className="row" style={{ paddingLeft: "17px" }}>
+                  <input
+                    type="checkbox"
+                    checked={this.state.selectAll}
+                    name="select"
+                    onClick={this.handleSelectAll}
+                  />{" "}
+                  <strong>Select All</strong>
+                </div>
+              )
+          }
 
           {loading == true && (
             <div className="center-div">
@@ -369,7 +383,7 @@ export default class WorkArrangementList extends React.Component {
               </CustomButton>
             </div>
           )}
-          {this.state.showSubButton && this.state.requestType == 2 && (
+          {this.state.showSubButton && (
             <div className="col-sm-3">
               <br />{" "}
               <CustomButton

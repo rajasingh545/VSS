@@ -226,6 +226,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Home Leave";
               } else if (wl.supervisorlist[j].reason == 5) {
                 jsonValue.reason = "Late";
+              } else if (wl.supervisorlist[j].reason == 6) {
+                jsonValue.reason = "Early Start";
               } else {
                 jsonValue.reason = "Others";
               }
@@ -263,6 +265,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Home Leave";
               } else if (wl.workerlist[j].reason == 5) {
                 jsonValue.reason = "Late";
+              } else if (wl.workerlist[j].reason == 6) {
+                jsonValue.reason = "Early Start";
               } else {
                 jsonValue.reason = "Others";
               }
