@@ -94,19 +94,13 @@ class AttedenceEdit extends React.Component {
       this.state.availableSupervisorsList =
         nextProps.requestDet.supervisorsList;
       this.state.team = nextProps.requestDet.team;
-    } else if (typeof nextProps.listingDetails === "object") {
-      // console.log(typeof nextProps.listingDetails);
-      if (
-        nextProps.listingDetails.workerlist &&
-        Array.isArray(nextProps.listingDetails.workerlist)
-      ) {
-        this.setState({
-          workersList: nextProps.listingDetails.workerlist,
-          supervisorsList: nextProps.listingDetails.supervisorlist,
-        });
-        if (nextProps.listingDetails[0]) {
-          this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
-        }
+    } else if (nextProps.listingDetails) {
+      this.setState({
+        workersList: nextProps.listingDetails.workerlist,
+        supervisorsList: nextProps.listingDetails.supervisorlist,
+      });
+      if (nextProps.listingDetails[0]) {
+        this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
       }
     }
   }

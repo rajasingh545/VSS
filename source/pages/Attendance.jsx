@@ -39,6 +39,7 @@ class Attedence extends React.Component {
     };
     this.selectedIds = [];
     this.timeValuesArr = [];
+    this.errorIdArr = [];
     this.teamArr = [];
     this.WAId = "";
     this.resetThenSet = this.resetThenSet.bind(this); // this is required to bind the dispatch
@@ -54,7 +55,7 @@ class Attedence extends React.Component {
     dispatch(requestDetails(this.state));
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("nextProps ", nextProps.requestDet.projects);
+    // console.log("nextProps ", nextProps);
     if (!Array.isArray(nextProps.listingDetails)) {
       if (nextProps.requestDet) {
         if (this.props.userType == 1) {
@@ -79,6 +80,8 @@ class Attedence extends React.Component {
         }
 
         this.state.workers = nextProps.requestDet.workers;
+        this.state.availableSupervisorsList =
+          nextProps.requestDet.supervisorsList;
         this.state.team = nextProps.requestDet.team;
       }
 
@@ -166,6 +169,10 @@ class Attedence extends React.Component {
       toast.error("Please make any one change to submit", { autoClose: 3000 });
       return false;
     }
+    if (this.errorIdArr.length > 0) {
+      toast.error("Please select the reason to submit", { autoClose: 3000 });
+      return false;
+    }
     const param = {
       ...this.state,
       requestCode: 7,
@@ -205,6 +212,7 @@ class Attedence extends React.Component {
     }
   };
   setReason = (key, list, stateKey) => {
+    const index = this.errorIdArr.indexOf(stateKey.split("_")[1]);
     const inTime = stateKey.split("_");
 
     const key1 = `in_${inTime[1]}`;
@@ -218,18 +226,21 @@ class Attedence extends React.Component {
     } else {
       this.timeValuesArr[stateKey] = key;
     }
+    if (index > -1) {
+      this.errorIdArr.splice(index, 1);
+    }
   };
   onTimeChange = (value, name, id, workerName) => {
     this.timeValuesArr[name] = value.format("HH:mm");
     let check = name.split("_"),
       { projects, projectId } = this.state,
-      { requestDet, listingDetails } = this.props;
+      { requestDet, listingDetails } = this.props,
+      workerIn = "00:00:00",
+      workerOut = "00:00:00";
     const selectedProject = projects.find(
       (element) => element.projectId === projectId
     );
-
     let wl = [...requestDet.availableWorkers];
-
     if (check[0] == "in") {
       wl.map((superList) => {
         if (
@@ -240,6 +251,7 @@ class Attedence extends React.Component {
           superList.outTime = "00.00";
         }
       });
+      workerIn = this.timeValuesArr[name] + ":00";
     } else {
       wl.map((superList) => {
         if (
@@ -249,6 +261,7 @@ class Attedence extends React.Component {
           superList.outTime = this.timeValuesArr[name].replace(/:/g, ".");
         }
       });
+      workerOut = this.timeValuesArr[name] + ":00";
     }
     // console.log(wl);
     const startTime = selectedProject.startTime
@@ -287,6 +300,8 @@ class Attedence extends React.Component {
           ", ";
       }
     });
+    this.timeFunc(startTime, endTime, workerIn, workerOut, id);
+
     // this.setState({ remarks: text });
     // let { workersList, supervisorsList } = this.state;
     // let AttedenceList = workersList.concat(supervisorsList);
@@ -304,7 +319,44 @@ class Attedence extends React.Component {
     }
   };
 
-  renderWorkers = (workers) => {
+  timeFunc = (startTime, endTime, workerIn, workerOut, wId) => {
+    // console.log(startTime, endTime, workerIn, workerOut, wId);
+
+    const sTime = startTime,
+      eTime = endTime,
+      wIn = workerIn.split(":").slice(0, 2).join("."),
+      wOut = workerOut.split(":").slice(0, 2).join(".");
+    console.log(sTime, eTime, wIn, wOut);
+
+    // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
+
+    if (
+      Number(sTime) < Number(wIn) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (
+      Number(sTime) > Number(wIn) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (
+      Number(eTime) > Number(wOut) &&
+      Number(wOut) !== Number("00.00") &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    }
+    // console.log(this.errorIdArr);
+  };
+
+  renderWorkers = (workers, type, startTime, endTime) => {
     if (workers.length > 0) {
       this.teamArr = [];
 
@@ -315,11 +367,28 @@ class Attedence extends React.Component {
           (this.state.selectedOption == 1 && worker.status != 1) ||
           (this.state.selectedOption == 2 && worker.statusOut != 1)
         ) {
-          const workerName = getDetailsWithMatchedKey2(
-            worker.workerId,
-            this.state.workers,
-            "workerIdActual",
-            "workerName"
+          let workerName = "";
+          if (type === "Supervisors") {
+            workerName = getDetailsWithMatchedKey2(
+              worker.workerId,
+              this.state.availableSupervisorsList,
+              "userId",
+              "Name"
+            );
+          } else if (type === "Workers") {
+            workerName = getDetailsWithMatchedKey2(
+              worker.workerId,
+              this.state.workers,
+              "workerIdActual",
+              "workerName"
+            );
+          }
+          this.timeFunc(
+            startTime.split(":").slice(0, 2).join("."),
+            endTime.split(":").slice(0, 2).join("."),
+            worker.inTime,
+            worker.outTime,
+            worker.workerId
           );
           const InName = `in_${worker.workerId}`;
           const OutName = `out_${worker.workerId}`;
@@ -348,10 +417,16 @@ class Attedence extends React.Component {
           if (worker.inTime != "00:00:00") {
             invalue = moment(`03-25-2015 ${worker.inTime}`);
             this.timeValuesArr[InName] = worker.inTime;
+          } else {
+            invalue = moment(`03-25-2015 ${startTime}`);
+            this.timeValuesArr[InName] = startTime;
           }
           if (worker.outTime != "00:00:00") {
             outvalue = moment(`03-25-2015 ${worker.outTime}`);
             this.timeValuesArr[OutName] = worker.outTime;
+          } else {
+            outvalue = moment(`03-25-2015 ${endTime}`);
+            this.timeValuesArr[OutName] = endTime;
           }
           rec++;
           return (
@@ -372,6 +447,7 @@ class Attedence extends React.Component {
                 <div className="col-xs-2" style={{ textAlign: "center" }}>
                   <TimePicker
                     defaultValue={invalue}
+                    // value={startTime}
                     format="hh:mm a"
                     showSecond={false}
                     onChange={(value, id = InName) =>
@@ -387,6 +463,7 @@ class Attedence extends React.Component {
                 <div className="col-xs-2" style={{ textAlign: "center" }}>
                   <TimePicker
                     defaultValue={outvalue}
+                    // value={endTime}
                     format="hh:mm a"
                     showSecond={false}
                     onChange={(value, id = OutName) =>
@@ -410,6 +487,9 @@ class Attedence extends React.Component {
                   list={this.reasonsList}
                   value={worker.reason}
                   resetThenSet={this.setReason}
+                  error={
+                    this.errorIdArr.indexOf(worker.workerId) > -1 ? true : false
+                  }
                 />
               </div>
             </div>
@@ -498,7 +578,7 @@ class Attedence extends React.Component {
     if (this.props.userType == 5) {
       readonly = true;
     }
-    console.log(this.state.projects);
+    // console.log(this.state.projects);
 
     return (
       <div className="work-arr-container">
@@ -607,7 +687,13 @@ class Attedence extends React.Component {
               </span>
             </div>
           </div>
-          {supervisorsList && this.renderWorkers(supervisorsList)}
+          {supervisorsList &&
+            this.renderWorkers(
+              supervisorsList,
+              "Supervisors",
+              startTime,
+              endTime
+            )}
           {supervisorsList && supervisorsList.length > 0 && this.teamDisplay()}
           <br />
           <div className="row">
@@ -639,7 +725,8 @@ class Attedence extends React.Component {
             </div>
           </div>
 
-          {workersList && this.renderWorkers(workersList)}
+          {workersList &&
+            this.renderWorkers(workersList, "Workers", startTime, endTime)}
           {workersList && workersList.length > 0 && this.teamDisplay()}
           <br />
         </div>

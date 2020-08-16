@@ -18,6 +18,9 @@ export function getCurrentTime(separator = ":") {
 export function addDays(now, add) {
   return now.setDate(now.getDate() + add);
 }
+export function subDays(now, add) {
+  return now.setDate(now.getDate() - add);
+}
 export function getFormattedDate(dat) {
   let separator = "-";
   let newDate = new Date(dat);

@@ -13,7 +13,7 @@ import {
   clearListing,
 } from "actions/workArrangement.actions";
 import CustomButton from "../components/CustomButton";
-import { getDetailsWithMatchedKey2, addDays } from "../common/utility";
+import { getDetailsWithMatchedKey2, addDays, subDays } from "../common/utility";
 
 import DatePicker from "react-datepicker";
 import moment from "moment";
@@ -424,6 +424,7 @@ export default class WorkRequestList extends React.Component {
               className=" form-control"
               isClearable={false}
               onChange={this.onStartDateChange}
+              minDate={userType == 1 ? "" : subDays(new Date(), 1)}
               maxDate={new Date()}
               name="startDate"
               dateFormat="DD-MM-YYYY"

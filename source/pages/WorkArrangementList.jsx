@@ -23,6 +23,7 @@ import { ToastContainer, toast } from "react-toastify";
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
   requestDet: state.request.get("requestDet"),
+  requestPost: state.request.get("requestPost"),
 }))
 @baseHOC
 export default class WorkArrangementList extends React.Component {
@@ -57,9 +58,32 @@ export default class WorkArrangementList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
-    const { requestDet } = nextProps;
+    const { requestDet, dispatch } = nextProps;
+
     this.setState({ listingDetails: nextProps.listingDetails });
     this.setState({ requestDet: requestDet });
+
+    // if (
+    //   typeof nextProps.requestPost.response !== "undefined" &&
+    //   nextProps.requestPost.response === "success"
+    // ) {
+    //   dispatch(requestPostClear());
+    //   toast.error("Can not this selected work arrangement", {
+    //     autoClose: 3000,
+    //   });
+    //   this.setState({ showSubButton: false });
+    //   this.state.userType = this.props.userType;
+    //   this.state.userId = this.props.userId;
+    //   //  if(!this.props.requestDet){
+    //   dispatch(requestDetails(this.state));
+    // } else {
+    //   this.setState({ showSubButton: false });
+    //   dispatch(requestPostClear());
+    //   this.state.userType = this.props.userType;
+    //   this.state.userId = this.props.userId;
+    //   //  if(!this.props.requestDet){
+    //   dispatch(requestDetails(this.state));
+    // }
   }
   componentWillUnmount() {
     const { dispatch } = this.props;
