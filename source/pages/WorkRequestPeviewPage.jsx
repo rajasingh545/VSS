@@ -395,7 +395,7 @@ class WorkRequestPreviewPage extends React.Component {
             <br />
             <CustomButton bsStyle="secondary">
               <a
-                href={`http://productivity-api.macinc.in/productivity-api/workrequestpdf.php?workrequestid=${this.state.listingId}`}
+                href={`http://productivityapi.vinayak.com.sg/workrequestpdf.php?workrequestid=${this.state.listingId}`}
                 target="_blank"
               >
                 {" "}
