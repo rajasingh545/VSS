@@ -89,7 +89,12 @@ class WorkArrangement extends React.Component {
           value_supervisors: "",
           value_supervisors2: "",
         });
-      } else {
+      } 
+      else if (nextProps.requestDet.availableWorkers && this.state.requestCode==99) {
+        
+        this.state.workers = nextProps.requestDet.availableWorkers;
+      }
+      else {
         // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors = nextProps.requestDet.supervisorsList;

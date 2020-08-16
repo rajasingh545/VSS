@@ -205,6 +205,7 @@ export default class Header extends Component {
           Welcome <strong>{username}</strong>
         </div>
         <div style={styles2.divider} />
+
         <a
           href="javascript:void(0);"
           onClick={this.goBack}
@@ -332,6 +333,29 @@ export default class Header extends Component {
               >
                 Productivity Report by <br /> Site & Supervisor
               </a>
+
+        <a href="javascript:void(0);" onClick={this.goBack} style={styles2.sidebarLink}><Glyphicon glyph="home"/> Home</a>
+        {userType == 5 && 
+            <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}>Work Arrangement</a>
+          }
+          <Accordion allowMultipleOpen>
+          {userType == 1 && 
+            <div label='Work Arrangements'>
+            
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangment')} style={styles2.sidebarLink}>Create Work Arrangement</a>   
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}> Work Arrangement List</a> 
+                 
+            </div>
+          }
+          
+            <div label='Attendance'>
+            {(userType == 1 || userType == 5 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}> Create Attendance</a> 
+              }  
+              {(userType == 1 ) &&
+              <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
+              } 
+
             </div>
           )}
         </Accordion>

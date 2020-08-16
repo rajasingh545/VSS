@@ -82,8 +82,9 @@ export default class WorkRequestList extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const { requestDet, workRequestData } = nextProps;
-    let projects = [...requestDet.projects],
-      clients = [...requestDet.clients],
+
+    let projects = requestDet ? [...requestDet.projects] : [],
+      clients = requestDet ? [...requestDet.clients]: [],
       defaultProject = {
         endTime: "",
         projectId: "0",
