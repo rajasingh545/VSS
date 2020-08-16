@@ -44,7 +44,6 @@ export default class WorkArrangementList extends React.Component {
       requestTypeTitle: "Select Status",
       selectAll: false,
     };
-
     this.selectedIds = [];
   }
   componentWillMount() {
