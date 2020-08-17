@@ -10,20 +10,20 @@ import TimeField from "../components/TimePicker";
 import {
   getCurrentDate,
   getReasons,
-  getDetailsWithMatchedKey2
+  getDetailsWithMatchedKey2,
 } from "../common/utility";
 import {
   requestDetails,
   requestPost,
-  listigDetails
+  listigDetails,
 } from "actions/workArrangement.actions";
 import { ToastContainer, toast } from "react-toastify";
 import DatePicker from "react-datepicker";
 import moment from "moment";
 
-@connect(state => ({
+@connect((state) => ({
   listingDetails: state.request.get("listingDetails"),
-  requestDet: state.request.get("requestDet")
+  requestDet: state.request.get("requestDet"),
 }))
 @baseHOC
 class AttedenceEdit extends React.Component {
@@ -41,7 +41,7 @@ class AttedenceEdit extends React.Component {
       workersList: [],
       supervisorsList: [],
       projectId: "",
-      projects: []
+      projects: [],
     };
     this.selectedIds = [];
     this.timeValuesArr = [];
@@ -73,6 +73,8 @@ class AttedenceEdit extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     let projectId = "";
+    console.log(nextProps);
+
     if (nextProps.requestDet) {
       if (this.props.userType == 1) {
         this.state.projects = nextProps.requestDet.projects;
@@ -89,20 +91,16 @@ class AttedenceEdit extends React.Component {
         this.state.projects = [{ projectId, projectName }];
       }
       this.state.workers = nextProps.requestDet.workers;
+      this.state.availableSupervisorsList =
+        nextProps.requestDet.supervisorsList;
       this.state.team = nextProps.requestDet.team;
-    }
-    if (typeof nextProps.listingDetails === "object") {
-      if (
-        nextProps.listingDetails.workerlist &&
-        Array.isArray(nextProps.listingDetails.workerlist)
-      ) {
-        this.setState({
-          workersList: nextProps.listingDetails.workerlist,
-          supervisorsList: nextProps.listingDetails.supervisorlist
-        });
-        if (nextProps.listingDetails[0]) {
-          this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
-        }
+    } else if (nextProps.listingDetails) {
+      this.setState({
+        workersList: nextProps.listingDetails.workerlist,
+        supervisorsList: nextProps.listingDetails.supervisorlist,
+      });
+      if (nextProps.listingDetails[0]) {
+        this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
       }
     }
   }
@@ -118,18 +116,18 @@ class AttedenceEdit extends React.Component {
 
   resetThenSet(id, key) {
     let temp = JSON.parse(JSON.stringify(this.state[key]));
-    temp.forEach(item => (item.selected = false));
+    temp.forEach((item) => (item.selected = false));
     temp[id].selected = true;
     this.setState({
-      [key]: temp
+      [key]: temp,
     });
   }
   handleOptionChange(changeEvent) {
     this.setState({
-      selectedOption: changeEvent.target.value
+      selectedOption: changeEvent.target.value,
     });
   }
-  onSubmit = type => {
+  onSubmit = (type) => {
     const { dispatch } = this.props;
     let finalValuesArr = [];
     if (this.selectedIds.length == 0) {
@@ -137,22 +135,22 @@ class AttedenceEdit extends React.Component {
       return false;
     }
     let error = 0;
-    this.selectedIds.map(id => {
+    this.selectedIds.map((id) => {
       if (this.timeValuesArr["in_" + id]) {
         finalValuesArr[id] = {
-          IN: this.timeValuesArr["in_" + id]
+          IN: this.timeValuesArr["in_" + id],
         };
       }
       if (this.timeValuesArr["out_" + id]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
-          OUT: this.timeValuesArr["out_" + id]
+          OUT: this.timeValuesArr["out_" + id],
         };
       }
       if (this.timeValuesArr["reason_" + id]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
-          reason: this.timeValuesArr["reason_" + id]
+          reason: this.timeValuesArr["reason_" + id],
         };
       }
     });
@@ -169,13 +167,13 @@ class AttedenceEdit extends React.Component {
       requestCode: 7,
       finalValuesArr,
       WAId: this.WAId,
-      type
+      type,
     };
 
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
   };
-  onCheckBoxClick = e => {
+  onCheckBoxClick = (e) => {
     e.stopPropagation();
     let id = e.target.value;
     let checked = e.target.checked;
@@ -199,7 +197,7 @@ class AttedenceEdit extends React.Component {
       this.errorIdArr.splice(index, 1);
     }
   };
-  onTimeChange = el => {
+  onTimeChange = (el) => {
     this.timeValuesArr[el.name] = el.value;
     let { projects, projectId } = this.state,
       { requestDet, listingDetails } = this.props,
@@ -209,7 +207,7 @@ class AttedenceEdit extends React.Component {
       workerIn = "00:00:00",
       workerOut = "00:00:00";
     const selectedProject = projects.find(
-      element => element.projectId === projectId
+      (element) => element.projectId === projectId
     );
     startTime = selectedProject.startTime;
     endTime = selectedProject.endTime;
@@ -223,26 +221,21 @@ class AttedenceEdit extends React.Component {
     this.setState({ projectStartTime: startTime, projectEndTime: endTime });
   };
   timeFunc = (startTime, endTime, workerIn, workerOut, wId) => {
-    const sTime = startTime
-        .split(":")
-        .slice(0, 2)
-        .join("."),
-      eTime = endTime
-        .split(":")
-        .slice(0, 2)
-        .join("."),
-      wIn = workerIn
-        .split(":")
-        .slice(0, 2)
-        .join("."),
-      wOut = workerOut
-        .split(":")
-        .slice(0, 2)
-        .join(".");
+    const sTime = startTime.split(":").slice(0, 2).join("."),
+      eTime = endTime.split(":").slice(0, 2).join("."),
+      wIn = workerIn.split(":").slice(0, 2).join("."),
+      wOut = workerOut.split(":").slice(0, 2).join(".");
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
 
     if (
       Number(sTime) < Number(wIn) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (
+      Number(sTime) > Number(wIn) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -259,16 +252,27 @@ class AttedenceEdit extends React.Component {
     }
     // console.log(this.errorIdArr);
   };
-  renderWorkers = (workers, startTime, endTime) => {
+  renderWorkers = (workers, startTime, endTime, type) => {
     if (workers.length > 0) {
       this.teamArr = [];
       return workers.map((worker, ind) => {
-        let workerName = getDetailsWithMatchedKey2(
-          worker.workerId,
-          this.state.workers,
-          "workerIdActual",
-          "workerName"
-        );
+        let workerName = "";
+        if (type === "Workers") {
+          workerName = getDetailsWithMatchedKey2(
+            worker.workerId,
+            this.state.workers,
+            "workerIdActual",
+            "workerName"
+          );
+        } else if (type === "Supervisors") {
+          workerName = getDetailsWithMatchedKey2(
+            worker.workerId,
+            this.state.availableSupervisorsList,
+            "userId",
+            "Name"
+          );
+        }
+
         let InName = "in_" + worker.workerId;
         let OutName = "out_" + worker.workerId;
         let reasonId = "reason_" + worker.workerId;
@@ -321,7 +325,7 @@ class AttedenceEdit extends React.Component {
 
             <div className="col-xs-2" style={{ textAlign: "center" }}>
               <TimeField
-                value={worker.inTime}
+                value={worker.inTime === "00:00:00" ? startTime : worker.inTime}
                 name={InName}
                 className="width100"
                 onChange={this.onTimeChange}
@@ -329,7 +333,7 @@ class AttedenceEdit extends React.Component {
             </div>
             <div className="col-xs-2" style={{ textAlign: "center" }}>
               <TimeField
-                value={worker.outTime}
+                value={worker.outTime === "00:00:00" ? endTime : worker.outTime}
                 name={OutName}
                 className="width100"
                 onChange={this.onTimeChange}
@@ -390,25 +394,25 @@ class AttedenceEdit extends React.Component {
       );
     });
   };
-  onStartDateChange = e => {
+  onStartDateChange = (e) => {
     if (e != null) {
       this.setState({
         startDate: e.format("YYYY/MM/DD"),
-        startDate1: e
+        startDate1: e,
       });
     } else {
       this.setState({
         startDate: "",
-        startDate1: ""
+        startDate1: "",
       });
     }
     this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
   };
-  setRemarks = e => {
+  setRemarks = (e) => {
     this.setState({ remarks: e.target.value });
   };
   getTime = (projects, name, pid) => {
-    projects.map(element => {
+    projects.map((element) => {
       if (element.projectId === pid) {
         return element[name];
       }
@@ -428,7 +432,7 @@ class AttedenceEdit extends React.Component {
       endTime = "",
       projectTitle = "";
     if (this.props.match.params.pid && projectId && projects.length > 0) {
-      projects.map(element => {
+      projects.map((element) => {
         if (element.projectId === projectId) {
           startTime = element.startTime;
           endTime = element.endTime;
@@ -440,7 +444,7 @@ class AttedenceEdit extends React.Component {
     // if (this.props.userType == 5) {
     //   readonly = true;
     // }
-    console.log(this.state);
+    // console.log(this.state.workers);
     // eslint-disable-next-line no-unreachable
     return (
       <div className="work-arr-container">
@@ -484,8 +488,13 @@ class AttedenceEdit extends React.Component {
                 </div>
               </div>
 
-              {this.renderWorkers(supervisorsList, startTime, endTime)}
-              {/* {this.teamDisplay()} */}
+              {this.renderWorkers(
+                supervisorsList,
+                startTime,
+                endTime,
+                "Supervisors"
+              )}
+              {this.teamDisplay()}
             </div>
           ) : (
             ""
@@ -515,7 +524,7 @@ class AttedenceEdit extends React.Component {
                 </div>
               </div>
 
-              {this.renderWorkers(workersList, startTime, endTime)}
+              {this.renderWorkers(workersList, startTime, endTime, "Workers")}
               {this.teamDisplay()}
             </div>
           ) : (

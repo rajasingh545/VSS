@@ -18,6 +18,9 @@ export function getCurrentTime(separator = ":") {
 export function addDays(now, add) {
   return now.setDate(now.getDate() + add);
 }
+export function subDays(now, add) {
+  return now.setDate(now.getDate() - add);
+}
 export function getFormattedDate(dat) {
   let separator = "-";
   let newDate = new Date(dat);
@@ -177,6 +180,7 @@ export function getReasons() {
     { id: 3, reason: "Absent" },
     { id: 4, reason: "Home Leave" },
     { id: 5, reason: "Late" },
+    { id: 6, reason: "Early Start" },
     { id: 99, reason: "Others" },
   ];
 }

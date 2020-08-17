@@ -241,7 +241,7 @@ export default class Header extends Component {
             {(userType == 1 || userType == 5 ) &&
               <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}> Create Attendance</a> 
               }  
-              {(userType == 1 ) &&
+              {(userType == 1 || userType == 5 ) &&
               <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
               } 
             </div>

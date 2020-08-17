@@ -226,6 +226,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Home Leave";
               } else if (wl.supervisorlist[j].reason == 5) {
                 jsonValue.reason = "Late";
+              } else if (wl.supervisorlist[j].reason == 6) {
+                jsonValue.reason = "Early Start";
               } else {
                 jsonValue.reason = "Others";
               }
@@ -263,6 +265,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Home Leave";
               } else if (wl.workerlist[j].reason == 5) {
                 jsonValue.reason = "Late";
+              } else if (wl.workerlist[j].reason == 6) {
+                jsonValue.reason = "Early Start";
               } else {
                 jsonValue.reason = "Others";
               }
@@ -338,7 +342,7 @@ export default class AttendanceList extends React.Component {
               selected={this.state.startDate1}
               className=" form-control"
               isClearable={false}
-              minDate={new Date()}
+              // minDate={new Date()}
               maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
               onChange={this.onStartDateChange}
               name="startDate"
