@@ -58,31 +58,28 @@ export default class WorkArrangementList extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const { requestDet, dispatch } = nextProps;
-
+    // console.log("next props", nextProps);
     this.setState({ listingDetails: nextProps.listingDetails });
     this.setState({ requestDet: requestDet });
 
-    // if (
-    //   typeof nextProps.requestPost.response !== "undefined" &&
-    //   nextProps.requestPost.response === "success"
-    // ) {
-    //   dispatch(requestPostClear());
-    //   toast.error("Can not this selected work arrangement", {
-    //     autoClose: 3000,
-    //   });
-    //   this.setState({ showSubButton: false });
-    //   this.state.userType = this.props.userType;
-    //   this.state.userId = this.props.userId;
-    //   //  if(!this.props.requestDet){
-    //   dispatch(requestDetails(this.state));
-    // } else {
-    //   this.setState({ showSubButton: false });
-    //   dispatch(requestPostClear());
-    //   this.state.userType = this.props.userType;
-    //   this.state.userId = this.props.userId;
-    //   //  if(!this.props.requestDet){
-    //   dispatch(requestDetails(this.state));
-    // }
+    // console.log(Array.isArray(nextProps.requestPost), nextProps.requestPost);
+
+    if (!Array.isArray(nextProps.requestPost)) {
+      let DeleteData = nextProps.requestPost;
+      if (DeleteData.response === "success" && DeleteData.responsecode === 2) {
+        let errorMGS =
+          DeleteData.attWorkListingNameMsg !== undefined
+            ? DeleteData.attWorkListingNameMsg.join(", ")
+            : "Deleted Successfully";
+        dispatch(requestPostClear([]));
+        // dispatch(requestDetails(JSONData));
+        this.setState({ showSubButton: false });
+        toast.success(errorMGS, {
+          autoClose: 2000,
+        });
+        this.getlist();
+      }
+    }
   }
   componentWillUnmount() {
     const { dispatch } = this.props;
@@ -129,8 +126,7 @@ export default class WorkArrangementList extends React.Component {
     let { listingDetails, requestDet } = this.props;
     let response = "";
     let requestDetails = {};
-    // console.log("requestDet ==>", listings);
-    if (listingDetails && listingDetails.length > 0) {
+    if (Array.isArray(listings) && listings.length > 0) {
       response = listings.map((data, index) => {
         if (this.state.requestDet)
           requestDetails = getDetailsWithLib2(data, this.state.requestDet);

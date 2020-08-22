@@ -14,6 +14,7 @@ import {
 import {
   requestDetails,
   requestPost,
+  requestPostClear,
   listigDetails,
 } from "actions/workArrangement.actions";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,6 +25,7 @@ import TimePicker from "rc-time-picker";
 @connect((state) => ({
   listingDetails: state.request.get("listingDetails"),
   requestDet: state.request.get("requestDet"),
+  requestPost: state.request.get("requestPost"),
 }))
 @baseHOC
 class Attedence extends React.Component {
@@ -36,6 +38,8 @@ class Attedence extends React.Component {
       team: [],
       startDate1: moment(),
       startDate: moment().format("YYYY/MM/DD"),
+      projectId: "",
+      projects: [],
     };
     this.selectedIds = [];
     this.timeValuesArr = [];
@@ -48,6 +52,10 @@ class Attedence extends React.Component {
     const now = new Date().getTime();
     this.time = moment(now);
   }
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(requestPostClear([]));
+  }
   componentWillMount() {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
@@ -55,8 +63,12 @@ class Attedence extends React.Component {
     dispatch(requestDetails(this.state));
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("nextProps ", nextProps);
-    if (!Array.isArray(nextProps.listingDetails)) {
+    const { dispatch } = this.props;
+    console.log("nextProps ", nextProps);
+    if (
+      nextProps.requestPost !== undefined &&
+      Array.isArray(nextProps.requestPost)
+    ) {
       if (nextProps.requestDet) {
         if (this.props.userType == 1) {
           this.state.projects = nextProps.requestDet.projects;
@@ -65,15 +77,23 @@ class Attedence extends React.Component {
           const projectId = this.props.project;
           const projectsArr = projectId.split(",");
           const porjectsMapArr = [];
-          projectsArr.map((pid) => {
-            const projectName = getDetailsWithMatchedKey2(
-              pid,
-              nextProps.requestDet.projects,
-              "projectId",
-              "projectName"
-            );
-            porjectsMapArr.push({ projectId: pid, projectName });
-          });
+          for (let i = 0; i < projectsArr.length; i++) {
+            const element = projectsArr[i];
+            nextProps.requestDet.projects.map((_p) => {
+              if (element == _p.projectId) {
+                porjectsMapArr.push(_p);
+              }
+            });
+          }
+          // projectsArr.map((pid) => {
+          //   const projectName = getDetailsWithMatchedKey2(
+          //     pid,
+          //     nextProps.requestDet.projects,
+          //     "projectId",
+          //     "projectName"
+          //   );
+          //   porjectsMapArr.push({ projectId: pid, projectName });
+          // });
 
           this.setState({ projects: porjectsMapArr });
           this.state.projects = porjectsMapArr;
@@ -84,30 +104,60 @@ class Attedence extends React.Component {
           nextProps.requestDet.supervisorsList;
         this.state.team = nextProps.requestDet.team;
       }
-
-      if (nextProps.listingDetails) {
-        // console.log(nextProps.listingDetails);
-
-        this.setState({
-          workersList: nextProps.listingDetails.workerlist,
-          supervisorsList: nextProps.listingDetails.supervisorlist,
-        });
-        if (nextProps.listingDetails.workerlist[0]) {
-          this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
+      if (
+        nextProps.listingDetails &&
+        nextProps.listingDetails !== undefined &&
+        !Array.isArray(nextProps.listingDetails)
+      ) {
+        if (
+          nextProps.listingDetails.workerlist !== undefined &&
+          (Array.isArray(nextProps.listingDetails.workerlist) ||
+            Array.isArray(nextProps.listingDetails.supervisorlist))
+        ) {
+          let list = nextProps.listingDetails.workerlist.concat(
+            nextProps.listingDetails.supervisorlist
+          );
+          if (list.length > 0) {
+            this.setState({
+              workersList: nextProps.listingDetails.workerlist,
+              supervisorsList: nextProps.listingDetails.supervisorlist,
+            });
+            if (nextProps.listingDetails.workerlist[0]) {
+              this.state.remarks =
+                nextProps.listingDetails.workerlist[0].remarks;
+            }
+          } else {
+            toast.error(
+              "Project not yet created please select another project",
+              {
+                autoClose: 3000,
+              }
+            );
+            this.setState({
+              workersList: [],
+              supervisorsList: [],
+              projectId: "",
+            });
+          }
         }
+      } else if (
+        nextProps.listingDetails !== undefined &&
+        Array.isArray(nextProps.listingDetails)
+      ) {
+        toast.error("Project not yet created please select another project", {
+          autoClose: 3000,
+        });
+        this.setState({
+          workersList: [],
+          supervisorsList: [],
+          projectId: "",
+        });
       }
     } else {
-      toast.error("Project not yet created please select another project", {
-        autoClose: 3000,
-      });
-      this.setState({
-        workersList: [],
-        supervisorsList: [],
-        projectId: "",
-      });
+      dispatch(requestPostClear([]));
     }
   }
-  getWorkers = (key, list, stateKey) => {
+  getWorkers = (key, list = [], stateKey = {}) => {
     const { dispatch } = this.props;
     if (key) {
       this.state.requestCode = 6;
@@ -193,6 +243,9 @@ class Attedence extends React.Component {
     } else {
       toast.success("Attendance Saved Successfully", { autoClose: 3000 });
     }
+    setTimeout(() => {
+      this.props.history.push("/AttendanceList");
+    }, 3000);
   };
   onCheckBoxClick = (e) => {
     e.stopPropagation();
@@ -326,12 +379,13 @@ class Attedence extends React.Component {
       eTime = endTime,
       wIn = workerIn.split(":").slice(0, 2).join("."),
       wOut = workerOut.split(":").slice(0, 2).join(".");
-    console.log(sTime, eTime, wIn, wOut);
+    // console.log(sTime, eTime, wIn, wOut);
 
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
 
     if (
       Number(sTime) < Number(wIn) &&
+      Number(wIn) !== 0 &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -339,6 +393,7 @@ class Attedence extends React.Component {
       }
     } else if (
       Number(sTime) > Number(wIn) &&
+      Number(wIn) !== 0 &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -346,6 +401,7 @@ class Attedence extends React.Component {
       }
     } else if (
       Number(eTime) > Number(wOut) &&
+      Number(wOut) !== 0 &&
       Number(wOut) !== Number("00.00") &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
@@ -383,6 +439,8 @@ class Attedence extends React.Component {
               "workerName"
             );
           }
+          console.log("startTime, endTime", startTime, endTime);
+
           this.timeFunc(
             startTime.split(":").slice(0, 2).join("."),
             endTime.split(":").slice(0, 2).join("."),
@@ -564,17 +622,15 @@ class Attedence extends React.Component {
       selectedProject = {},
       startTime = "",
       endTime = "";
-    if (
-      projectId !== undefined &&
-      typeof projects !== "undefined" &&
-      projects.length > 0
-    ) {
+    if (projectId !== "" && projects.length > 0) {
       selectedProject = projects.find(
         (element) => element.projectId === projectId
       );
       startTime = selectedProject.startTime;
       endTime = selectedProject.endTime;
     }
+    console.log(startTime, endTime, projectId, projects);
+
     if (this.props.userType == 5) {
       readonly = true;
     }

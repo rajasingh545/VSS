@@ -15,6 +15,7 @@ import {
 import {
   requestDetails,
   requestPost,
+  requestPostClear,
   listigDetails,
 } from "actions/workArrangement.actions";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,6 +25,7 @@ import moment from "moment";
 @connect((state) => ({
   listingDetails: state.request.get("listingDetails"),
   requestDet: state.request.get("requestDet"),
+  requestPost: state.request.get("requestPost"),
 }))
 @baseHOC
 class AttedenceEdit extends React.Component {
@@ -52,6 +54,10 @@ class AttedenceEdit extends React.Component {
     this.handleOptionChange = this.handleOptionChange.bind(this);
     this.reasonsList = getReasons();
   }
+  // componentDidMount() {
+  //   const { dispatch } = this.props;
+  //   // dispatch(requestPostClear([]));
+  // }
   componentWillMount() {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
@@ -72,36 +78,44 @@ class AttedenceEdit extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
+    const { dispatch } = this.props;
     let projectId = "";
-    console.log(nextProps);
-
-    if (nextProps.requestDet) {
-      if (this.props.userType == 1) {
-        this.state.projects = nextProps.requestDet.projects;
+    // console.log(nextProps);
+    if (
+      nextProps.requestPost !== undefined &&
+      Array.isArray(nextProps.requestPost)
+    ) {
+      if (nextProps.requestDet) {
+        if (this.props.userType == 1) {
+          this.state.projects = nextProps.requestDet.projects;
+        }
+        if (this.props.userType == 5) {
+          projectId = this.props.project;
+          let projectName = getDetailsWithMatchedKey2(
+            projectId,
+            nextProps.requestDet.projects,
+            "projectId",
+            "projectName"
+          );
+          this.setState({ projects: nextProps.requestDet.projects });
+          this.state.projects = nextProps.requestDet.projects;
+          console.log(projectId, projectName, this.state.projects);
+        }
+        this.state.workers = nextProps.requestDet.workers;
+        this.state.availableSupervisorsList =
+          nextProps.requestDet.supervisorsList;
+        this.state.team = nextProps.requestDet.team;
+      } else if (nextProps.listingDetails) {
+        this.setState({
+          workersList: nextProps.listingDetails.workerlist,
+          supervisorsList: nextProps.listingDetails.supervisorlist,
+        });
+        if (nextProps.listingDetails[0]) {
+          this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
+        }
       }
-      if (this.props.userType == 5) {
-        projectId = this.props.project;
-        let projectName = getDetailsWithMatchedKey2(
-          projectId,
-          nextProps.requestDet.projects,
-          "projectId",
-          "projectName"
-        );
-        this.setState({ projects: [{ projectId, projectName }] });
-        this.state.projects = [{ projectId, projectName }];
-      }
-      this.state.workers = nextProps.requestDet.workers;
-      this.state.availableSupervisorsList =
-        nextProps.requestDet.supervisorsList;
-      this.state.team = nextProps.requestDet.team;
-    } else if (nextProps.listingDetails) {
-      this.setState({
-        workersList: nextProps.listingDetails.workerlist,
-        supervisorsList: nextProps.listingDetails.supervisorlist,
-      });
-      if (nextProps.listingDetails[0]) {
-        this.state.remarks = nextProps.listingDetails.workerlist[0].remarks;
-      }
+    } else {
+      dispatch(requestPostClear([]));
     }
   }
   getWorkers = (key, list, stateKey) => {
@@ -172,6 +186,9 @@ class AttedenceEdit extends React.Component {
 
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
+    setTimeout(() => {
+      this.props.history.push("/AttendanceList");
+    }, 3000);
   };
   onCheckBoxClick = (e) => {
     e.stopPropagation();
@@ -192,10 +209,13 @@ class AttedenceEdit extends React.Component {
   };
   setReason = (key, list, stateKey) => {
     this.timeValuesArr[stateKey] = key;
-    const index = this.errorIdArr.indexOf(stateKey.split("_")[1]);
+    let wrkId = stateKey.split("_")[1];
+    let index = this.errorIdArr.indexOf(wrkId);
+    // console.log("Befofe", this.errorIdArr, wrkId);
     if (index > -1) {
       this.errorIdArr.splice(index, 1);
     }
+    // console.log("After", this.errorIdArr);
   };
   onTimeChange = (el) => {
     this.timeValuesArr[el.name] = el.value;
@@ -228,14 +248,7 @@ class AttedenceEdit extends React.Component {
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
 
     if (
-      Number(sTime) < Number(wIn) &&
-      this.timeValuesArr["reason_" + wId] == undefined
-    ) {
-      if (this.errorIdArr.indexOf(wId) == "-1") {
-        this.errorIdArr.push(wId);
-      }
-    } else if (
-      Number(sTime) > Number(wIn) &&
+      (Number(sTime) < Number(wIn) || Number(sTime) > Number(wIn)) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -243,7 +256,6 @@ class AttedenceEdit extends React.Component {
       }
     } else if (
       Number(eTime) > Number(wOut) &&
-      Number(wOut) !== Number("00.00") &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
