@@ -357,7 +357,7 @@ class WorkRequestPreview extends Component {
                 onChange={this.filepload}
               />
             </div>
-            {images.length > 0 ? (
+            {images && images.length > 0 ? (
               <div className="col-sm-12">
                 <Grid>
                   <Grid.Row columns={8}>
