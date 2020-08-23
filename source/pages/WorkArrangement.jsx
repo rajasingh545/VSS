@@ -58,6 +58,8 @@ class WorkArrangement extends React.Component {
       selectedProject: {},
       selectedListSup: [],
       selectedListWork: [],
+      value_supervisors: "",
+      value_supervisors2: "",
     };
     this.partialWorkers = [];
     this.partialAddSup = [];
@@ -71,14 +73,14 @@ class WorkArrangement extends React.Component {
     this.state.userId = this.props.userId;
     dispatch(requestDetails(this.state));
     //get details of listing
-    if (this.props.match.params && this.props.match.params.id) {
+    if (this.props.match.params && this.props.match.params.id !== undefined) {
       this.state.listingId = this.props.match.params.id;
       this.state.requestCode = 3;
       dispatch(listigDetails(this.state));
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("next props", nextProps.requestDet);
+    // console.log("next props", nextProps);
 
     if (nextProps.requestDet) {
       if (nextProps.requestDet.supervisors) {
@@ -89,13 +91,18 @@ class WorkArrangement extends React.Component {
           value_supervisors: "",
           value_supervisors2: "",
         });
-      } 
-      else if (nextProps.requestDet.availableWorkers && this.state.requestCode==99) {
-        
+      } else if (
+        nextProps.requestDet.availableWorkers &&
+        this.state.requestCode == 99
+      ) {
         this.state.workers = nextProps.requestDet.availableWorkers;
-      }
-      else {
-        // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
+      } else {
+        this.setState({
+          workers: nextProps.requestDet.availableWorkers,
+          projects: nextProps.requestDet.projects,
+          supervisors: nextProps.requestDet.supervisorsList,
+          addSupervisors: nextProps.requestDet.supervisorsList,
+        });
         this.state.projects = nextProps.requestDet.projects;
         this.state.supervisors = nextProps.requestDet.supervisorsList;
         this.state.addSupervisors = nextProps.requestDet.supervisorsList;

@@ -31,7 +31,7 @@ class PreviewTemplate extends React.Component {
       onClickList,
     } = this.props;
     let checkedValue = checkBoxChecked == true ? true : this.state.checked;
-    console.log(detailsArr);
+    // console.log(detailsArr);
 
     return (
       <div

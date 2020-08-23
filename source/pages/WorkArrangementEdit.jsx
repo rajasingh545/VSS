@@ -28,6 +28,7 @@ import { DOMAIN_NAME } from "../config/api-config";
   loading: state.request.get("loadingListing"),
   listingDetails: state.request.get("listingDetails"),
   requestDet: state.request.get("requestDet"),
+  requestPost: state.request.get("requestPost"),
 }))
 @baseHOC
 class WorkArrangementEdit extends React.Component {
@@ -46,6 +47,41 @@ class WorkArrangementEdit extends React.Component {
       partialWorkers: [],
       partialAddSup: [],
       partialBaseSupervisors: [],
+      // addSupervisors: [],
+      // addsupervisorTitle: "Select Supervisor",
+      // baseSupervisorIds: [],
+      // baseSupervisorName: [],
+      // baseSupervisors: [],
+      // baseSupervsor: [],
+      // listingId: "",
+      // modalMsg: "",
+      // modalTitle: "",
+      // partialAddSup: [],
+      // partialBaseSupId: [],
+      // partialBaseSupervisors: [],
+      // partialSupIds: [],
+      // partialSupervisors: [],
+      // partialWorkerIds: [],
+      // partialWorkers: [],
+      // project: [],
+      // projectId: "",
+      // projectTitle: "Select Project",
+      // projects: [],
+      // remarks: "",
+      // selectedItemsAddSup: [],
+      // selectedItemsBaseSup: [],
+      // selectedListWork: [],
+      // supervisorIds: [],
+      // supervisorName: [],
+      // supervisorTitle: "Select Supervisor",
+      // supervisors: [],
+      // value_projects: "",
+      // value_supervisors: "",
+      // value_supervisors2: [],
+      // workerIds: [],
+      // workerName: [],
+      // workers: [],
+      // show: false,
     };
     this.partialWorkers = [];
     this.partialAddSup = [];
@@ -84,197 +120,201 @@ class WorkArrangementEdit extends React.Component {
     }
   }
   componentWillReceiveProps(nextProps) {
-    // console.log("next props", nextProps);
+    console.log("next props", nextProps);
     let { listingDetails } = nextProps;
     const { dispatch } = this.props;
-    if (
-      nextProps.location &&
-      nextProps.location.state &&
-      nextProps.location.state.requestType_Title &&
-      nextProps.location.state.requestType_Title === "Draft"
-    ) {
+    if (Array.isArray(nextProps.requestPost)) {
       if (
-        nextProps.listingDetails &&
-        nextProps.listingDetails.workdraft &&
-        nextProps.listingDetails.workdraft ===
-          "Worker or Supervisor Already Assigned Project"
+        nextProps.location &&
+        nextProps.location.state &&
+        nextProps.location.state.requestType_Title &&
+        nextProps.location.state.requestType_Title === "Draft"
       ) {
-        toast.error(
-          "Worker or Supervisor Already Assigned to another Project",
-          {
-            autoClose: 3000,
-          }
-        );
-        // this.resetForm();
-        this.clearStore();
-        setTimeout(() => {
-          this.props.history.push("/WorkArrangmentList");
-        }, 3000);
+        if (
+          nextProps.listingDetails &&
+          nextProps.listingDetails.workdraft &&
+          nextProps.listingDetails.workdraft ===
+            "Worker or Supervisor Already Assigned Project"
+        ) {
+          toast.error(
+            "Worker or Supervisor Already Assigned to another Project",
+            {
+              autoClose: 3000,
+            }
+          );
+          // this.resetForm();
+          this.clearStore();
+          setTimeout(() => {
+            this.props.history.push("/WorkArrangmentList");
+          }, 3000);
+        }
       }
-    }
 
-    if (nextProps.requestDet) {
-      if (nextProps.requestDet.supervisors) {
-        this.setState({
-          supervisors: nextProps.requestDet.supervisors,
-          value_supervisors: "",
-          value_supervisors2: "",
+      if (nextProps.requestDet) {
+        if (nextProps.requestDet.supervisors) {
+          this.setState({
+            supervisors: nextProps.requestDet.supervisors,
+            value_supervisors: "",
+            value_supervisors2: "",
+          });
+        } else if (nextProps.requestDet && nextProps.listingDetails) {
+          // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
+          this.state.projects = [...nextProps.requestDet.projects];
+          this.state.supervisors = [...listingDetails.availablesupervisor];
+          this.state.workers = [...listingDetails.availableworker];
+          this.state.addSupervisors = [...listingDetails.availablesupervisor];
+          this.state.baseSupervsor = [...listingDetails.availablesupervisor];
+          this.state.addSupervisors = this.state.addSupervisors.filter(
+            (addSup) => addSup.userId !== listingDetails.baseSupervsor
+          );
+          this.state.baseSupervsor = this.state.baseSupervsor.filter(
+            (addSup) => addSup.userId === listingDetails.baseSupervsor
+          );
+        }
+      }
+
+      if (listingDetails && this.state.projects && this.state.supervisors) {
+        this.setState({ value_projects: listingDetails.projectId });
+        this.setState({ projectId: listingDetails.projectId });
+        let proTitle = getDetailsWithMatchedKey2(
+          listingDetails.projectId,
+          this.state.projects,
+          "projectId",
+          "projectName"
+        );
+        this.state.projectTitle = proTitle;
+        let superTitle = getDetailsWithMatchedKey2(
+          listingDetails.baseSupervsor,
+          this.state.supervisors,
+          "userId",
+          "Name"
+        );
+        this.state.supervisorTitle = superTitle;
+        console.log(this.state.supervisorTitle);
+
+        this.setState({ value_supervisors: listingDetails.baseSupervsor });
+        let addsuperTitle = getDetailsWithMatchedKey2(
+          listingDetails.addSupervsor,
+          this.state.addSupervisors,
+          "userId",
+          "Name"
+        );
+        this.state.addsupervisorTitle = addsuperTitle;
+        this.setState({ value_supervisors2: listingDetails.addSupervsor });
+        this.setState({ remarks: listingDetails.remarks });
+        let selectedWorkerIds = [],
+          selectedSupIds = [],
+          selectedBasSupId = [];
+        let selectedWorkerNames = [],
+          selectedSupervisorNames = [],
+          selectedBaseSupervisorName = [];
+        let dateSelected = moment(listingDetails.createdOn, "YYYY-MM-DD");
+        let actualDate = dateSelected.format("YYYY/MM/DD");
+        this.setState({ startDate1: dateSelected, startDate: actualDate });
+        let selectedItemsWorkers = [],
+          selectedItemsAddSup = [],
+          selectedItemsBaseSup = [];
+        let workerListArr = this.state.workers.map((val) => {
+          let selected = false;
+          this.state.partialWorkerIds = listingDetails.partialWorkers;
+          if (
+            listingDetails.workers &&
+            listingDetails.workers.includes(val.workerIdActual.toString())
+          ) {
+            selected = true;
+            selectedWorkerIds.push(val.workerId);
+            selectedItemsWorkers.push(val);
+            if (
+              this.state.partialWorkerIds &&
+              this.state.partialWorkerIds.includes(
+                val.workerIdActual.toString()
+              )
+            ) {
+              this.partialWorkers.push(val.workerId);
+            }
+          }
+          return {
+            ...val,
+            selected,
+          };
         });
-      } else if (nextProps.requestDet && nextProps.listingDetails) {
-        // this.setState({workers:nextProps.requestDet.workers, projects:nextProps.requestDet.projects, supervisors:nextProps.requestDet.supervisorsList});
-        this.state.projects = [...nextProps.requestDet.projects];
-        this.state.supervisors = [...listingDetails.availablesupervisor];
-        this.state.workers = [...listingDetails.availableworker];
-        this.state.addSupervisors = [...listingDetails.availablesupervisor];
-        this.state.baseSupervsor = [...listingDetails.availablesupervisor];
-        this.state.addSupervisors = this.state.addSupervisors.filter(
-          (addSup) => addSup.userId !== listingDetails.baseSupervsor
-        );
-        this.state.baseSupervsor = this.state.baseSupervsor.filter(
-          (addSup) => addSup.userId === listingDetails.baseSupervsor
-        );
+        let supListArr = this.state.addSupervisors.map((val) => {
+          let selected = false;
+          this.state.partialSupIds = listingDetails.partialsupervisor;
+          if (
+            listingDetails.addSupervsor &&
+            listingDetails.addSupervsor.includes(val.userId.toString())
+          ) {
+            selected = true;
+            selectedSupIds.push(val.userId);
+            selectedItemsAddSup.push(val);
+            if (
+              this.state.partialSupIds &&
+              this.state.partialSupIds.includes(val.userId.toString())
+            ) {
+              this.partialAddSup.push(val.userId);
+            }
+          }
+          return {
+            ...val,
+            selected,
+          };
+        });
+        // console.log(this.state.baseSupervsor);
+
+        let BaseSupListArr = this.state.baseSupervsor.map((val) => {
+          let selected = false;
+          this.state.partialBaseSupId = listingDetails.partialBaseSupervisors;
+          if (
+            listingDetails.baseSupervsor &&
+            listingDetails.baseSupervsor === val.userId.toString()
+          ) {
+            selected = true;
+            selectedBasSupId.push(val.userId);
+            selectedItemsBaseSup.push(val);
+            if (
+              this.state.partialBaseSupId &&
+              this.state.partialBaseSupId.includes(val.userId.toString())
+            ) {
+              this.partialBaseSupervisors.push(val.userId);
+            }
+          }
+          return {
+            ...val,
+            selected,
+          };
+        });
+        this.setState({
+          workers: workerListArr,
+          workerIds: selectedWorkerIds,
+          workerName: selectedWorkerNames,
+          selectedListWork: selectedItemsWorkers,
+          partialWorkers: this.partialWorkers,
+
+          supervisors: supListArr,
+          supervisorIds: selectedSupIds,
+          supervisorName: selectedSupervisorNames,
+          selectedItemsAddSup: selectedItemsAddSup,
+          partialSupervisors: this.partialAddSup,
+
+          baseSupervisors: BaseSupListArr,
+          baseSupervisorIds: selectedBasSupId,
+          baseSupervisorName: selectedBaseSupervisorName,
+          selectedItemsBaseSup: selectedItemsBaseSup,
+          partialBaseSupervisors: this.partialBaseSupervisors,
+        });
+
+        // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
       }
-    }
-
-    if (listingDetails && this.state.projects && this.state.supervisors) {
-      this.setState({ value_projects: listingDetails.projectId });
-      this.setState({ projectId: listingDetails.projectId });
-      let proTitle = getDetailsWithMatchedKey2(
-        listingDetails.projectId,
-        this.state.projects,
-        "projectId",
-        "projectName"
-      );
-      this.state.projectTitle = proTitle;
-      let superTitle = getDetailsWithMatchedKey2(
-        listingDetails.baseSupervsor,
-        this.state.supervisors,
-        "userId",
-        "Name"
-      );
-      this.state.supervisorTitle = superTitle;
-      console.log(this.state.supervisorTitle);
-
-      this.setState({ value_supervisors: listingDetails.baseSupervsor });
-      let addsuperTitle = getDetailsWithMatchedKey2(
-        listingDetails.addSupervsor,
-        this.state.addSupervisors,
-        "userId",
-        "Name"
-      );
-      this.state.addsupervisorTitle = addsuperTitle;
-      this.setState({ value_supervisors2: listingDetails.addSupervsor });
-      this.setState({ remarks: listingDetails.remarks });
-      let selectedWorkerIds = [],
-        selectedSupIds = [],
-        selectedBasSupId = [];
-      let selectedWorkerNames = [],
-        selectedSupervisorNames = [],
-        selectedBaseSupervisorName = [];
-      let dateSelected = moment(listingDetails.createdOn, "YYYY-MM-DD");
-      let actualDate = dateSelected.format("YYYY/MM/DD");
-      this.setState({ startDate1: dateSelected, startDate: actualDate });
-      let selectedItemsWorkers = [],
-        selectedItemsAddSup = [],
-        selectedItemsBaseSup = [];
-      let workerListArr = this.state.workers.map((val) => {
-        let selected = false;
-        this.state.partialWorkerIds = listingDetails.partialWorkers;
-        if (
-          listingDetails.workers &&
-          listingDetails.workers.includes(val.workerIdActual.toString())
-        ) {
-          selected = true;
-          selectedWorkerIds.push(val.workerId);
-          selectedItemsWorkers.push(val);
-          if (
-            this.state.partialWorkerIds &&
-            this.state.partialWorkerIds.includes(val.workerIdActual.toString())
-          ) {
-            this.partialWorkers.push(val.workerId);
-          }
-        }
-        return {
-          ...val,
-          selected,
+      if (this.state.projectId) {
+        const obj = {
+          requestCode: 1,
+          projectId: this.state.projectId,
+          workArrangement: this.props.match.params.id,
         };
-      });
-      let supListArr = this.state.addSupervisors.map((val) => {
-        let selected = false;
-        this.state.partialSupIds = listingDetails.partialsupervisor;
-        if (
-          listingDetails.addSupervsor &&
-          listingDetails.addSupervsor.includes(val.userId.toString())
-        ) {
-          selected = true;
-          selectedSupIds.push(val.userId);
-          selectedItemsAddSup.push(val);
-          if (
-            this.state.partialSupIds &&
-            this.state.partialSupIds.includes(val.userId.toString())
-          ) {
-            this.partialAddSup.push(val.userId);
-          }
-        }
-        return {
-          ...val,
-          selected,
-        };
-      });
-      // console.log(this.state.baseSupervsor);
 
-      let BaseSupListArr = this.state.baseSupervsor.map((val) => {
-        let selected = false;
-        this.state.partialBaseSupId = listingDetails.partialBaseSupervisors;
-        if (
-          listingDetails.baseSupervsor &&
-          listingDetails.baseSupervsor === val.userId.toString()
-        ) {
-          selected = true;
-          selectedBasSupId.push(val.userId);
-          selectedItemsBaseSup.push(val);
-          if (
-            this.state.partialBaseSupId &&
-            this.state.partialBaseSupId.includes(val.userId.toString())
-          ) {
-            this.partialBaseSupervisors.push(val.userId);
-          }
-        }
-        return {
-          ...val,
-          selected,
-        };
-      });
-      this.setState({
-        workers: workerListArr,
-        workerIds: selectedWorkerIds,
-        workerName: selectedWorkerNames,
-        selectedListWork: selectedItemsWorkers,
-        partialWorkers: this.partialWorkers,
-
-        supervisors: supListArr,
-        supervisorIds: selectedSupIds,
-        supervisorName: selectedSupervisorNames,
-        selectedItemsAddSup: selectedItemsAddSup,
-        partialSupervisors: this.partialAddSup,
-
-        baseSupervisors: BaseSupListArr,
-        baseSupervisorIds: selectedBasSupId,
-        baseSupervisorName: selectedBaseSupervisorName,
-        selectedItemsBaseSup: selectedItemsBaseSup,
-        partialBaseSupervisors: this.partialBaseSupervisors,
-      });
-
-      // this.setState({value_supervisors:listingDetails.baseSupervsor , value_supervisors2:listingDetails.addSupervsor, projectId:listingDetails.projectId});
-    }
-    if (this.state.projectId) {
-      const obj = {
-        requestCode: 1,
-        projectId: this.state.projectId,
-        workArrangement: this.props.match.params.id,
-      };
-
-      dispatch(requestDetails(obj));
+        dispatch(requestDetails(obj));
+      }
     }
   }
   componentWillUnmount() {
@@ -599,7 +639,7 @@ class WorkArrangementEdit extends React.Component {
   /* Render */
   render() {
     const { headerTitle, listingId, selectedItemsBaseSup } = this.state;
-    // console.log(selectedItemsBaseSup);
+    // console.log("this.state", this.state);
 
     const { loading } = this.props;
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";

@@ -57,6 +57,8 @@ export default class AttendanceList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
+    console.log("nextProps", nextProps);
+
     const { requestDet } = nextProps;
     this.setState({ listingDetails: nextProps.listingDetails });
     if (requestDet) {
