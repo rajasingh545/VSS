@@ -225,14 +225,17 @@ class WorkArrangement extends React.Component {
         [valuekey]: key.toString(),
       });
     } else {
-      addSupervisors = supervisors.filter(
-        (task) => task.userId !== selectedObj.userId
-      );
-      this.setState({
-        [stateKey]: list,
-        selectedSupervisor: selectedObj,
-        addSupervisors,
-      });
+      if(selectedObj){
+        addSupervisors = supervisors.filter(
+          (task) => task.userId !== selectedObj.userId
+        );
+        this.setState({
+          [stateKey]: list,
+          selectedSupervisor: selectedObj,
+          addSupervisors,
+        });
+      }
+      
 
       let valuekey = `value_${stateKey}`;
 
@@ -460,8 +463,8 @@ class WorkArrangement extends React.Component {
     let availSupervisorsCount = 0,
       availWorkersCount = 0;
     if (projectId !== undefined || Number(projectId) > 0) {
-      availSupervisorsCount = this.state.addSupervisors.length;
-      availWorkersCount = this.state.workers.length;
+      availSupervisorsCount = this.state.addSupervisors ? this.state.addSupervisors.length : 0;
+      availWorkersCount = this.state.workers ? this.state.workers.length : 0;
     }
     return (
       <div className="container work-arr-container">
