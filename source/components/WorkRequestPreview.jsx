@@ -8,6 +8,7 @@ class WorkRequestPreview extends Component {
     this.state = {
       curState: props.curState,
       images: props.images,
+      isLoading:false,
     };
   }
 
@@ -242,6 +243,7 @@ class WorkRequestPreview extends Component {
   //   this.setState({ drawingAttachedFile: fileUpload });
   // };
   filepload = (e) => {
+    this.setState({isLoading:true});
     const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
@@ -264,8 +266,10 @@ class WorkRequestPreview extends Component {
       .then((res) => {
         if (res.responsecode === 1) {
           this.state.drawingimage = res.imageurl;
-          this.setState({ images: this.state.images.concat(res.imageurl) });
+          this.setState({ images: this.state.images.concat(res.imageurl),isLoading:false });
         } else {
+          this.setState({isLoading:false});
+
           console.log(res.response);
           // toast.error(res.response, { autoClose: 3000 });
         }
@@ -273,7 +277,7 @@ class WorkRequestPreview extends Component {
     // console.log(this.state.drawingimage);
   };
   render() {
-    const { curState, images } = this.state;
+    const { curState, images,isLoading } = this.state;
     console.log(curState);
 
     return (
@@ -356,6 +360,11 @@ class WorkRequestPreview extends Component {
                 multiple
                 onChange={this.filepload}
               />
+              {
+                isLoading && (
+                  <p style={{color:'green'}}>Loading...</p>
+                )
+              }
             </div>
             {images && images.length > 0 ? (
               <div className="col-sm-12">
