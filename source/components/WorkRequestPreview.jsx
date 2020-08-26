@@ -353,17 +353,21 @@ class WorkRequestPreview extends Component {
               <label>Images:</label>
             </div>
             <div className="col-sm-6">
-              <input
+              {
+                isLoading && (
+                  <p style={{color:'green'}}>Loading...</p>
+                )
+              }
+              {
+               images.length < 6 ?(
+                <input
                 type="file"
                 id="drawingAttachedFile"
                 name="drawingAttachedFile"
                 multiple
                 onChange={this.filepload}
               />
-              {
-                isLoading && (
-                  <p style={{color:'green'}}>Loading...</p>
-                )
+               ):""
               }
             </div>
             {images && images.length > 0 ? (
