@@ -658,6 +658,8 @@ class Attedence extends React.Component {
               selected={this.state.startDate1}
               className=" form-control"
               isClearable={false}
+              minDate={new Date()}
+              maxDate={new Date()}
               onChange={this.onStartDateChange}
               name="startDate"
               dateFormat="DD-MM-YYYY"

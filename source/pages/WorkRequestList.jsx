@@ -82,9 +82,10 @@ export default class WorkRequestList extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const { requestDet, workRequestData } = nextProps;
+    console.log("nextProps", nextProps);
 
     let projects = requestDet ? [...requestDet.projects] : [],
-      clients = requestDet ? [...requestDet.clients]: [],
+      clients = requestDet ? [...requestDet.clients] : [],
       defaultProject = {
         endTime: "",
         projectId: "0",
@@ -406,6 +407,7 @@ export default class WorkRequestList extends React.Component {
     const { requestType, requestJsonData, projects, clients } = this.state;
     // console.log("options", options);
     const { loading } = this.props;
+    // console.log(projects, clients, workRequestData);
 
     let loadingurl = DOMAIN_NAME + "/assets/img/loading.gif";
     if (
