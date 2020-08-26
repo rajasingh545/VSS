@@ -458,7 +458,6 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
-
         <div className="row">
           <div className="col-sm-6">
             <label>Client</label>
@@ -475,7 +474,6 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
-
         <div className="row">
           <div className="col-xs-6">
             <label>Work Request By</label>
@@ -489,7 +487,6 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
-
         <div className="row">
           <div className="col-xs-1">
             <label>
@@ -506,7 +503,6 @@ class WorkRequest extends React.Component {
             <label>Original Contract</label>
           </div>
         </div>
-
         <div className="row">
           <div className="col-xs-1">
             <label>
@@ -523,7 +519,6 @@ class WorkRequest extends React.Component {
             <label>Variation Works</label>
           </div>
         </div>
-
         {this.state.cType == 1 ? (
           <div className="pull-right">
             <div className="col-xs-6">
@@ -664,7 +659,35 @@ class WorkRequest extends React.Component {
         ) : (
           ""
         )}
-
+        {this.state.cType == 1 ? (
+          <div>
+            <div className="col-xs-6">
+              <input
+                type="checkbox"
+                name="drawingAttached"
+                onClick={this.onCheckBoxChecked}
+                checked={this.state.drawingAttached == 1}
+                style={{
+                  marginRight: "11px",
+                }}
+              />
+              <label>Drawing Attached</label>
+            </div>
+            {this.state.drawingAttached == 1 && (
+              <div className="col-xs-6">
+                <input
+                  type="file"
+                  ref="file"
+                  id="drawingAttachedFile"
+                  name="drawingAttachedFile"
+                  onChange={this.filepload}
+                />
+              </div>
+            )}
+          </div>
+        ) : (
+          ""
+        )}
         <div className="description">
           <div className="row">
             <div className="col-xs-6">
@@ -681,7 +704,6 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         </div>
-
         <div className="workBasedOn">
           <div className="row">
             <div className="col-sm-12">Work Based On</div>
@@ -728,7 +750,6 @@ class WorkRequest extends React.Component {
             handleSubmit={this.handleSizeSubmit}
           />
         </Popup>
-
         <Popup
           show={this.state.showManPowerPopup}
           title="Add Manpower"
@@ -739,7 +760,6 @@ class WorkRequest extends React.Component {
             handleClose={this.handleManPowerPopupClose}
           />
         </Popup>
-
         {this.state.workBased == 1 && (
           <div>
             {this.state.sizeList.length > 0 && (
@@ -787,7 +807,6 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         )}
-
         <div className="row">
           <div className="col-xs-3">Remarks</div>
           <div className="col-xs-6">
@@ -835,7 +854,6 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         </div>
-
         <Modal
           show={this.state.show}
           onHide={this.handleClose}
