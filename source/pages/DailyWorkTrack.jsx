@@ -99,6 +99,7 @@ class DailyWorkTrack extends React.Component {
       requestByName: "",
       showManpowerPopup: false,
       selectedWRId: 0,
+      imagePush:[1,2,3],
     };
 
     this.teamList = [];
@@ -168,6 +169,7 @@ class DailyWorkTrack extends React.Component {
     // this.setState({ images:this.images });
     const ext = event.target.files[0].name.split(".");
 
+  
     const data = new FormData();
     data.append("image", event.target.files[0], event.target.files[0].name);
     data.append("uniqueId", this.state.uniqueId);
@@ -177,7 +179,6 @@ class DailyWorkTrack extends React.Component {
       [event.target
         .name]: `images/${this.state.uniqueId}/${event.target.name}.${ext[1]}`,
     });
-
     this.uploadImages(data);
   };
 
@@ -473,6 +474,16 @@ class DailyWorkTrack extends React.Component {
       [stateKey]: list,
     });
   }
+
+  itemAddition = () => {
+    let arrayData = this.state.imagePush;
+    const lastData = arrayData.slice(-1)[0] 
+    const newCount = lastData+1;
+    if (!arrayData.includes(newCount))
+    arrayData.push(newCount);
+    this.setState({imagePush:arrayData})
+  }
+
   /* Render */
   render() {
     let { headerTitle } = this.state;
@@ -709,39 +720,41 @@ class DailyWorkTrack extends React.Component {
             </div>
 
             <br />
-            <div className="row" style={{ paddingTop: "15px" }}>
-              <div className="col-xs-3">Upload Photo 1</div>
-              <div className="col-xs-6">
-                {" "}
-                <input
-                  type="file"
-                  name="photo_1"
-                  onChange={this.selectImages}
-                />
-              </div>
-            </div>
-            <div className="row" style={{ paddingTop: "15px" }}>
-              <div className="col-xs-3">Upload Photo 2</div>
-              <div className="col-xs-6">
-                {" "}
-                <input
-                  type="file"
-                  name="photo_2"
-                  onChange={this.selectImages}
-                />
-              </div>
-            </div>
-            <div className="row" style={{ paddingTop: "15px" }}>
-              <div className="col-xs-3">Upload Photo 2</div>
-              <div className="col-xs-6">
-                {" "}
-                <input
-                  type="file"
-                  name="photo_3"
-                  onChange={this.selectImages}
-                />
-              </div>
-            </div>
+            {
+              //this.imagePush && this.state.imagePush.length > 0 &&
+                this.state.imagePush.map((data)=>{
+                  const name= "photo_"+data;
+                  return(
+                <div className="row" style={{ paddingTop: "15px" }} key={data}>
+                  <div className="col-xs-3" key={data}>Upload Photo {data}</div>
+                  <div className="col-xs-6" key={data}>
+                    {" "}
+                    <input
+                      type="file"
+                      name={name}
+                      onChange={this.selectImages}
+                    />
+                  </div>
+                </div>
+                  )
+                })
+          }
+          {
+             this.state.imagePush.length <= 5 && <div className="pull-right">
+             <div className="col-xs-6">
+               <button
+                 type="button"
+                 id="Add"
+                 onClick={this.itemAddition}
+                 className="btn btn-default btn-sm right"
+               >
+                 <span className="glyphicon glyphicon-plus right" />
+               </button>
+             </div>
+           </div>
+            
+          }
+            
           </div>
         )}
         <div className="row">

@@ -13,6 +13,7 @@ class WorkRequestPreview extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+  //  console.log("component will res",nextProps.curState);
     this.setState({ curState: nextProps.curState, images: nextProps.images });
   }
 
@@ -269,17 +270,14 @@ class WorkRequestPreview extends Component {
           this.setState({ images: this.state.images.concat(res.imageurl),isLoading:false });
         } else {
           this.setState({isLoading:false});
-
-          console.log(res.response);
-          // toast.error(res.response, { autoClose: 3000 });
+          //toast.error(res.response, { autoClose: 3000 });
         }
       });
-    // console.log(this.state.drawingimage);
   };
+
+  
   render() {
     const { curState, images,isLoading } = this.state;
-    console.log(curState);
-
     return (
       <div>
         <div className="container work-arr-container">
@@ -315,6 +313,15 @@ class WorkRequestPreview extends Component {
             </div>
             <div className="col-sm-6 strong">{curState.description}</div>
           </div>
+          {curState.drawingImage && (
+            <div className="row">
+            <div className="col-sm-6">
+              <label>DrawingImage:</label>
+            </div>
+            <div className="col-sm-6"><img src={curState.drawingImage}></img>
+            </div>
+            </div>
+          )}
           {curState.cType == 1 && this.setItemList(curState.itemList)}
           {curState.cType == 2 && (
             <div>
@@ -358,8 +365,6 @@ class WorkRequestPreview extends Component {
                   <p style={{color:'green'}}>Loading...</p>
                 )
               }
-              {
-               images.length < 6 ?(
                 <input
                 type="file"
                 id="drawingAttachedFile"
@@ -367,15 +372,13 @@ class WorkRequestPreview extends Component {
                 multiple
                 onChange={this.filepload}
               />
-               ):""
-              }
             </div>
             {images && images.length > 0 ? (
               <div className="col-sm-12">
                 <Grid>
                   <Grid.Row columns={8}>
                     {images.map((_x) => (
-                      <Grid.Column>
+                      <Grid.Column >
                         <Image src={_x} onClick={this.click} />
                       </Grid.Column>
                     ))}

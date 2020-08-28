@@ -223,29 +223,61 @@ class DailyWorkTrackPreview extends Component{
                 {this.setMaterialList(curState.materialList, curState)}
             </div>
             }
-            {curState.photo_1 != "" &&
+            {/* {
+               curState.showImage.map((data,index)=>{
+                   let name=""
+                   if(data.key===1){
+                        name = curState.photo_1;
+                   }
+                return(
+                    <div className="row">
+                    <div className="col-sm-6"><label>Photo {data.key}</label></div>
+                    <div className="col-sm-6 strong"><a href={imgURL+"/"+name} target="_blank"><img src={imgURL+"/"+name} height="100px" width="200px" /></a></div>
+                   </div>
+                   )
+              })   
+            } */}
+            {curState.photo_1 &&
             <div className="row">
             <div className="col-sm-6"><label>Photo 1</label></div>
             <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_1} target="_blank"><img src={imgURL+"/"+curState.photo_1} height="100px" width="200px" /></a></div>
            </div>
             }
-             {curState.photo_2 != "" &&
+             {curState.photo_2 &&
            <div className="row"> 
             <div className="col-sm-6"><label>Photo 2</label></div>
             <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_2} target="_blank"><img src={imgURL+"/"+curState.photo_2}  height="100px" width="200px" /></a></div>
            </div>
              }
-              {curState.photo_3 != "" &&
+              {curState.photo_3 &&
            <div className="row">
             <div className="col-sm-6"><label>Photo 3</label></div>
             <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_3} target="_blank"><img src={imgURL+"/"+curState.photo_3} height="100px" width="200px" /></a></div>
+           </div>
+              }
+              {curState.photo_4 &&
+           <div className="row">
+            <div className="col-sm-6"><label>Photo 4</label></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_4} target="_blank"><img src={imgURL+"/"+curState.photo_4} height="100px" width="200px" /></a></div>
+           </div>
+              }
+              {curState.photo_5 &&
+           <div className="row">
+            <div className="col-sm-6"><label>Photo 5</label></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_5} target="_blank"><img src={imgURL+"/"+curState.photo_5} height="100px" width="200px" /></a></div>
+           </div>
+              }
+              {curState.photo_6  &&
+           <div className="row">
+            <div className="col-sm-6"><label>Photo 6</label></div>
+            <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_6} target="_blank"><img src={imgURL+"/"+curState.photo_6} height="100px" width="200px" /></a></div>
            </div>
               }
            <div className="row">
             <div className="col-sm-6"><label>Mat.Misuse</label></div>
             <div className="col-sm-6 strong">{(curState.matMisuse == 1)? "Yes":"No"}</div>
            </div>
-           {curState.matPhotos != "" &&
+           {curState.matPhotos &&
            <div className="row">
             <div className="col-sm-6"><label>Photos</label></div>
             <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.matPhotos} target="_blank"><img src={imgURL+"/"+curState.matPhotos} height="100px" width="200px" /></a></div>
@@ -259,7 +291,7 @@ class DailyWorkTrackPreview extends Component{
             <div className="col-sm-6"><label>Safty Vio.</label></div>
             <div className="col-sm-6 strong">{(curState.safetyvio == 1)? "Yes":"No"}</div>
            </div>
-           {curState.safetyPhoto != "" &&
+           {curState.safetyPhoto &&
            <div className="row">
             <div className="col-sm-6"><label>Photos</label></div>
             <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.safetyPhoto} target="_blank"><img src={imgURL+"/"+curState.safetyPhoto} height="100px" width="200px" /></a></div>

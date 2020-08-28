@@ -3,6 +3,8 @@ import React from "react";
 import { connect } from "react-redux";
 import { Modal } from "react-bootstrap";
 import { ToastContainer, toast } from "react-toastify";
+import { Grid, Image } from "semantic-ui-react";
+
 import Dropdown from "../components/Dropdown";
 import CustomButton from "../components/CustomButton";
 import WorkRequestPreview from "../components/WorkRequestPreview";
@@ -50,6 +52,8 @@ class WorkRequest extends React.Component {
       clientsStore: [],
       showSizePopup: false,
       drawingimage: "",
+      drawImageshow:"",
+      isLoading:false
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -230,6 +234,7 @@ class WorkRequest extends React.Component {
   };
   filepload = (e) => {
     e.preventDefault();
+    this.setState({isLoading:true})
     const formData = new FormData();
     formData.append("uniqueId", this.state.userId);
     formData.append("requestCode", 24);
@@ -241,8 +246,13 @@ class WorkRequest extends React.Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.state.drawingimage = res.imageurl;
-          this.setState({ drawingimage: res.imageurl });
+          const basePath = res.basepath;
+          const imageURL = res.imageurl;
+          const drawURL = basePath.concat(imageURL);
+          //this.state.drawingimage = res.imageurl;
+          this.setState({ drawingimage: drawURL,drawImageshow:drawURL,isLoading:false });
+        }else{
+          this.setState({isLoading:false})
         }
       });
   };
@@ -256,6 +266,7 @@ class WorkRequest extends React.Component {
       }
       this.state.requestCode = 14;
       this.state.status = status;
+      this.state.drawImageshow = "";
 
       dispatch(workRequestPost(Object.assign(this.state)));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
@@ -309,6 +320,9 @@ class WorkRequest extends React.Component {
     return true;
   };
 
+  click = () => {
+    console.log("working");
+  };
   addListToItem = () => {
     const found = this.itemList.some(
       (el) => el.value_item === this.state.value_item
@@ -425,7 +439,7 @@ class WorkRequest extends React.Component {
 
   /* Render */
   render() {
-    const { itemtitle } = this.state;
+    const { itemtitle , drawingimage,isLoading,drawImageshow} = this.state;
     // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
 
     let showSizeAddButton = true;
@@ -458,6 +472,7 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
+
         <div className="row">
           <div className="col-sm-6">
             <label>Client</label>
@@ -474,6 +489,7 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
+
         <div className="row">
           <div className="col-xs-6">
             <label>Work Request By</label>
@@ -487,6 +503,7 @@ class WorkRequest extends React.Component {
             />
           </div>
         </div>
+
         <div className="row">
           <div className="col-xs-1">
             <label>
@@ -503,6 +520,7 @@ class WorkRequest extends React.Component {
             <label>Original Contract</label>
           </div>
         </div>
+
         <div className="row">
           <div className="col-xs-1">
             <label>
@@ -519,6 +537,7 @@ class WorkRequest extends React.Component {
             <label>Variation Works</label>
           </div>
         </div>
+
         {this.state.cType == 1 ? (
           <div className="pull-right">
             <div className="col-xs-6">
@@ -645,6 +664,11 @@ class WorkRequest extends React.Component {
               </div>
               {this.state.drawingAttached == 1 && (
                 <div className="col-xs-3">
+                    {
+                     isLoading && (
+                  <p style={{color:'green'}}>Loading...</p>
+                )
+              }              
                   <input
                     type="file"
                     ref="file"
@@ -654,40 +678,23 @@ class WorkRequest extends React.Component {
                   />
                 </div>
               )}
-            </div>
-          </div>
-        ) : (
-          ""
-        )}
-        {this.state.cType == 1 ? (
-          <div>
-            <div className="col-xs-6">
-              <input
-                type="checkbox"
-                name="drawingAttached"
-                onClick={this.onCheckBoxChecked}
-                checked={this.state.drawingAttached == 1}
-                style={{
-                  marginRight: "11px",
-                }}
-              />
-              <label>Drawing Attached</label>
-            </div>
-            {this.state.drawingAttached == 1 && (
-              <div className="col-xs-6">
-                <input
-                  type="file"
-                  ref="file"
-                  id="drawingAttachedFile"
-                  name="drawingAttachedFile"
-                  onChange={this.filepload}
-                />
+              {drawingimage && (
+                <div className="col-sm-12">
+                <Grid>
+                  <Grid.Row columns={8}>
+                      <Grid.Column >
+                        <Image src={drawImageshow} onClick={this.click} />
+                      </Grid.Column>
+                  </Grid.Row>
+                </Grid>
               </div>
             )}
+            </div>
           </div>
         ) : (
           ""
         )}
+
         <div className="description">
           <div className="row">
             <div className="col-xs-6">
@@ -704,6 +711,7 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         </div>
+
         <div className="workBasedOn">
           <div className="row">
             <div className="col-sm-12">Work Based On</div>
@@ -750,6 +758,7 @@ class WorkRequest extends React.Component {
             handleSubmit={this.handleSizeSubmit}
           />
         </Popup>
+
         <Popup
           show={this.state.showManPowerPopup}
           title="Add Manpower"
@@ -760,6 +769,7 @@ class WorkRequest extends React.Component {
             handleClose={this.handleManPowerPopupClose}
           />
         </Popup>
+
         {this.state.workBased == 1 && (
           <div>
             {this.state.sizeList.length > 0 && (
@@ -807,6 +817,7 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         )}
+
         <div className="row">
           <div className="col-xs-3">Remarks</div>
           <div className="col-xs-6">
@@ -854,7 +865,7 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         </div>
-        <Modal
+    <Modal
           show={this.state.show}
           onHide={this.handleClose}
           dialogClassName="modallg"
