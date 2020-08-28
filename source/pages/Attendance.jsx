@@ -418,10 +418,17 @@ class Attedence extends React.Component {
 
       // this.selectedIds = [];
       return workers.map((worker, ind) => {
+        console.log(
+          "this.state.selectedOption",
+          this.state.selectedOption,
+          worker.status,
+          worker.statusOut
+        );
+
         let rec = 0;
         if (
-          (this.state.selectedOption == 1 && worker.status != 1) ||
-          (this.state.selectedOption == 2 && worker.statusOut != 1)
+          (this.state.selectedOption == 1 && worker.status == 1) ||
+          (this.state.selectedOption == 2 && worker.statusOut == 1)
         ) {
           let workerName = "";
           if (type === "Supervisors") {

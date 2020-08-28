@@ -69,7 +69,7 @@ export default class WorkArrangementList extends React.Component {
       if (DeleteData.response === "success" && DeleteData.responsecode === 2) {
         let errorMGS =
           DeleteData.attWorkListingNameMsg !== undefined
-            ? DeleteData.attWorkListingNameMsg.join(", ")
+            ? DeleteData.attWorkListingNameMsg.join(",")
             : "Deleted Successfully";
         dispatch(requestPostClear([]));
         // dispatch(requestDetails(JSONData));

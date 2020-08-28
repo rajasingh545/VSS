@@ -345,7 +345,7 @@ export default class AttendanceList extends React.Component {
               className=" form-control"
               isClearable={false}
               // minDate={new Date()}
-              maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
+              maxDate={new Date()}
               onChange={this.onStartDateChange}
               name="startDate"
               dateFormat="DD-MM-YYYY"
