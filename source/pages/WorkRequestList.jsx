@@ -204,7 +204,7 @@ export default class WorkRequestList extends React.Component {
           "  Requested By :  " +
           data.requestedBy;
         // console.log(data.title, data.requestSizeList, data.requestmanpower);
-        if (data.requestSizeList.length > 0) {
+        if (data.requestSizeList && data.requestSizeList.length > 0) {
           let text = "";
           data.requestSizeList.map((_x, i) => {
             let title = _x.scaffoldsubcategory,

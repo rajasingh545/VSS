@@ -141,28 +141,31 @@ export default class SizeWorkRequest extends Component {
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="L"
                 value={ this.state.L }
                 onChange={ this.onFormChange }
+                
               /> L
             </div>
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="W"
                 value={ this.state.W }
                 onChange={ this.onFormChange }
+                step="any"
               />W
             </div>
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="H"
                 value={ this.state.H }
                 onChange={ this.onFormChange }
+                step="any"
               />H
             </div>
 
