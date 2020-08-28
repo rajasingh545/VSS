@@ -95,7 +95,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
       obj.workerNames = text;
     }
 
-    obj.supervisor2 = supervisors.join(", ");
+    obj.supervisor2 = supervisors.join(",");
     obj.workerCount = listingDet.workers.length;
     obj.workArrangementId = listingDet.workArrangementId;
     obj.Remarks = listingDet.remarks;
@@ -166,7 +166,7 @@ export function getPreviewContent(obj, libArr) {
       "Name"
     ),
     workerCount: obj.workerName.length,
-    workerNames: obj.workerName.join(", "),
+    workerNames: obj.workerName.join(","),
     Remarks: obj.remarks,
   };
 
