@@ -11,7 +11,9 @@ export default class WorkRequestDWTR extends Component {
 
     this.state = {
       uniqueId: Date.now(),
+      
     };
+
   }
 
   selectImages = (event) => {
@@ -184,6 +186,7 @@ export default class WorkRequestDWTR extends Component {
   };
 
   render() {
+   
     return (
       <div className="orginalContract">
         <div className="row">
@@ -235,7 +238,7 @@ export default class WorkRequestDWTR extends Component {
                 {" "}
                 <CustInput
                   size="4"
-                  type="number"
+                  type="float"
                   name="L"
                   value={this.state.L}
                   onChange={this.onFormChange}
@@ -245,7 +248,7 @@ export default class WorkRequestDWTR extends Component {
               <div className="col-xs-3">
                 <CustInput
                   size="4"
-                  type="number"
+                  type="float"
                   name="W"
                   value={this.state.W}
                   onChange={this.onFormChange}
@@ -255,7 +258,7 @@ export default class WorkRequestDWTR extends Component {
               <div className="col-xs-3">
                 <CustInput
                   size="4"
-                  type="number"
+                  type="float"
                   name="H"
                   value={this.state.H}
                   onChange={this.onFormChange}
@@ -302,7 +305,7 @@ export default class WorkRequestDWTR extends Component {
                   {" "}
                   <CustInput
                     size="4"
-                    type="number"
+                    type="float"
                     name="cL"
                     value={this.state.cL}
                     onChange={this.onFormChange}
@@ -312,7 +315,7 @@ export default class WorkRequestDWTR extends Component {
                 <div className="col-xs-3">
                   <CustInput
                     size="4"
-                    type="number"
+                    type="float"
                     name="cW"
                     value={this.state.cW}
                     onChange={this.onFormChange}
@@ -322,7 +325,7 @@ export default class WorkRequestDWTR extends Component {
                 <div className="col-xs-3">
                   <CustInput
                     size="4"
-                    type="number"
+                    type="float"
                     name="cH"
                     value={this.state.cH}
                     onChange={this.onFormChange}
