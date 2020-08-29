@@ -129,8 +129,8 @@ export default class WorkRequestDWTR extends Component {
         typeof this.state.photo_2 === "undefined" ||
         typeof this.state.photo_3 === "undefined"
       ) {
-        msg1 = "Required upload photos";
-        toast.error(msg1, { autoClose: 3000 });
+        // msg1 = "Required upload photos";
+        toast.error("Required upload photos", { autoClose: 3000 });
         return false;
       }
     }
