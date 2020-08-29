@@ -83,42 +83,44 @@ export default class WorkRequestDWTR extends Component {
       toast.error("Please select sub division", { autoClose: 3000 });
       return false;
     }
+    if(this.state.workType == 1){
 
-    if (!this.state.L) {
-      toast.error("Length is required", { autoClose: 3000 });
-      return false;
-    }
-    if (!this.state.W) {
-      toast.error("Width is required", { autoClose: 3000 });
-      return false;
-    }
-    if (!this.state.H) {
-      toast.error("Height is required", { autoClose: 3000 });
-      return false;
-    }
-    if (!this.state.set) {
-      toast.error("Set is required", { autoClose: 3000 });
-      return false;
-    }
+      if (!this.state.L) {
+        toast.error("Length is required", { autoClose: 3000 });
+        return false;
+      }
+      if (!this.state.W) {
+        toast.error("Width is required", { autoClose: 3000 });
+        return false;
+      }
+      if (!this.state.H) {
+        toast.error("Height is required", { autoClose: 3000 });
+        return false;
+      }
+      if (!this.state.set) {
+        toast.error("Set is required", { autoClose: 3000 });
+        return false;
+      }
 
-    if (
-      typeof this.state.workstatus === "undefined" ||
-      this.state.workstatus == ""
-    ) {
-      toast.error("Please select work status", { autoClose: 3000 });
-      return false;
-    }
-    let totalTodayWork =
-        Number(this.state.L) * Number(this.state.H) * Number(this.state.W),
-      totalWork = this.state.selectedArr.totalset,
-      workDone = this.state.selectedArr.workdonetotal,
-      pendingWork = totalWork - workDone,
-      msg = "",
-      msg1 = "";
-    if (pendingWork < totalTodayWork) {
-      msg = "Available volume is " + pendingWork;
-      toast.error(msg, { autoClose: 3000 });
-      return false;
+      if (
+        typeof this.state.workstatus === "undefined" ||
+        this.state.workstatus == ""
+      ) {
+        toast.error("Please select work status", { autoClose: 3000 });
+        return false;
+      }
+      let totalTodayWork =
+          Number(this.state.L) * Number(this.state.H) * Number(this.state.W),
+        totalWork = this.state.selectedArr.totalset,
+        workDone = this.state.selectedArr.workdonetotal,
+        pendingWork = totalWork - workDone,
+        msg = "",
+        msg1 = "";
+      if (pendingWork < totalTodayWork) {
+        msg = "Available volume is " + pendingWork;
+        toast.error(msg, { autoClose: 3000 });
+        return false;
+      }
     }
 
     if (this.state.selectedArrWR.workRequestsizebased == "yes") {
