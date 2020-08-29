@@ -21,6 +21,7 @@ import Popup from "../components/Popup";
 import TeamPreview from "../components/TeamPreview";
 import MaterialPreview from "../components/MaterialPreview";
 import WorkRequestDWTRPreview from "../components/WorkRequestDWTRPreview";
+import { useColumnOrder } from "react-table";
 
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
@@ -100,6 +101,7 @@ class DailyWorkTrack extends React.Component {
       showManpowerPopup: false,
       selectedWRId: 0,
       imagePush:[1,2,3],
+      isLoading:false
     };
 
     this.teamList = [];
@@ -165,6 +167,9 @@ class DailyWorkTrack extends React.Component {
   }
   selectImages = (event) => {
     const { dispatch } = this.props;
+    this.setState({
+      isLoading:true
+    })
     // this.images[event.target.name] = event.target.files[0];
     // this.setState({ images:this.images });
     const ext = event.target.files[0].name.split(".");
@@ -193,8 +198,10 @@ class DailyWorkTrack extends React.Component {
   };
   imageUploadSuccess = (json) => {
     if (json.responsecode == 1) {
+      this.setState({isLoading:false})
       toast.success("Image uploaded Successfully", { autoClose: 3000 });
     } else {
+      this.setState({isLoading:false})
       toast.error(`Error: ${json.response}`, { autoClose: 3000 });
     }
   };
@@ -484,9 +491,10 @@ class DailyWorkTrack extends React.Component {
     this.setState({imagePush:arrayData})
   }
 
+
   /* Render */
   render() {
-    let { headerTitle } = this.state;
+    let { headerTitle,imagePush,isLoading } = this.state;
     return (
       <div className="container work-arr-container">
         <ToastContainer autoClose={8000} />
@@ -718,29 +726,27 @@ class DailyWorkTrack extends React.Component {
                   this.displayMaterialList(this.state.materialList)}
               </div>
             </div>
+            {isLoading && (<div><p style={{color:'red',paddingLeft:"15px"}}>Image Loading...</p></div>)}
 
             <br />
             {
-              //this.imagePush && this.state.imagePush.length > 0 &&
-                this.state.imagePush.map((data)=>{
-                  const name= "photo_"+data;
-                  return(
-                <div className="row" style={{ paddingTop: "15px" }} key={data}>
-                  <div className="col-xs-3" key={data}>Upload Photo {data}</div>
-                  <div className="col-xs-6" key={data}>
-                    {" "}
-                    <input
-                      type="file"
-                      name={name}
-                      onChange={this.selectImages}
-                    />
-                  </div>
+            imagePush.length > 0 && (
+              this.state.imagePush.map((data,index)=>{
+                return(<div className="row" style={{ paddingTop: "15px" }} key={index}>
+                <div className="col-xs-3" >Upload Photo {data}</div>
+                <div className="col-xs-6" >
+                  {" "}
+                  <input
+                    type="file"
+                    name={"photo_"+data}
+                    onChange={this.selectImages}
+                  />
                 </div>
-                  )
-                })
-          }
+              </div>)
+              })
+            ) }
           {
-             this.state.imagePush.length <= 5 && <div className="pull-right">
+             this.state.imagePush.length <= 5 && <div className="row pull-right">
              <div className="col-xs-6">
                <button
                  type="button"

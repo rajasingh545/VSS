@@ -223,20 +223,6 @@ class DailyWorkTrackPreview extends Component{
                 {this.setMaterialList(curState.materialList, curState)}
             </div>
             }
-            {/* {
-               curState.showImage.map((data,index)=>{
-                   let name=""
-                   if(data.key===1){
-                        name = curState.photo_1;
-                   }
-                return(
-                    <div className="row">
-                    <div className="col-sm-6"><label>Photo {data.key}</label></div>
-                    <div className="col-sm-6 strong"><a href={imgURL+"/"+name} target="_blank"><img src={imgURL+"/"+name} height="100px" width="200px" /></a></div>
-                   </div>
-                   )
-              })   
-            } */}
             {curState.photo_1 &&
             <div className="row">
             <div className="col-sm-6"><label>Photo 1</label></div>
