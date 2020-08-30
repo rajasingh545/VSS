@@ -50,6 +50,7 @@ class WorkRequest extends React.Component {
       clientsStore: [],
       showSizePopup: false,
       drawingimage: "",
+      contractSize:0
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -123,6 +124,7 @@ class WorkRequest extends React.Component {
     let itemTitle = "";
     let desc = "";
     let description = "";
+    let total = 0;
     list.map((item) => {
       if (item.id == key) {
         LocTitle = item.location;
@@ -137,6 +139,7 @@ class WorkRequest extends React.Component {
           item["height"] +
           "mH, Set:" +
           item["sets"];
+          total = item["length"]*item["width"]*item["height"]*item["sets"];
       }
     });
     this.resetThenSet(key, list, "location", LocTitle);
@@ -146,7 +149,10 @@ class WorkRequest extends React.Component {
       itemtitle: this.state.text_item,
       locationTitle: this.state.text_location,
       desc,
+      contractSize: total,
     });
+
+    
   };
 
   resetThenSet(key, list, stateKey, title) {
@@ -748,6 +754,9 @@ class WorkRequest extends React.Component {
             subCategory={this.state.subCategoryStore}
             handleClose={this.handleSizePopupClose}
             handleSubmit={this.handleSizeSubmit}
+            contractId={this.state.value_item}
+            contractSize = {this.state.contractSize}
+            contractDesc = {this.state.desc}
           />
         </Popup>
         <Popup
