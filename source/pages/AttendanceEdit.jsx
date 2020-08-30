@@ -246,9 +246,17 @@ class AttedenceEdit extends React.Component {
       wIn = workerIn.split(":").slice(0, 2).join("."),
       wOut = workerOut.split(":").slice(0, 2).join(".");
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
+    // console.log(Number(sTime), Number(wIn), Number(eTime), Number(wOut), wId);
 
     if (
-      (Number(sTime) < Number(wIn) || Number(sTime) > Number(wIn)) &&
+      Number(sTime) < Number(wIn) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (
+      Number(sTime) > Number(wIn) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -262,6 +270,17 @@ class AttedenceEdit extends React.Component {
         this.errorIdArr.push(wId);
       }
     }
+    // else if (Number(sTime) == Number(wIn)) {
+    //   const index = this.errorIdArr.indexOf(wId);
+    //   if (index > -1) {
+    //     this.errorIdArr.splice(index, 1);
+    //   }
+    // } else if (Number(eTime) == Number(wOut)) {
+    //   const index = this.errorIdArr.indexOf(wId);
+    //   if (index > -1) {
+    //     this.errorIdArr.splice(index, 1);
+    //   }
+    // }
     // console.log(this.errorIdArr);
   };
   renderWorkers = (workers, startTime, endTime, type) => {

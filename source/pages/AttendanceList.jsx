@@ -183,7 +183,12 @@ export default class AttendanceList extends React.Component {
     this.handleRequestType(e.format("YYYY/MM/DD"));
   };
   prdata = (state) => {
-    let { projects, availableWorkers, supervisorsList } = state.requestDet,
+    let {
+        projects,
+        availableWorkers,
+        supervisorsList,
+        workers,
+      } = state.requestDet,
       { listingDetails } = state;
     // console.log("predata 1", availableWorkers, supervisorsList);
     if (Array.isArray(listingDetails) && listingDetails.length > 0) {
@@ -210,6 +215,7 @@ export default class AttendanceList extends React.Component {
         wl.workerlist = wl.attendancelist.workerlist;
         wl.finalRenderList = [];
         wl.paragraph = "";
+
         for (let j = 0; j < wl.supervisorlist.length; j++) {
           for (let k = 0; k < supervisorsList.length; k++) {
             if (wl.supervisorlist[j].workerId == supervisorsList[k].userId) {
@@ -234,13 +240,13 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Others";
               }
               wl.paragraph +=
-                "<p>  Name: " +
+                "<p> " +
                 supervisorsList[k].Name +
-                " -  In Time: " +
+                " -  (" +
                 wl.supervisorlist[j].inTime +
-                " -  Out Time: " +
+                " / " +
                 wl.supervisorlist[j].outTime +
-                " -  Reason: " +
+                ") - " +
                 jsonValue.reason +
                 "</p> </br> ";
               wl.finalRenderList.push(jsonValue);
@@ -248,12 +254,10 @@ export default class AttendanceList extends React.Component {
           }
         }
         for (let j = 0; j < wl.workerlist.length; j++) {
-          for (let k = 0; k < availableWorkers.length; k++) {
-            if (
-              wl.workerlist[j].workerId == availableWorkers[k].workerIdActual
-            ) {
+          for (let k = 0; k < workers.length; k++) {
+            if (wl.workerlist[j].workerId == workers[k].workerIdActual) {
               let jsonValue = {
-                name: availableWorkers[k].workerName,
+                name: workers[k].workerName,
                 inTime: wl.workerlist[j].inTime,
                 outTime: wl.workerlist[j].outTime,
               };
@@ -273,13 +277,13 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Others";
               }
               wl.paragraph +=
-                "<p>  Name: " +
-                availableWorkers[k].workerName +
-                " -  In Time: " +
+                "<p> " +
+                workers[k].workerName +
+                " -  (" +
                 wl.workerlist[j].inTime +
-                " -  Out Time: " +
+                " / " +
                 wl.workerlist[j].outTime +
-                " -  Reason: " +
+                ") - " +
                 jsonValue.reason +
                 "</p> </br> ";
               wl.finalRenderList.push(jsonValue);
