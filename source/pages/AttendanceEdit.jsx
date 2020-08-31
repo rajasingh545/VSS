@@ -89,7 +89,7 @@ class AttedenceEdit extends React.Component {
         if (this.props.userType == 1) {
           this.state.projects = nextProps.requestDet.projects;
         }
-        if (this.props.userType == 5) {
+        if (this.props.userType == 5 || this.props.userType == 5) {
           projectId = this.props.project;
           let projectName = getDetailsWithMatchedKey2(
             projectId,

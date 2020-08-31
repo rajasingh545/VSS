@@ -1,18 +1,43 @@
 
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { toast } from 'react-toastify';
 import Dropdown1 from './Dropdown1';
 import CustInput from './CustInput';
 import CustomButton from './CustomButton';
+// import baseHOC from "../pages/baseHOC";
+import { workRequestPost } from '../actions/workArrangement.actions';
 
-
+@connect((state) => ({
+  loading: state.request.get('loadingListing'),
+  listingDetails: state.request.get('listingDetails'),
+  workRequestData: state.request.get('workRequestData'),
+  requestDet: state.request.get('requestDet'),
+}))
 export default class SizeWorkRequest extends Component {
   constructor() {
     super();
 
     this.state = {
       subCategory: [],
+      completedTotal: 0,
     };
+  }
+  componentDidMount() {
+    const { dispatch, contractId } = this.props;
+    const request = {
+      requestCode: 30,
+      contractId,
+    };
+    dispatch(workRequestPost(request));
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.workRequestData) {
+      const total = nextProps.workRequestData.total ? nextProps.workRequestData.total : 0 
+      this.setState({ completedTotal: total});
+      this.setState({ remainingSize: parseInt(this.props.contractSize) - parseInt(total) });
+    }
   }
 
   onFormChange = (e) => {
@@ -58,6 +83,13 @@ export default class SizeWorkRequest extends Component {
     }
     if (typeof this.state.set === 'undefined' || this.state.set == '' || this.state.set == 0) {
       toast.error('Set cant be empty', { autoClose: 3000 });
+      return false;
+    }
+
+    const enteredSize = this.state.L * this.state.H * this.state.W * this.state.set;
+
+    if(enteredSize > this.state.remainingSize){
+      toast.error('Entered size can not be more that remaining size', { autoClose: 3000 });
       return false;
     }
     return true;
@@ -141,28 +173,31 @@ export default class SizeWorkRequest extends Component {
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="L"
                 value={ this.state.L }
                 onChange={ this.onFormChange }
+
               /> L
             </div>
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="W"
                 value={ this.state.W }
                 onChange={ this.onFormChange }
+                step="any"
               />W
             </div>
             <div className="col-xs-3">
               <CustInput
                 size="4"
-                type="number"
+                type="float"
                 name="H"
                 value={ this.state.H }
                 onChange={ this.onFormChange }
+                step="any"
               />H
             </div>
 
@@ -176,6 +211,19 @@ export default class SizeWorkRequest extends Component {
               />Set
             </div>
           </div>
+          <br />
+          <br />
+          <div className="row">
+            <div className="col-sm-6"><label>Total Contract Size:</label></div>
+    <div className="col-sm-6"><label><strong>{this.props.contractDesc} ({this.props.contractSize})</strong></label></div>
+          </div>
+          <div className="row">
+            <div className="col-sm-3"><label>Completed Size:</label></div>
+    <div className="col-sm-3"><label><strong>{this.state.completedTotal}</strong></label></div>
+    <div className="col-sm-3"><label>Remaining Size:</label></div>
+    <div className="col-sm-3"><label><strong>{this.state.remainingSize}</strong></label></div>
+          </div>
+
           <br />
           <hr />
           <br />

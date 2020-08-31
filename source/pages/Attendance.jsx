@@ -73,7 +73,7 @@ class Attedence extends React.Component {
         if (this.props.userType == 1) {
           this.state.projects = nextProps.requestDet.projects;
         }
-        if (this.props.userType == 5) {
+        if (this.props.userType == 5 || this.props.userType == 3) {
           const projectId = this.props.project;
           const projectsArr = projectId.split(",");
           const porjectsMapArr = [];
@@ -651,7 +651,7 @@ class Attedence extends React.Component {
     }
     // console.log(startTime, endTime, projectId, projects);
 
-    if (this.props.userType == 5) {
+    if (this.props.userType == 5 || this.props.userType == 3) {
       readonly = true;
     }
     // console.log(this.state.projects);
