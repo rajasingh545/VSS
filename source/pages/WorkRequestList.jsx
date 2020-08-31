@@ -176,11 +176,6 @@ export default class WorkRequestList extends React.Component {
         if (this.state.requestType == 1) {
           checkBox = false;
         }
-        this.initialItems.push({
-          ...data,
-          projectName,
-          clientname,
-        });
         let PName = [...projectName].join(""),
           CName = [...clientname].join("");
         PName = PName.slice(0, 3).toUpperCase();
@@ -202,7 +197,11 @@ export default class WorkRequestList extends React.Component {
           " : " +
           clientname +
           "  Requested By :  " +
-          data.requestedBy;
+          data.requestedBy +
+          "  Created By :  " +
+          data.createdByName +
+          "  Created On :  " +
+          data.createdOn;
         // console.log(data.title, data.requestSizeList, data.requestmanpower);
         if (data.requestSizeList && data.requestSizeList.length > 0) {
           let text = "";
@@ -222,6 +221,12 @@ export default class WorkRequestList extends React.Component {
         } else {
           data.paragraph = "<p>No Record</p>";
         }
+        this.initialItems.push({
+          ...data,
+          projectName,
+          clientname,
+        });
+
         // console.log(data);
 
         // return (
@@ -403,6 +408,8 @@ export default class WorkRequestList extends React.Component {
   };
 
   FilterDataCallBackfun = (result) => {
+    console.log(result);
+
     this.setState({ workRequestData: result });
   };
   render() {
@@ -485,7 +492,16 @@ export default class WorkRequestList extends React.Component {
               resetThenSet={this.onSelectDropdownProject}
             />
           </div>
-
+          {workRequestData && loading == false && (
+            <div className="col-xs-2">
+              <div style={{ zIndex: 0 }}>
+                <InputSearch
+                  initialItems={this.initialItems}
+                  FilterData={this.FilterDataCallBackfun}
+                />
+              </div>
+            </div>
+          )}
           <div className="col-xs-4">
             <Button
               bsStyle="primary"
@@ -495,16 +511,6 @@ export default class WorkRequestList extends React.Component {
               {loading === true ? "Loading ..." : "Search"}
             </Button>
           </div>
-          {/* {workRequestData && loading == false && (
-            <div>
-              <div style={{ zIndex: 0 }}>
-                <InputSearch
-                  initialItems={this.initialItems}
-                  FilterData={this.FilterDataCallBackfun}
-                />
-              </div>
-            </div>
-          )} */}
         </div>
         <div className="row">
           <div className="col-xs-8">

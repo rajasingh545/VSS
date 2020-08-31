@@ -210,6 +210,7 @@ class WorkRequest extends React.Component {
     } else {
       this.setState({ contracts: [] });
     }
+    this.state.drawingAttached = "";
     this.onFormChange(e);
   };
   onChangeSizeType = (e) => {
@@ -543,66 +544,7 @@ class WorkRequest extends React.Component {
         )}
         <br />
         <br />
-        {this.state.contracts.length > 0 && (
-          <div className="orginalContract">
-            <div className="row">
-              <div className="col-xs-6">
-                <label>Items</label>
-                <Dropdown
-                  title={itemtitle}
-                  name="item"
-                  keyName="id"
-                  stateId="item"
-                  list={this.state.contracts}
-                  resetThenSet={this.onItemChange}
-                />
-              </div>
-              <div className="col-xs-6">
-                <label>Locations</label>
-                <Dropdown
-                  title={this.state.locationTitle}
-                  name="location"
-                  keyName="id"
-                  stateId="location"
-                  list={this.state.contracts}
-                  resetThenSet={this.onItemChange}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-xs-12 red"> {this.state.desc}</div>
-            </div>
-            <div className="row">
-              <div className="col-xs-1">
-                <label>
-                  <input
-                    type="radio"
-                    name="sizeType"
-                    value="1"
-                    onChange={this.onChangeSizeType}
-                    checked={this.state.sizeType == "1"}
-                  />
-                </label>
-              </div>
-              <span className="col-xs-6">Full Size</span>
-            </div>
 
-            <div className="row">
-              <div className="col-xs-1">
-                <label>
-                  <input
-                    type="radio"
-                    name="sizeType"
-                    value="2"
-                    onChange={this.onChangeSizeType}
-                    checked={this.state.sizeType == "2"}
-                  />
-                </label>
-              </div>
-              <span className="col-xs-6">Partial Size</span>
-            </div>
-          </div>
-        )}
         {this.state.sizeType == 2 && (
           <div className="description">
             <div className="row">
@@ -667,7 +609,7 @@ class WorkRequest extends React.Component {
         )}
         {this.state.cType == 1 ? (
           <div>
-            <div className="col-xs-6">
+            <div className="col-xs-3">
               <input
                 type="checkbox"
                 name="drawingAttached"
@@ -680,7 +622,7 @@ class WorkRequest extends React.Component {
               <label>Drawing Attached</label>
             </div>
             {this.state.drawingAttached == 1 && (
-              <div className="col-xs-6">
+              <div className="col-xs-3">
                 <input
                   type="file"
                   ref="file"
@@ -694,22 +636,89 @@ class WorkRequest extends React.Component {
         ) : (
           ""
         )}
+        <br />
+        <br />
+        {this.state.contracts.length > 0 && (
+          <div className="orginalContract">
+            <div className="row">
+              <div className="col-xs-6">
+                <label>Items</label>
+                <Dropdown
+                  title={itemtitle}
+                  name="item"
+                  keyName="id"
+                  stateId="item"
+                  list={this.state.contracts}
+                  resetThenSet={this.onItemChange}
+                />
+              </div>
+              <div className="col-xs-6">
+                <label>Locations</label>
+                <Dropdown
+                  title={this.state.locationTitle}
+                  name="location"
+                  keyName="id"
+                  stateId="location"
+                  list={this.state.contracts}
+                  resetThenSet={this.onItemChange}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-xs-12 red"> {this.state.desc}</div>
+            </div>
+            <div className="row">
+              <div className="col-xs-1">
+                <label>
+                  <input
+                    type="radio"
+                    name="sizeType"
+                    value="1"
+                    onChange={this.onChangeSizeType}
+                    checked={this.state.sizeType == "1"}
+                  />
+                </label>
+              </div>
+              <span className="col-xs-6">Full Size</span>
+            </div>
+
+            <div className="row">
+              <div className="col-xs-1">
+                <label>
+                  <input
+                    type="radio"
+                    name="sizeType"
+                    value="2"
+                    onChange={this.onChangeSizeType}
+                    checked={this.state.sizeType == "2"}
+                  />
+                </label>
+              </div>
+              <span className="col-xs-6">Partial Size</span>
+            </div>
+          </div>
+        )}
+        <br />
+        <br />
         <div className="description">
           <div className="row">
-            <div className="col-xs-6">
-              <label>Description</label>
-            </div>
-            <div className="col-xs-6">
-              <CustInput
-                type="textarea"
-                name="description"
-                value={this.state.description}
-                onChange={this.onFormChange}
-                readOnly={this.state.cType == "1" ? "readOnly" : ""}
-              />
+            <div className="col-xs-12">
+              <div className="col-xs-6">
+                <label>Description</label>
+              </div>
+              <div className="col-xs-6">
+                <CustInput
+                  type="textarea"
+                  name="description"
+                  value={this.state.description}
+                  onChange={this.onFormChange}
+                  readOnly={this.state.cType == "1" ? "readOnly" : ""}
+                />
+              </div>
             </div>
           </div>
         </div>
+        <br />
         <div className="workBasedOn">
           <div className="row">
             <div className="col-sm-12">Work Based On</div>
