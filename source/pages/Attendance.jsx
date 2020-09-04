@@ -476,14 +476,7 @@ class Attedence extends React.Component {
 
           this.state[`select_${worker.workerId}`] = "Select..";
 
-          if (worker.reason != 0) {
-            title = getDetailsWithMatchedKey2(
-              worker.reason,
-              this.reasonsList,
-              "id",
-              "reason"
-            );
-          }
+          
           if (this.teamArr[workerTeam]) {
             this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam]) + 1;
           } else {
