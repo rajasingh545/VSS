@@ -204,8 +204,18 @@ class DWTRPreview extends React.Component {
         photo_1: requestDet.photo_1,
         photo_2: requestDet.photo_2,
         photo_3: requestDet.photo_3,
+        photo_4: requestDet.photo_4,
+        photo_5: requestDet.photo_5,
+        photo_6: requestDet.photo_6,
         uniqueId: requestDet.uniqueId,
         remarks: requestDet.remarks,
+        matMisuse:requestDet.matMisuse,
+        matmisueremarks:requestDet.matRemarks,
+        matPhotos:requestDet.matPhotos,
+        safetyVio:requestDet.safetyVio,
+        safetyvioremarks:requestDet.safetyRemarks,
+        safetyPhoto:requestDet.safetyPhoto,
+
       });
       if (requestDet.type == 1) {
         this.state.value_projects = requestDet.projectId;
@@ -274,6 +284,9 @@ class DWTRPreview extends React.Component {
           photo_1: item.photo_1,
           photo_2: item.photo_2,
           photo_3: item.photo_3,
+          photo_4: item.photo_4,
+          photo_5: item.photo_5,
+          photo_6: item.photo_6,
         };
         items.push(obj);
       });

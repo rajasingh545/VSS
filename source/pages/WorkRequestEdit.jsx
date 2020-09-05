@@ -19,6 +19,8 @@ import Popup from "../components/Popup";
 import SizePreview from "../components/SizePreview";
 import ManPowerPreview from "../components/ManPowerPreview";
 import ManPowerWorkRequest from "../components/ManPowerWorkRequest";
+import { Grid, Image } from "semantic-ui-react";
+import * as API from "../config/api-config";
 
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
@@ -45,7 +47,9 @@ class WorkRequestEdit extends React.Component {
       itemList: [],
       sizeList: [],
       manpowerList: [],
+      drawImageshow:"",
       contractSize: 0,
+
     };
     this.itemList = [];
     this.sizeList = [];
@@ -62,6 +66,10 @@ class WorkRequestEdit extends React.Component {
       dispatch(workRequestPost(this.state));
     }
   }
+
+  click = () => {
+    console.log("working");
+  };
   componentWillReceiveProps(nextProps) {
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
@@ -72,8 +80,7 @@ class WorkRequestEdit extends React.Component {
       this.state.workRequestList = nextProps.requestDet.workRequestList;
     }
     if (nextProps.requestDet && nextProps.requestDet.contracts) {
-      this.setState({ contracts: nextProps.requestDet.contracts });
-      // this.setState()
+     this.setState({ contracts: nextProps.requestDet.contracts });
       this.state.contracts = nextProps.requestDet.contracts;
 
       if (
@@ -174,13 +181,17 @@ class WorkRequestEdit extends React.Component {
         workBased: requestItems.workBased,
         scaffoldRegister: requestDet.scaffoldRegister,
         remarks: requestDet.remarks,
+        drawingAttached:requestDet.drawingAttach,
+        drawingImage:requestDet.drawingImage,
+        drawImageshow:requestDet.drawingImage,
+        completionImages:requestDet.completionImages,
+        location1:requestDet.location,
+        basePath:requestDet.basePath,
       });
-
-      if (requestDet.contractType == 1) {
+        if (requestDet.contractType == 1) {
         this.state.value_projects = requestDet.projectId;
         this.state.value_clients = requestDet.clientId;
         this.state.cType = requestDet.contractType;
-
         this.requestItems();
       }
       if (requestDet.contractType == 1) {
@@ -210,6 +221,56 @@ class WorkRequestEdit extends React.Component {
       }
     }
   }
+
+  filepload = (e) => {
+    e.preventDefault();
+    this.setState({isLoading:true})
+    const formData = new FormData();
+    formData.append("uniqueId", this.state.userId);
+    formData.append("requestCode", 24);
+    formData.append("drawingimage", e.target.files[0]);
+    fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          const basePath = res.basepath;
+          const imageURL = res.imageurl;
+          const drawURL = basePath.concat(imageURL);
+          this.state.drawingimage = res.imageurl;
+          this.setState({ drawingimage: imageURL,drawImageshow:drawURL });
+        }else{
+        }
+      });
+  };
+  
+  multiplefileupload = (e) => {
+    this.setState({isLoading:true});
+    e.preventDefault();
+    let formData = new FormData();
+    formData.append("uniqueId", this.state.userId);
+    formData.append("requestCode", 25);
+    formData.append("workrequestid", this.state.listingId);
+    let images = [];
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("images[]", e.target.files[i]);
+    }
+    fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.setState({ completionImages: this.state.completionImages.concat(res.imageurl),isLoading:false });
+        } else {
+          this.setState({isLoading:false});
+          //toast.error(res.response, { autoClose: 3000 });
+        }
+      });
+  };
 
   getOrginalContDataPopulate = (requestItemsArr) => {
     // console.log("in pop===", this.state.contracts);
@@ -445,7 +506,6 @@ class WorkRequestEdit extends React.Component {
       subCategory: this.state.subCategoryStore[key],
       scaffoldSubcategorytitle: "Select Category",
     });
-
     this.resetThenSet(key, list, stateKey, title);
   };
 
@@ -725,7 +785,7 @@ class WorkRequestEdit extends React.Component {
             <label>Variation Works</label>
           </div>
         </div>
-
+        
         {this.state.cType == 1 && (
           <div className="pull-right">
             <div className="col-xs-6">
@@ -818,6 +878,60 @@ class WorkRequestEdit extends React.Component {
               </div>
             </div>
           </div>
+        )}
+        {this.state.cType == 2 ? (
+          <div className="location">
+            <div className="row">
+              <div className="col-xs-2">
+                <label>Location</label>
+              </div>
+              <div className="col-xs-4">
+                <CustInput
+                  type="textarea"
+                  name="location1"
+                  value={this.state.location1}
+                  onChange={this.onFormChange}
+                />
+              </div>
+
+              <div className="col-xs-3">
+                <input
+                  type="checkbox"
+                  name="drawingAttached"
+                  onClick={this.onCheckBoxChecked}
+                  checked={this.state.drawingAttached == 1}
+                  style={{
+                    marginRight: "11px",
+                  }}
+                />
+                <label>Drawing Attached</label>
+              </div>
+              {this.state.drawingAttached == 1 && (
+                <div className="col-xs-3">
+                  <input
+                    type="file"
+                    ref="file"
+                    id="drawingAttachedFile"
+                    name="drawingAttachedFile"
+                    onChange={this.filepload}
+                  />
+                </div>
+              )}
+              {this.state.drawImageshow && (
+                <div className="col-sm-12">
+                 <Grid>
+                  <Grid.Row columns={8}>
+                      <Grid.Column >
+                        <Image src={this.state.drawImageshow} onClick={this.click} />
+                      </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </div>
+            )}
+            </div>
+          </div>
+        ) : (
+          ""
         )}
         <div className="description">
           <div className="row">
@@ -954,6 +1068,53 @@ class WorkRequestEdit extends React.Component {
             />
           </div>
         </div>
+        {this.state.completionImages && this.state.completionImages.length > 0 ? (
+                  <div className="completionImage">
+                            <div className="row">
+                                              <div className="col-sm-6">
+                                <label>Images:</label>
+                              </div>
+                              <div className="col-sm-6">
+                                  <input
+                                  type="file"
+                                  id="completionImage"
+                                  name="completionImage"
+                                  multiple
+                                  onChange={this.multiplefileupload}
+                                />
+                              </div>
+                              {/* {this.state.completionImages && this.state.completionImages.length > 0 ? (
+                            <div className="col-sm-12">
+                                  {this.state.completionImages.map((_x,index) => (
+                                      <div key={index} class="image" id="image2" style="background-image:url({_x});">
+                                      <a href="#" class="delete">Delete</a>
+                                    </div>
+                                  ))}
+                            </div>
+                          ) : (
+                            ""
+                          )} */}
+
+     {this.state.completionImages && this.state.completionImages.length > 0 ? (
+              <div className="col-sm-12">
+                <Grid>
+                  <Grid.Row columns={8}>
+                    {this.state.completionImages.map((_x) => (
+                      <Grid.Column >
+                        <Image src={_x} onClick={this.click} />
+                      </Grid.Column>
+                    ))}
+                  </Grid.Row>
+                </Grid>
+              </div>
+            ) : (
+              ""
+            )}
+              </div>
+              </div>
+            ) : (
+              ""
+            )}
         <div className="row">
           <div className="col-12">
             <div className="col-sm-3">
@@ -1017,7 +1178,7 @@ class WorkRequestEdit extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <WorkRequestPreview curState={this.state} />
+            <WorkRequestPreview curState={this.state} images={[]}/>
           </Modal.Body>
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>
