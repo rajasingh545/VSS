@@ -52,7 +52,6 @@ class WorkRequestEdit extends React.Component {
     this.itemList = [];
     this.sizeList = [];
     this.manpowerList = [];
-
   }
   componentWillMount() {
     const { dispatch } = this.props;
@@ -70,7 +69,6 @@ class WorkRequestEdit extends React.Component {
     console.log("working");
   };
   componentWillReceiveProps(nextProps) {
-    console.log("particular id response",nextProps.requestDetails);
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
       this.state.clients = nextProps.requestDet.clients;
@@ -80,9 +78,7 @@ class WorkRequestEdit extends React.Component {
       this.state.workRequestList = nextProps.requestDet.workRequestList;
     }
     if (nextProps.requestDet && nextProps.requestDet.contracts) {
-
-      this.setState({ contracts: nextProps.requestDet.contracts });
-      // this.setState()
+     this.setState({ contracts: nextProps.requestDet.contracts });
       this.state.contracts = nextProps.requestDet.contracts;
 
       if (
@@ -121,10 +117,7 @@ class WorkRequestEdit extends React.Component {
       nextProps.workRequestData &&
       nextProps.workRequestData.requestDetails
     ) {
-
       const requestDet = nextProps.workRequestData.requestDetails;
-      console.log("particular data",nextProps.requestDet);
-
       const requestItemsArr = nextProps.workRequestData.requestItems;
       const requestManlistArr = nextProps.workRequestData.requestManList
         ? nextProps.workRequestData.requestManList
@@ -193,10 +186,7 @@ class WorkRequestEdit extends React.Component {
         location1:requestDet.location,
         basePath:requestDet.basePath,
       });
-      console.log("drawing image name",requestDet.drawingImage);
-      console.log("drawing image drawingAttached",requestDet.drawingAttach);
-      console.log("drawing image completionImages",requestDet.completionImages);
-      if (requestDet.contractType == 1) {
+        if (requestDet.contractType == 1) {
         this.state.value_projects = requestDet.projectId;
         this.state.value_clients = requestDet.clientId;
         this.state.cType = requestDet.contractType;
@@ -508,7 +498,6 @@ class WorkRequestEdit extends React.Component {
 
       this.state.requestCode = 21;
       this.state.status = status;
-      console.log("submit data",this.state);
       dispatch(workRequestPost(this.state));
       toast.success("Work Request Updated Successfully", { autoClose: 3000 });
 
@@ -910,10 +899,6 @@ class WorkRequestEdit extends React.Component {
               )}
               {this.state.drawImageshow && (
                 <div className="col-sm-12">
-                  {/* <div class="image" id="image2" style="background-image:url({this.state.drawImageshow}>);">
-                       <a href="#" class="delete">Delete</a>
-                  </div>
-                <img src={this.state.drawImageshow}></img> */}
                  <Grid>
                   <Grid.Row columns={8}>
                       <Grid.Column >

@@ -5,7 +5,6 @@ import { ToastContainer, toast } from "react-toastify";
 class WorkRequestPreview extends Component {
   constructor(props) {
     super(props);
-    console.log("constructor",props.curState);
     this.state = {
       curState: props.curState,
       images: props.images,
@@ -15,7 +14,6 @@ class WorkRequestPreview extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
-   console.log("component will res",nextProps.curState);
     this.setState({ curState: nextProps.curState, images: nextProps.images,drawingImage:nextProps.curState.drawingImage });
   }
 
@@ -307,15 +305,6 @@ class WorkRequestPreview extends Component {
             </div>
             <div className="col-sm-6 strong">{curState.description}</div>
           </div>
-          {/* {curState.drawingImage && (
-            <div className="row">
-            <div className="col-sm-6">
-              <label>DrawingImage:</label>
-            </div>
-            <div className="col-sm-6"><img src={curState.drawingImage}></img>
-            </div>
-            </div>
-          )} */}
           {drawingImage && (
             <div className="row">
             <div className="col-sm-6">
