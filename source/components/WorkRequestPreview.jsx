@@ -5,16 +5,18 @@ import { ToastContainer, toast } from "react-toastify";
 class WorkRequestPreview extends Component {
   constructor(props) {
     super(props);
+    console.log("constructor",props.curState);
     this.state = {
       curState: props.curState,
       images: props.images,
       isLoading:false,
+      drawingImage:props.curState.drawImageshow
     };
   }
 
   componentWillReceiveProps(nextProps) {
-  //  console.log("component will res",nextProps.curState);
-    this.setState({ curState: nextProps.curState, images: nextProps.images });
+   console.log("component will res",nextProps.curState);
+    this.setState({ curState: nextProps.curState, images: nextProps.images,drawingImage:nextProps.curState.drawingImage });
   }
 
   setItemList = (itemList) => {
@@ -239,13 +241,9 @@ class WorkRequestPreview extends Component {
   click = () => {
     console.log("working");
   };
-  // filepload = (e) => {
-  //   const fileUpload = e.target.files;
-  //   this.setState({ drawingAttachedFile: fileUpload });
-  // };
+  
   filepload = (e) => {
     this.setState({isLoading:true});
-    const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
     const formData = new FormData();
@@ -255,10 +253,7 @@ class WorkRequestPreview extends Component {
     let images = [];
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("images[]", e.target.files[i]);
-      // images.push(e.target.files[i]);
     }
-    // formData.append("images[]", images);
-    // formData.append("drawingimage", e.target.files);
     fetch(API.WORKREQUEST_URI, {
       method: "post",
       body: formData,
@@ -266,7 +261,6 @@ class WorkRequestPreview extends Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.state.drawingimage = res.imageurl;
           this.setState({ images: this.state.images.concat(res.imageurl),isLoading:false });
         } else {
           this.setState({isLoading:false});
@@ -277,7 +271,7 @@ class WorkRequestPreview extends Component {
 
   
   render() {
-    const { curState, images,isLoading } = this.state;
+    const { curState, images,isLoading,drawingImage } = this.state;
     return (
       <div>
         <div className="container work-arr-container">
@@ -313,12 +307,21 @@ class WorkRequestPreview extends Component {
             </div>
             <div className="col-sm-6 strong">{curState.description}</div>
           </div>
-          {curState.drawingImage && (
+          {/* {curState.drawingImage && (
             <div className="row">
             <div className="col-sm-6">
               <label>DrawingImage:</label>
             </div>
             <div className="col-sm-6"><img src={curState.drawingImage}></img>
+            </div>
+            </div>
+          )} */}
+          {drawingImage && (
+            <div className="row">
+            <div className="col-sm-6">
+              <label>DrawingImage:</label>
+            </div>
+            <div className="col-sm-6"><img src={drawingImage}></img>
             </div>
             </div>
           )}

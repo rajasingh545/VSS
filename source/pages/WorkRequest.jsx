@@ -249,8 +249,8 @@ class WorkRequest extends React.Component {
           const basePath = res.basepath;
           const imageURL = res.imageurl;
           const drawURL = basePath.concat(imageURL);
-          //this.state.drawingimage = res.imageurl;
-          this.setState({ drawingimage: drawURL,drawImageshow:drawURL,isLoading:false });
+          this.state.drawingimage = res.imageurl;
+          this.setState({ drawingimage: res.imageurl,drawImageshow:drawURL,isLoading:false });
         }else{
           this.setState({isLoading:false})
         }
@@ -680,13 +680,7 @@ class WorkRequest extends React.Component {
               )}
               {drawingimage && (
                 <div className="col-sm-12">
-                <Grid>
-                  <Grid.Row columns={8}>
-                      <Grid.Column >
                         <Image src={drawImageshow} onClick={this.click} />
-                      </Grid.Column>
-                  </Grid.Row>
-                </Grid>
               </div>
             )}
             </div>

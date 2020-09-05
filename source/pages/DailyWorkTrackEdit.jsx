@@ -256,6 +256,9 @@ class DailyWorkTrackEdit extends React.Component {
         disphoto_1: requestDet.photo_1,
         disphoto_2: requestDet.photo_2,
         disphoto_3: requestDet.photo_3,
+        disphoto_4: requestDet.photo_4,
+        disphoto_5: requestDet.photo_5,
+        disphoto_6: requestDet.photo_6,
         safetyPhoto: requestDet.safetyPhoto,
         matPhotos: requestDet.matPhotos,
         status: requestDet.status,
@@ -344,6 +347,9 @@ class DailyWorkTrackEdit extends React.Component {
           disphoto_1: item.photo_1,
           disphoto_2: item.photo_2,
           disphoto_3: item.photo_3,
+          disphoto_4: item.photo_4,
+          disphoto_5: item.photo_5,
+          disphoto_6: item.photo_6,
         };
 
         items.push(obj);
@@ -750,6 +756,34 @@ class DailyWorkTrackEdit extends React.Component {
       [stateKey]: list,
     });
   }
+
+  delelteImageAction = (name) => {
+    const data = new FormData();
+    data.append("requestCode", 26);
+    data.append("dwtrId", this.state.listingId);
+    data.append("imagefor", name);
+    fetch(API.WORKREQUEST_URI, {
+        method: "post",
+        mode: "cors",
+        body: data,
+      })
+        .then((response) => response.json())
+        .then((json) => this.imageDeleteSuccess(json));
+  }
+
+  imageDeleteSuccess = (json) => {
+    if (json.responsecode == 1) {
+     const { dispatch } = this.props;
+      this.state.listingId = this.props.match.params.id;
+      this.state.requestCode = 19;
+      console.log("state",this.state);
+      dispatch(workRequestPost(this.state));
+      toast.success("Image deleted Successfully", { autoClose: 3000 });
+    } else {
+      toast.error(`Error: ${json.response}`, { autoClose: 3000 });
+    }
+  };
+
   /* Render */
   render() {
     const imgURL = API.CONTEXT;
@@ -983,8 +1017,11 @@ class DailyWorkTrackEdit extends React.Component {
             <br />
             {this.state.disphoto_1 && (
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-3">
                   <label>Photo 1:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_1')}>Remove</button>
                 </div>
                 <div className="col-sm-6 strong">
                   <a
@@ -1015,8 +1052,11 @@ class DailyWorkTrackEdit extends React.Component {
             )}
             {this.state.disphoto_2 && (
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-3">
                   <label>Photo 2:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_2')}>Remove</button>
                 </div>
                 <div className="col-sm-6 strong">
                   <a
@@ -1047,8 +1087,11 @@ class DailyWorkTrackEdit extends React.Component {
             )}
             {this.state.disphoto_3 && (
               <div className="row">
-                <div className="col-sm-6">
+                <div className="col-sm-3">
                   <label>Photo 3:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_3')}>Remove</button>
                 </div>
                 <div className="col-sm-6 strong">
                   <a
@@ -1064,14 +1107,119 @@ class DailyWorkTrackEdit extends React.Component {
                 </div>
               </div>
             )}
-            {!this.state.photo_3 && (
+            {!this.state.disphoto_3 && (
               <div className="row" style={{ paddingTop: "15px" }}>
-                <div className="col-xs-3">Upload Photo 2</div>
+                <div className="col-xs-3">Upload Photo 3</div>
                 <div className="col-xs-6">
                   {" "}
                   <input
                     type="file"
                     name="photo_3"
+                    onChange={this.selectImages}
+                  />
+                </div>
+              </div>
+            )}
+            {this.state.disphoto_4 && (
+              <div className="row">
+                <div className="col-sm-3">
+                  <label>Photo 4:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_4')}>Remove</button>
+                </div>
+                <div className="col-sm-6 strong">
+                  <a
+                    target="_blank"
+                    href={`${imgURL}/${this.state.disphoto_4}`}
+                  >
+                    <img
+                      src={`${imgURL}/${this.state.disphoto_4}`}
+                      height="100px"
+                      width="200px"
+                    />
+                  </a>
+                </div>
+              </div>
+            )}
+            {!this.state.disphoto_4 && (
+              <div className="row" style={{ paddingTop: "15px" }}>
+                <div className="col-xs-3">Upload Photo 4</div>
+                <div className="col-xs-6">
+                  {" "}
+                  <input
+                    type="file"
+                    name="photo_4"
+                    onChange={this.selectImages}
+                  />
+                </div>
+              </div>
+            )}
+            {this.state.disphoto_5 && (
+              <div className="row">
+                <div className="col-sm-3">
+                  <label>Photo 5:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_5')}>Remove</button>
+                </div>
+                <div className="col-sm-6 strong">
+                  <a
+                    target="_blank"
+                    href={`${imgURL}/${this.state.disphoto_5}`}
+                  >
+                    <img
+                      src={`${imgURL}/${this.state.disphoto_5}`}
+                      height="100px"
+                      width="200px"
+                    />
+                  </a>
+                </div>
+              </div>
+            )}
+            {!this.state.disphoto_5 && (
+              <div className="row" style={{ paddingTop: "15px" }}>
+                <div className="col-xs-3">Upload Photo 5</div>
+                <div className="col-xs-6">
+                  {" "}
+                  <input
+                    type="file"
+                    name="photo_5"
+                    onChange={this.selectImages}
+                  />
+                </div>
+              </div>
+            )}
+            {this.state.disphoto_6 && (
+              <div className="row">
+                <div className="col-sm-3">
+                  <label>Photo 6:</label>
+                </div>
+                <div className="col-sm-3">
+                  <button onClick={() => this.delelteImageAction('photo_6')}>Remove</button>
+                </div>
+                <div className="col-sm-6 strong">
+                  <a
+                    target="_blank"
+                    href={`${imgURL}/${this.state.disphoto_6}`}
+                  >
+                    <img
+                      src={`${imgURL}/${this.state.disphoto_6}`}
+                      height="100px"
+                      width="200px"
+                    />
+                  </a>
+                </div>
+              </div>
+            )}
+            {!this.state.disphoto_6 && (
+              <div className="row" style={{ paddingTop: "15px" }}>
+                <div className="col-xs-3">Upload Photo 6</div>
+                <div className="col-xs-6">
+                  {" "}
+                  <input
+                    type="file"
+                    name="photo_6"
                     onChange={this.selectImages}
                   />
                 </div>

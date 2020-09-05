@@ -261,7 +261,7 @@ class DailyWorkTrackPreview extends Component{
               }
            <div className="row">
             <div className="col-sm-6"><label>Mat.Misuse</label></div>
-            <div className="col-sm-6 strong">{(curState.matMisuse == 1)? "Yes":"No"}</div>
+            <div className="col-sm-6 strong">{(curState.matMisuse == "1")? "Yes":"No"}</div>
            </div>
            {curState.matPhotos &&
            <div className="row">
@@ -275,7 +275,7 @@ class DailyWorkTrackPreview extends Component{
            </div>
            <div className="row">
             <div className="col-sm-6"><label>Safty Vio.</label></div>
-            <div className="col-sm-6 strong">{(curState.safetyvio == 1)? "Yes":"No"}</div>
+            <div className="col-sm-6 strong">{(curState.safetyvio == "1")? "Yes":"No"}</div>
            </div>
            {curState.safetyPhoto &&
            <div className="row">
