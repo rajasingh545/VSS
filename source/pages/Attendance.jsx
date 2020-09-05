@@ -476,14 +476,7 @@ class Attedence extends React.Component {
 
           this.state[`select_${worker.workerId}`] = "Select..";
 
-          if (worker.reason != 0) {
-            title = getDetailsWithMatchedKey2(
-              worker.reason,
-              this.reasonsList,
-              "id",
-              "reason"
-            );
-          }
+          
           if (this.teamArr[workerTeam]) {
             this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam]) + 1;
           } else {
@@ -507,6 +500,7 @@ class Attedence extends React.Component {
             this.timeValuesArr[OutName] = endTime;
           }
           rec++;
+          const disable = (worker.assignedWorker == 1)? true : false;
           return (
             <div className="row" key={ind}>
               <div className="col-xs-1" style={{ width: "10px" }}>
@@ -515,6 +509,7 @@ class Attedence extends React.Component {
                     value={worker.workerId}
                     type="checkbox"
                     onClick={this.onCheckBoxClick}
+                    disabled={disable}
                   />
                 </span>
               </div>
@@ -534,6 +529,7 @@ class Attedence extends React.Component {
                     use12Hours
                     name={InName}
                     className="width100"
+                    disabled={disable}
                   />
                 </div>
               )}
@@ -553,6 +549,7 @@ class Attedence extends React.Component {
                     use12Hours
                     name={OutName}
                     className="width100"
+                    disabled={disable}
                   />
                 </div>
               )}
@@ -568,6 +565,7 @@ class Attedence extends React.Component {
                   error={
                     this.errorIdArr.indexOf(worker.workerId) > -1 ? true : false
                   }
+                  disabled={disable}
                 />
               </div>
             </div>
