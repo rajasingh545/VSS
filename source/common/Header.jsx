@@ -224,7 +224,7 @@ export default class Header extends Component {
         <div style={styles2.sidebarLink}>Welcome <strong>{username}</strong></div>
         <div style={styles2.divider} />
         <a href="javascript:void(0);" onClick={this.goBack} style={styles2.sidebarLink}><Glyphicon glyph="home"/> Home</a>
-        {userType == 5 && 
+        {(userType == 5 || userType == 3) && 
             <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkArrangmentList')} style={styles2.sidebarLink}>Work Arrangement</a>
           }
           <Accordion allowMultipleOpen>
@@ -238,10 +238,10 @@ export default class Header extends Component {
           }
           
             <div label='Attendance'>
-            {(userType == 1 || userType == 5 ) &&
+            {(userType == 1 || userType == 5 || userType == 3) &&
               <a href="javascript:void(0);" onClick={()=>this.goToUrl('/Attendance')} style={styles2.sidebarLink}> Create Attendance</a> 
               }  
-              {(userType == 1 || userType == 5 ) &&
+              {(userType == 1 || userType == 5 || userType == 3) &&
               <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
               } 
             </div>
@@ -254,7 +254,7 @@ export default class Header extends Component {
               
               </div>
             }
-            {(userType == 1 || userType == 5) && 
+            {(userType == 1 || userType == 5 || userType == 3) && 
               <div label='Daily Work Track'>
                 
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/DailyWorkTrack')} style={styles2.sidebarLink}>Create DWTR</a>   

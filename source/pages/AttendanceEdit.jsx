@@ -89,7 +89,7 @@ class AttedenceEdit extends React.Component {
         if (this.props.userType == 1) {
           this.state.projects = nextProps.requestDet.projects;
         }
-        if (this.props.userType == 5) {
+        if (this.props.userType == 5 || this.props.userType == 5) {
           projectId = this.props.project;
           let projectName = getDetailsWithMatchedKey2(
             projectId,
@@ -246,9 +246,17 @@ class AttedenceEdit extends React.Component {
       wIn = workerIn.split(":").slice(0, 2).join("."),
       wOut = workerOut.split(":").slice(0, 2).join(".");
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
+    // console.log(Number(sTime), Number(wIn), Number(eTime), Number(wOut), wId);
 
     if (
-      (Number(sTime) < Number(wIn) || Number(sTime) > Number(wIn)) &&
+      Number(sTime) < Number(wIn) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (
+      Number(sTime) > Number(wIn) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
@@ -262,6 +270,17 @@ class AttedenceEdit extends React.Component {
         this.errorIdArr.push(wId);
       }
     }
+    // else if (Number(sTime) == Number(wIn)) {
+    //   const index = this.errorIdArr.indexOf(wId);
+    //   if (index > -1) {
+    //     this.errorIdArr.splice(index, 1);
+    //   }
+    // } else if (Number(eTime) == Number(wOut)) {
+    //   const index = this.errorIdArr.indexOf(wId);
+    //   if (index > -1) {
+    //     this.errorIdArr.splice(index, 1);
+    //   }
+    // }
     // console.log(this.errorIdArr);
   };
   renderWorkers = (workers, startTime, endTime, type) => {
@@ -319,7 +338,7 @@ class AttedenceEdit extends React.Component {
         //   worker.workerId,
         //   this.errorIdArr.indexOf(worker.workerId) > -1
         // );
-
+        const disable = (worker.assignedWorker == 1)? true : false;
         return (
           <div className="row" key={ind}>
             <div className="col-xs-1" style={{ width: "10px" }}>
@@ -328,6 +347,7 @@ class AttedenceEdit extends React.Component {
                   value={worker.workerId}
                   type="checkbox"
                   onClick={this.onCheckBoxClick}
+                  disabled={disable}
                 />
               </span>
             </div>
@@ -341,6 +361,7 @@ class AttedenceEdit extends React.Component {
                 name={InName}
                 className="width100"
                 onChange={this.onTimeChange}
+                disabled={disable}
               />
             </div>
             <div className="col-xs-2" style={{ textAlign: "center" }}>
@@ -363,6 +384,7 @@ class AttedenceEdit extends React.Component {
                 error={
                   this.errorIdArr.indexOf(worker.workerId) > -1 ? true : false
                 }
+                disabled={disable}
               />
             </div>
           </div>

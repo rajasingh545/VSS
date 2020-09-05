@@ -64,7 +64,7 @@ class Attedence extends React.Component {
   }
   componentWillReceiveProps(nextProps) {
     const { dispatch } = this.props;
-    console.log("nextProps ", nextProps);
+    // console.log("nextProps ", nextProps);
     if (
       nextProps.requestPost !== undefined &&
       Array.isArray(nextProps.requestPost)
@@ -73,7 +73,7 @@ class Attedence extends React.Component {
         if (this.props.userType == 1) {
           this.state.projects = nextProps.requestDet.projects;
         }
-        if (this.props.userType == 5) {
+        if (this.props.userType == 5 || this.props.userType == 3) {
           const projectId = this.props.project;
           const projectsArr = projectId.split(",");
           const porjectsMapArr = [];
@@ -237,6 +237,7 @@ class Attedence extends React.Component {
       projectTitle: "Select Project",
       showSubButton: false,
     });
+
     dispatch(requestPost(param));
     if (type == 1) {
       toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
@@ -399,6 +400,11 @@ class Attedence extends React.Component {
       if (this.errorIdArr.indexOf(wId) == "-1") {
         this.errorIdArr.push(wId);
       }
+    } else if (Number(sTime) == Number(wIn)) {
+      const index = this.errorIdArr.indexOf(wId);
+      if (index > -1) {
+        this.errorIdArr.splice(index, 1);
+      }
     } else if (
       Number(eTime) > Number(wOut) &&
       Number(wOut) !== 0 &&
@@ -407,6 +413,11 @@ class Attedence extends React.Component {
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
         this.errorIdArr.push(wId);
+      }
+    } else if (Number(eTime) == Number(wOut)) {
+      const index = this.errorIdArr.indexOf(wId);
+      if (index > -1) {
+        this.errorIdArr.splice(index, 1);
       }
     }
     // console.log(this.errorIdArr);
@@ -418,10 +429,19 @@ class Attedence extends React.Component {
 
       // this.selectedIds = [];
       return workers.map((worker, ind) => {
+        // console.log(
+        //   "this.state.selectedOption",
+        //   this.state.selectedOption,
+        //   worker.status,
+        //   worker.statusOut
+        // );
+
         let rec = 0;
         if (
-          (this.state.selectedOption == 1 && worker.status != 1) ||
-          (this.state.selectedOption == 2 && worker.statusOut != 1)
+          (this.state.selectedOption == 1 &&
+            (worker.status == 1 || worker.status != 1)) ||
+          (this.state.selectedOption == 2 &&
+            (worker.statusOut == 1 || worker.statusOut != 1))
         ) {
           let workerName = "";
           if (type === "Supervisors") {
@@ -439,7 +459,7 @@ class Attedence extends React.Component {
               "workerName"
             );
           }
-          console.log("startTime, endTime", startTime, endTime);
+          // console.log("startTime, endTime", startTime, endTime);
 
           this.timeFunc(
             startTime.split(":").slice(0, 2).join("."),
@@ -456,14 +476,7 @@ class Attedence extends React.Component {
 
           this.state[`select_${worker.workerId}`] = "Select..";
 
-          if (worker.reason != 0) {
-            title = getDetailsWithMatchedKey2(
-              worker.reason,
-              this.reasonsList,
-              "id",
-              "reason"
-            );
-          }
+          
           if (this.teamArr[workerTeam]) {
             this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam]) + 1;
           } else {
@@ -487,6 +500,7 @@ class Attedence extends React.Component {
             this.timeValuesArr[OutName] = endTime;
           }
           rec++;
+          const disable = (worker.assignedWorker == 1)? true : false;
           return (
             <div className="row" key={ind}>
               <div className="col-xs-1" style={{ width: "10px" }}>
@@ -495,6 +509,7 @@ class Attedence extends React.Component {
                     value={worker.workerId}
                     type="checkbox"
                     onClick={this.onCheckBoxClick}
+                    disabled={disable}
                   />
                 </span>
               </div>
@@ -514,6 +529,7 @@ class Attedence extends React.Component {
                     use12Hours
                     name={InName}
                     className="width100"
+                    disabled={disable}
                   />
                 </div>
               )}
@@ -533,6 +549,7 @@ class Attedence extends React.Component {
                     use12Hours
                     name={OutName}
                     className="width100"
+                    disabled={disable}
                   />
                 </div>
               )}
@@ -548,6 +565,7 @@ class Attedence extends React.Component {
                   error={
                     this.errorIdArr.indexOf(worker.workerId) > -1 ? true : false
                   }
+                  disabled={disable}
                 />
               </div>
             </div>
@@ -629,9 +647,9 @@ class Attedence extends React.Component {
       startTime = selectedProject.startTime;
       endTime = selectedProject.endTime;
     }
-    console.log(startTime, endTime, projectId, projects);
+    // console.log(startTime, endTime, projectId, projects);
 
-    if (this.props.userType == 5) {
+    if (this.props.userType == 5 || this.props.userType == 3) {
       readonly = true;
     }
     // console.log(this.state.projects);

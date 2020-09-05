@@ -69,7 +69,7 @@ export default class WorkArrangementList extends React.Component {
       if (DeleteData.response === "success" && DeleteData.responsecode === 2) {
         let errorMGS =
           DeleteData.attWorkListingNameMsg !== undefined
-            ? DeleteData.attWorkListingNameMsg.join(", ")
+            ? DeleteData.attWorkListingNameMsg.join(",")
             : "Deleted Successfully";
         dispatch(requestPostClear([]));
         // dispatch(requestDetails(JSONData));
@@ -335,7 +335,7 @@ export default class WorkArrangementList extends React.Component {
                 selected={this.state.startDate1}
                 className=" form-control"
                 isClearable={false}
-                minDate={new Date()}
+                minDate={userType != "1" ? new Date() : ""}
                 maxDate={userType != "1" ? addDays(new Date(), 1) : ""}
                 onChange={this.onStartDateChange}
                 name="startDate"
@@ -362,7 +362,6 @@ export default class WorkArrangementList extends React.Component {
             <div className="col-xs-2">&nbsp;</div>
           </div>
         )}
-
         <div className="padding15" id="divRequestListing">
           {
             //this.state.requestType == 2 &&
@@ -389,7 +388,7 @@ export default class WorkArrangementList extends React.Component {
           {listingDetails && loading == false && this.Listings(listingDetails)}
         </div>
         <div>
-          {this.state.showSubButton && (
+          {this.state.showSubButton && this.state.requestType !== "1" && (
             <div className="col-sm-3">
               <br />{" "}
               <CustomButton

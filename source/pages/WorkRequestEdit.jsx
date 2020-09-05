@@ -48,6 +48,8 @@ class WorkRequestEdit extends React.Component {
       sizeList: [],
       manpowerList: [],
       drawImageshow:"",
+      contractSize: 0,
+
     };
     this.itemList = [];
     this.sizeList = [];
@@ -204,6 +206,8 @@ class WorkRequestEdit extends React.Component {
           this.sizeList = sizeList;
           this.setState({ sizeList });
           this.setState({ manpowerList });
+
+          this.onItemChange(requestItems.itemId, this.state.contracts);
         }, 1000);
       }
       if (requestDet.contractType == 2) {
@@ -405,10 +409,24 @@ class WorkRequestEdit extends React.Component {
     });
     let LocTitle = "";
     let itemTitle = "";
+    let desc = "";
+    let description = "";
+    let total = 0;
     list.map((item) => {
       if (item.id == key) {
         LocTitle = item.location;
         itemTitle = item.item;
+        description = item.description;
+        desc =
+          "Size: " +
+          item["length"] +
+          "mL x " +
+          item["width"] +
+          "mW x " +
+          item["height"] +
+          "mH, Set:" +
+          item["sets"];
+          total = item["length"]*item["width"]*item["height"]*item["sets"];
       }
     });
     this.resetThenSet(key, list, "location", LocTitle);
@@ -416,6 +434,8 @@ class WorkRequestEdit extends React.Component {
     this.setState({
       itemTitle: this.state.text_item,
       locationTitle: this.state.text_location,
+      desc,
+      contractSize: total,
     });
   };
 
@@ -974,6 +994,9 @@ class WorkRequestEdit extends React.Component {
             subCategory={this.state.subCategoryStore}
             handleClose={this.handleSizePopupClose}
             handleSubmit={this.handleSizeSubmit}
+            contractId={this.state.value_item}
+            contractSize = {this.state.contractSize}
+            contractDesc = {this.state.desc}
           />
         </Popup>
 

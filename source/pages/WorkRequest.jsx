@@ -53,7 +53,8 @@ class WorkRequest extends React.Component {
       showSizePopup: false,
       drawingimage: "",
       drawImageshow:"",
-      isLoading:false
+      isLoading:false,
+      contractSize:0
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -127,6 +128,7 @@ class WorkRequest extends React.Component {
     let itemTitle = "";
     let desc = "";
     let description = "";
+    let total = 0;
     list.map((item) => {
       if (item.id == key) {
         LocTitle = item.location;
@@ -141,6 +143,7 @@ class WorkRequest extends React.Component {
           item["height"] +
           "mH, Set:" +
           item["sets"];
+          total = item["length"]*item["width"]*item["height"]*item["sets"];
       }
     });
     this.resetThenSet(key, list, "location", LocTitle);
@@ -150,7 +153,10 @@ class WorkRequest extends React.Component {
       itemtitle: this.state.text_item,
       locationTitle: this.state.text_location,
       desc,
+      contractSize: total,
     });
+
+    
   };
 
   resetThenSet(key, list, stateKey, title) {
@@ -208,6 +214,7 @@ class WorkRequest extends React.Component {
     } else {
       this.setState({ contracts: [] });
     }
+    this.state.drawingAttached = "";
     this.onFormChange(e);
   };
   onChangeSizeType = (e) => {
@@ -556,66 +563,7 @@ class WorkRequest extends React.Component {
         )}
         <br />
         <br />
-        {this.state.contracts.length > 0 && (
-          <div className="orginalContract">
-            <div className="row">
-              <div className="col-xs-6">
-                <label>Items</label>
-                <Dropdown
-                  title={itemtitle}
-                  name="item"
-                  keyName="id"
-                  stateId="item"
-                  list={this.state.contracts}
-                  resetThenSet={this.onItemChange}
-                />
-              </div>
-              <div className="col-xs-6">
-                <label>Locations</label>
-                <Dropdown
-                  title={this.state.locationTitle}
-                  name="location"
-                  keyName="id"
-                  stateId="location"
-                  list={this.state.contracts}
-                  resetThenSet={this.onItemChange}
-                />
-              </div>
-            </div>
-            <div className="row">
-              <div className="col-xs-12 red"> {this.state.desc}</div>
-            </div>
-            <div className="row">
-              <div className="col-xs-1">
-                <label>
-                  <input
-                    type="radio"
-                    name="sizeType"
-                    value="1"
-                    onChange={this.onChangeSizeType}
-                    checked={this.state.sizeType == "1"}
-                  />
-                </label>
-              </div>
-              <span className="col-xs-6">Full Size</span>
-            </div>
 
-            <div className="row">
-              <div className="col-xs-1">
-                <label>
-                  <input
-                    type="radio"
-                    name="sizeType"
-                    value="2"
-                    onChange={this.onChangeSizeType}
-                    checked={this.state.sizeType == "2"}
-                  />
-                </label>
-              </div>
-              <span className="col-xs-6">Partial Size</span>
-            </div>
-          </div>
-        )}
         {this.state.sizeType == 2 && (
           <div className="description">
             <div className="row">
@@ -678,9 +626,40 @@ class WorkRequest extends React.Component {
                   />
                 </div>
               )}
+
               {drawingimage && (
                 <div className="col-sm-12">
                         <Image src={drawImageshow} onClick={this.click} />
+
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {this.state.cType == 1 ? (
+          <div>
+            <div className="col-xs-3">
+              <input
+                type="checkbox"
+                name="drawingAttached"
+                onClick={this.onCheckBoxChecked}
+                checked={this.state.drawingAttached == 1}
+                style={{
+                  marginRight: "11px",
+                }}
+              />
+              <label>Drawing Attached</label>
+            </div>
+            {this.state.drawingAttached == 1 && (
+              <div className="col-xs-3">
+                <input
+                  type="file"
+                  ref="file"
+                  id="drawingAttachedFile"
+                  name="drawingAttachedFile"
+                  onChange={this.filepload}
+                />
+
               </div>
             )}
             </div>
@@ -689,22 +668,91 @@ class WorkRequest extends React.Component {
           ""
         )}
 
+        <br />
+        <br />
+        {this.state.contracts.length > 0 && (
+          <div className="orginalContract">
+            <div className="row">
+              <div className="col-xs-6">
+                <label>Items</label>
+                <Dropdown
+                  title={itemtitle}
+                  name="item"
+                  keyName="id"
+                  stateId="item"
+                  list={this.state.contracts}
+                  resetThenSet={this.onItemChange}
+                />
+              </div>
+              <div className="col-xs-6">
+                <label>Locations</label>
+                <Dropdown
+                  title={this.state.locationTitle}
+                  name="location"
+                  keyName="id"
+                  stateId="location"
+                  list={this.state.contracts}
+                  resetThenSet={this.onItemChange}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-xs-12 red"> {this.state.desc}</div>
+            </div>
+            <div className="row">
+              <div className="col-xs-1">
+                <label>
+                  <input
+                    type="radio"
+                    name="sizeType"
+                    value="1"
+                    onChange={this.onChangeSizeType}
+                    checked={this.state.sizeType == "1"}
+                  />
+                </label>
+              </div>
+              <span className="col-xs-6">Full Size</span>
+            </div>
+
+            <div className="row">
+              <div className="col-xs-1">
+                <label>
+                  <input
+                    type="radio"
+                    name="sizeType"
+                    value="2"
+                    onChange={this.onChangeSizeType}
+                    checked={this.state.sizeType == "2"}
+                  />
+                </label>
+              </div>
+              <span className="col-xs-6">Partial Size</span>
+            </div>
+          </div>
+        )}
+        <br />
+        <br />
+
         <div className="description">
           <div className="row">
-            <div className="col-xs-6">
-              <label>Description</label>
-            </div>
-            <div className="col-xs-6">
-              <CustInput
-                type="textarea"
-                name="description"
-                value={this.state.description}
-                onChange={this.onFormChange}
-                readOnly={this.state.cType == "1" ? "readOnly" : ""}
-              />
+            <div className="col-xs-12">
+              <div className="col-xs-6">
+                <label>Description</label>
+              </div>
+              <div className="col-xs-6">
+                <CustInput
+                  type="textarea"
+                  name="description"
+                  value={this.state.description}
+                  onChange={this.onFormChange}
+                  readOnly={this.state.cType == "1" ? "readOnly" : ""}
+                />
+              </div>
             </div>
           </div>
         </div>
+
+        <br />
 
         <div className="workBasedOn">
           <div className="row">
@@ -750,6 +798,9 @@ class WorkRequest extends React.Component {
             subCategory={this.state.subCategoryStore}
             handleClose={this.handleSizePopupClose}
             handleSubmit={this.handleSizeSubmit}
+            contractId={this.state.value_item}
+            contractSize = {this.state.contractSize}
+            contractDesc = {this.state.desc}
           />
         </Popup>
 
