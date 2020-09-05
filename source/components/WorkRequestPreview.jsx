@@ -9,13 +9,17 @@ class WorkRequestPreview extends Component {
       curState: props.curState,
       images: props.images,
       isLoading: false,
-      isLoading:false,
-      drawingImage:props.curState.drawImageshow
+      isLoading: false,
+      drawingImage: props.curState.drawImageshow,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ curState: nextProps.curState, images: nextProps.images,drawingImage:nextProps.curState.drawingImage });
+    this.setState({
+      curState: nextProps.curState,
+      images: nextProps.images,
+      drawingImage: nextProps.curState.drawingImage,
+    });
   }
 
   setItemList = (itemList) => {
@@ -274,13 +278,9 @@ class WorkRequestPreview extends Component {
         }
       });
   };
-  render() {
-    const { curState, images, isLoading } = this.state;
-    // console.log(curState);
-
 
   render() {
-    const { curState, images,isLoading,drawingImage } = this.state;
+    const { curState, images, isLoading, drawingImage } = this.state;
     return (
       <div>
         <div className="container work-arr-container">
@@ -318,11 +318,12 @@ class WorkRequestPreview extends Component {
           </div>
           {drawingImage && (
             <div className="row">
-            <div className="col-sm-6">
-              <label>DrawingImage:</label>
-            </div>
-            <div className="col-sm-6"><img src={drawingImage}></img>
-            </div>
+              <div className="col-sm-6">
+                <label>DrawingImage:</label>
+              </div>
+              <div className="col-sm-6">
+                <img src={drawingImage}></img>
+              </div>
             </div>
           )}
           {curState.cType == 1 && this.setItemList(curState.itemList)}
@@ -381,7 +382,7 @@ class WorkRequestPreview extends Component {
                 <Grid>
                   <Grid.Row columns={8}>
                     {images.map((_x) => (
-                      <Grid.Column >
+                      <Grid.Column>
                         <Image src={_x} onClick={this.click} />
                       </Grid.Column>
                     ))}

@@ -52,9 +52,9 @@ class WorkRequest extends React.Component {
       clientsStore: [],
       showSizePopup: false,
       drawingimage: "",
-      drawImageshow:"",
-      isLoading:false,
-      contractSize:0
+      drawImageshow: "",
+      isLoading: false,
+      contractSize: 0,
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -143,7 +143,7 @@ class WorkRequest extends React.Component {
           item["height"] +
           "mH, Set:" +
           item["sets"];
-          total = item["length"]*item["width"]*item["height"]*item["sets"];
+        total = item["length"] * item["width"] * item["height"] * item["sets"];
       }
     });
     this.resetThenSet(key, list, "location", LocTitle);
@@ -155,8 +155,6 @@ class WorkRequest extends React.Component {
       desc,
       contractSize: total,
     });
-
-    
   };
 
   resetThenSet(key, list, stateKey, title) {
@@ -241,7 +239,7 @@ class WorkRequest extends React.Component {
   };
   filepload = (e) => {
     e.preventDefault();
-    this.setState({isLoading:true})
+    this.setState({ isLoading: true });
     const formData = new FormData();
     formData.append("uniqueId", this.state.userId);
     formData.append("requestCode", 24);
@@ -257,9 +255,13 @@ class WorkRequest extends React.Component {
           const imageURL = res.imageurl;
           const drawURL = basePath.concat(imageURL);
           this.state.drawingimage = res.imageurl;
-          this.setState({ drawingimage: res.imageurl,drawImageshow:drawURL,isLoading:false });
-        }else{
-          this.setState({isLoading:false})
+          this.setState({
+            drawingimage: res.imageurl,
+            drawImageshow: drawURL,
+            isLoading: false,
+          });
+        } else {
+          this.setState({ isLoading: false });
         }
       });
   };
@@ -446,7 +448,7 @@ class WorkRequest extends React.Component {
 
   /* Render */
   render() {
-    const { itemtitle , drawingimage,isLoading,drawImageshow} = this.state;
+    const { itemtitle, drawingimage, isLoading, drawImageshow } = this.state;
     // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
 
     let showSizeAddButton = true;
@@ -612,11 +614,7 @@ class WorkRequest extends React.Component {
               </div>
               {this.state.drawingAttached == 1 && (
                 <div className="col-xs-3">
-                    {
-                     isLoading && (
-                  <p style={{color:'green'}}>Loading...</p>
-                )
-              }              
+                  {isLoading && <p style={{ color: "green" }}>Loading...</p>}
                   <input
                     type="file"
                     ref="file"
@@ -629,8 +627,9 @@ class WorkRequest extends React.Component {
 
               {drawingimage && (
                 <div className="col-sm-12">
-                        <Image src={drawImageshow} onClick={this.click} />
-
+                  <Image src={drawImageshow} onClick={this.click} />
+                </div>
+              )}
             </div>
           </div>
         ) : (
@@ -659,10 +658,8 @@ class WorkRequest extends React.Component {
                   name="drawingAttachedFile"
                   onChange={this.filepload}
                 />
-
               </div>
             )}
-            </div>
           </div>
         ) : (
           ""
@@ -799,8 +796,8 @@ class WorkRequest extends React.Component {
             handleClose={this.handleSizePopupClose}
             handleSubmit={this.handleSizeSubmit}
             contractId={this.state.value_item}
-            contractSize = {this.state.contractSize}
-            contractDesc = {this.state.desc}
+            contractSize={this.state.contractSize}
+            contractDesc={this.state.desc}
           />
         </Popup>
 
@@ -910,7 +907,7 @@ class WorkRequest extends React.Component {
             </div>
           </div>
         </div>
-    <Modal
+        <Modal
           show={this.state.show}
           onHide={this.handleClose}
           dialogClassName="modallg"
