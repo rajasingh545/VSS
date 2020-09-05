@@ -175,6 +175,7 @@ class WorkRequestPreviewPage extends React.Component {
         workBased: requestItems.workBased,
         scaffoldRegister: requestDet.scaffoldRegister,
         remarks: requestDet.remarks,
+        drawingImage: requestDet.drawingImage
       });
 
       if (requestDet.contractType == 1) {

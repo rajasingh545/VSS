@@ -9,11 +9,13 @@ class WorkRequestPreview extends Component {
       curState: props.curState,
       images: props.images,
       isLoading: false,
+      isLoading:false,
+      drawingImage:props.curState.drawImageshow
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ curState: nextProps.curState, images: nextProps.images });
+    this.setState({ curState: nextProps.curState, images: nextProps.images,drawingImage:nextProps.curState.drawingImage });
   }
 
   setItemList = (itemList) => {
@@ -238,10 +240,7 @@ class WorkRequestPreview extends Component {
   click = () => {
     console.log("working");
   };
-  // filepload = (e) => {
-  //   const fileUpload = e.target.files;
-  //   this.setState({ drawingAttachedFile: fileUpload });
-  // };
+
   filepload = (e) => {
     this.setState({ isLoading: true });
     const { dispatch } = this.props;
@@ -254,10 +253,7 @@ class WorkRequestPreview extends Component {
     let images = [];
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("images[]", e.target.files[i]);
-      // images.push(e.target.files[i]);
     }
-    // formData.append("images[]", images);
-    // formData.append("drawingimage", e.target.files);
     fetch(API.WORKREQUEST_URI, {
       method: "post",
       body: formData,
@@ -277,12 +273,14 @@ class WorkRequestPreview extends Component {
           // toast.error(res.response, { autoClose: 3000 });
         }
       });
-    // console.log(this.state.drawingimage);
   };
   render() {
     const { curState, images, isLoading } = this.state;
     // console.log(curState);
 
+
+  render() {
+    const { curState, images,isLoading,drawingImage } = this.state;
     return (
       <div>
         <div className="container work-arr-container">
@@ -318,6 +316,15 @@ class WorkRequestPreview extends Component {
             </div>
             <div className="col-sm-6 strong">{curState.description}</div>
           </div>
+          {drawingImage && (
+            <div className="row">
+            <div className="col-sm-6">
+              <label>DrawingImage:</label>
+            </div>
+            <div className="col-sm-6"><img src={drawingImage}></img>
+            </div>
+            </div>
+          )}
           {curState.cType == 1 && this.setItemList(curState.itemList)}
           {curState.cType == 2 && (
             <div>
@@ -374,7 +381,7 @@ class WorkRequestPreview extends Component {
                 <Grid>
                   <Grid.Row columns={8}>
                     {images.map((_x) => (
-                      <Grid.Column>
+                      <Grid.Column >
                         <Image src={_x} onClick={this.click} />
                       </Grid.Column>
                     ))}

@@ -381,6 +381,7 @@ class AttedenceEdit extends React.Component {
         //   worker.workerId,
         //   this.errorIdArr.indexOf(worker.workerId) > -1
         // );
+        const disable = worker.assignedWorker == 1 ? true : false;
         return (
           <div className="row" key={ind}>
             <div className="col-xs-1" style={{ width: "10px" }}>
@@ -389,6 +390,7 @@ class AttedenceEdit extends React.Component {
                   value={worker.workerId}
                   type="checkbox"
                   onClick={this.onCheckBoxClick}
+                  disabled={disable}
                 />
               </span>
             </div>
@@ -423,6 +425,8 @@ class AttedenceEdit extends React.Component {
                 name={InName}
                 className="width100"
                 onChange={this.onTimeChange}
+
+                disabled={disable}
               /> */}
             </div>
             <div className="col-xs-2" style={{ textAlign: "center" }}>
@@ -466,6 +470,7 @@ class AttedenceEdit extends React.Component {
                 error={
                   this.errorIdArr.indexOf(worker.workerId) > -1 ? true : false
                 }
+                disabled={disable}
               />
             </div>
           </div>
