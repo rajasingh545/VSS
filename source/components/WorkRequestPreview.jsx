@@ -8,7 +8,7 @@ class WorkRequestPreview extends Component {
     this.state = {
       curState: props.curState,
       images: props.images,
-      isLoading:false,
+      isLoading: false,
     };
   }
 
@@ -243,7 +243,7 @@ class WorkRequestPreview extends Component {
   //   this.setState({ drawingAttachedFile: fileUpload });
   // };
   filepload = (e) => {
-    this.setState({isLoading:true});
+    this.setState({ isLoading: true });
     const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
@@ -266,9 +266,12 @@ class WorkRequestPreview extends Component {
       .then((res) => {
         if (res.responsecode === 1) {
           this.state.drawingimage = res.imageurl;
-          this.setState({ images: this.state.images.concat(res.imageurl),isLoading:false });
+          this.setState({
+            images: this.state.images.concat(res.imageurl),
+            isLoading: false,
+          });
         } else {
-          this.setState({isLoading:false});
+          this.setState({ isLoading: false });
 
           console.log(res.response);
           // toast.error(res.response, { autoClose: 3000 });
@@ -277,8 +280,8 @@ class WorkRequestPreview extends Component {
     // console.log(this.state.drawingimage);
   };
   render() {
-    const { curState, images,isLoading } = this.state;
-    console.log(curState);
+    const { curState, images, isLoading } = this.state;
+    // console.log(curState);
 
     return (
       <div>
@@ -353,22 +356,18 @@ class WorkRequestPreview extends Component {
               <label>Images:</label>
             </div>
             <div className="col-sm-6">
-              {
-                isLoading && (
-                  <p style={{color:'green'}}>Loading...</p>
-                )
-              }
-              {
-               images.length < 6 ?(
+              {isLoading && <p style={{ color: "green" }}>Loading...</p>}
+              {images.length < 6 ? (
                 <input
-                type="file"
-                id="drawingAttachedFile"
-                name="drawingAttachedFile"
-                multiple
-                onChange={this.filepload}
-              />
-               ):""
-              }
+                  type="file"
+                  id="drawingAttachedFile"
+                  name="drawingAttachedFile"
+                  multiple
+                  onChange={this.filepload}
+                />
+              ) : (
+                ""
+              )}
             </div>
             {images && images.length > 0 ? (
               <div className="col-sm-12">

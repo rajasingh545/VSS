@@ -71,6 +71,7 @@ class WorkArrangement extends React.Component {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
+    this.state.userID = this.props.userId;
     dispatch(requestDetails(this.state));
     //get details of listing
     if (this.props.match.params && this.props.match.params.id !== undefined) {
@@ -83,10 +84,15 @@ class WorkArrangement extends React.Component {
     // console.log("next props", nextProps);
 
     if (nextProps.requestDet) {
+      if (nextProps.requestDet.projects) {
+        this.setState({ projects: nextProps.requestDet.projects });
+      }
       if (nextProps.requestDet.supervisors) {
         this.setState({
           supervisors: nextProps.requestDet.supervisors,
           addSupervisors: nextProps.requestDet.supervisors,
+          availSup: nextProps.requestDet.supervisors,
+          availwork: nextProps.requestDet.workers,
           workers: nextProps.requestDet.workers,
           value_supervisors: "",
           value_supervisors2: "",
@@ -225,7 +231,7 @@ class WorkArrangement extends React.Component {
         [valuekey]: key.toString(),
       });
     } else {
-      if(selectedObj){
+      if (selectedObj) {
         addSupervisors = supervisors.filter(
           (task) => task.userId !== selectedObj.userId
         );
@@ -235,7 +241,6 @@ class WorkArrangement extends React.Component {
           addSupervisors,
         });
       }
-      
 
       let valuekey = `value_${stateKey}`;
 
@@ -315,12 +320,39 @@ class WorkArrangement extends React.Component {
         startDate1: "",
       });
     }
+    const { dispatch } = this.props;
+    this.state.userType = this.props.userType;
+    this.state.userId = this.props.userId;
+    this.state.userID = this.props.userId;
+    delete this.state.requestCode;
+    dispatch(requestDetails(this.state));
+    //get details of listing
+    if (this.props.match.params && this.props.match.params.id !== undefined) {
+      this.state.listingId = this.props.match.params.id;
+      this.state.requestCode = 3;
+      dispatch(listigDetails(this.state));
+    }
+    this.setState({
+      workers: [],
+      projects: [],
+      supervisors: [],
+      addSupervisors: [],
+      availSup: [],
+      availwork: [],
+      selectedSupervisor: {},
+      selectedItemsAddSup: {},
+      selectedItemsWorkers: {},
+      projectId: "0",
+      workersTitle: "Select Workers",
+      supervisorTitle: "Select Supervisor",
+      addsupervisorTitle: "Select Supervisor",
+    });
 
     this.state.startDate = e.format("YYYY/MM/DD"); //dont remove - to get immedaite value of date
-    this.getAvailableWorker();
-    if (this.state.projectId) {
-      this.getSupervisor(this.state.projectId);
-    }
+    // this.getAvailableWorker();
+    // if (this.state.projectId) {
+    //   this.getSupervisor(this.state.projectId);
+    // }
   };
   goBack = (e) => {
     e.preventDefault();
@@ -457,15 +489,20 @@ class WorkArrangement extends React.Component {
       selectedSupervisor,
       selectedItemsAddSup,
     } = this.state;
-    // console.log(selectedSupervisor);
+    // console.log(projectId, this.state.availSup, this.state.availwork);
 
     const { loading } = this.props;
     let availSupervisorsCount = 0,
       availWorkersCount = 0;
     if (projectId !== undefined || Number(projectId) > 0) {
-      availSupervisorsCount = this.state.addSupervisors ? this.state.addSupervisors.length : 0;
-      availWorkersCount = this.state.workers ? this.state.workers.length : 0;
+      availSupervisorsCount = this.state.availSup
+        ? this.state.availSup.length
+        : 0;
+      availWorkersCount = this.state.availwork
+        ? this.state.availwork.length
+        : 0;
     }
+
     return (
       <div className="container work-arr-container">
         <br />
@@ -567,11 +604,12 @@ class WorkArrangement extends React.Component {
             <label>Partial Additional Supervisor</label>
           </div>
           <div className="col-sm-6">
-            {this.state.selectedItemsAddSup && (
-              <div>
-                {this.displayPartialAddSup(this.state.selectedItemsAddSup)}
-              </div>
-            )}
+            {this.state.selectedItemsAddSup &&
+              this.state.selectedItemsAddSup.length > 0 && (
+                <div>
+                  {this.displayPartialAddSup(this.state.selectedItemsAddSup)}
+                </div>
+              )}
           </div>
         </div>
         <div className="row">
@@ -597,11 +635,12 @@ class WorkArrangement extends React.Component {
             <label>Partial Workers</label>
           </div>
           <div className="col-sm-6">
-            {this.state.selectedItemsWorkers && (
-              <div>
-                {this.displayPartialWorkers(this.state.selectedItemsWorkers)}
-              </div>
-            )}
+            {this.state.selectedItemsWorkers &&
+              this.state.selectedItemsWorkers.length > 0 && (
+                <div>
+                  {this.displayPartialWorkers(this.state.selectedItemsWorkers)}
+                </div>
+              )}
           </div>
         </div>
 

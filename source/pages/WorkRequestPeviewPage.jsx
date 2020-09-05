@@ -9,6 +9,7 @@ import {
 } from "actions/workArrangement.actions";
 import { getDetailsWithMatchedKey2 } from "../common/utility";
 import CustomButton from "../components/CustomButton";
+import { CONTEXT } from "../config/api-config";
 
 @connect((state) => ({
   loading: state.request.get("loadingListing"),
@@ -395,7 +396,7 @@ class WorkRequestPreviewPage extends React.Component {
             <br />
             <CustomButton bsStyle="secondary">
               <a
-                href={`http://productivityapi.vinayak.com.sg/workrequestpdf.php?workrequestid=${this.state.listingId}`}
+                href={`${CONTEXT}/workrequestpdf.php?workrequestid=${this.state.listingId}`}
                 target="_blank"
               >
                 {" "}

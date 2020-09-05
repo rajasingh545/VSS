@@ -8,7 +8,7 @@ class Dropdown extends Component {
     this.state = {
       listOpen: false,
       headerTitle: this.props.title,
-      list: this.props.list
+      list: this.props.list,
     };
     this.close = this.close.bind(this);
   }
@@ -44,32 +44,32 @@ class Dropdown extends Component {
 
   reset() {
     this.setState({
-      headerTitle: this.props.title
+      headerTitle: this.props.title,
     });
   }
   close() {
     this.setState({
-      listOpen: false
+      listOpen: false,
     });
   }
 
   selectItem(title, id, stateKey, value) {
     const { list } = this.props;
-    list.forEach(item => (item.selected = false));
+    list.forEach((item) => (item.selected = false));
     list[id].selected = true;
 
     this.setState(
       {
         headerTitle: title,
-        listOpen: false
+        listOpen: false,
       },
       this.props.resetThenSet(value, list, stateKey, title, list[id])
     );
   }
 
   toggleList() {
-    this.setState(prevState => ({
-      listOpen: !prevState.listOpen
+    this.setState((prevState) => ({
+      listOpen: !prevState.listOpen,
     }));
   }
 
@@ -79,7 +79,7 @@ class Dropdown extends Component {
       name,
       stateId,
       disabled = false,
-      error = false
+      error = false,
     } = this.props;
     const { list, listOpen, headerTitle } = this.state;
 
@@ -88,7 +88,7 @@ class Dropdown extends Component {
         className="dd-wrapper"
         style={{
           pointerEvents: disabled ? "none" : "",
-          border: error ? "1px solid red" : "1px solid #dfdfdf"
+          border: error ? "1px solid red" : "1px solid #dfdfdf",
         }}
       >
         <div className="dd-header" onClick={() => this.toggleList()}>
@@ -104,8 +104,9 @@ class Dropdown extends Component {
           )}
         </div>
         {listOpen && (
-          <ul className="dd-list" onClick={e => e.stopPropagation()}>
-            {list.length > 0 &&
+          <ul className="dd-list" onClick={(e) => e.stopPropagation()}>
+            {list &&
+              list.length > 0 &&
               list.map((item, index) => (
                 <li
                   style={{ textAlign: "left" }}

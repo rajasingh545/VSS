@@ -57,7 +57,7 @@ export default class DailyWorkTrackList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    // console.log(nextProps);
 
     const { requestDet } = nextProps;
     this.setState({ listingDetails: nextProps.listingDetails });
@@ -98,7 +98,7 @@ export default class DailyWorkTrackList extends React.Component {
   };
 
   Listings = (listings) => {
-    console.log(listings);
+    // console.log(listings);
 
     let { workRequestData, requestDet } = this.props;
     let response = "";
@@ -132,7 +132,14 @@ export default class DailyWorkTrackList extends React.Component {
           clientname,
         });
         let elmId = "elm_" + requestDetails.workArrangementId;
-        data.Title = projectName + " : " + clientname;
+        data.Title =
+          projectName +
+          " : " +
+          clientname +
+          " , Created By: " +
+          data.createdByName +
+          " , Created On: " +
+          data.createdOn;
         data.paragraph = "";
         let p = "";
 
@@ -152,6 +159,7 @@ export default class DailyWorkTrackList extends React.Component {
           });
         }
         data.paragraph += p;
+        // console.log(data);
 
         // return (
         //   <div
@@ -164,7 +172,7 @@ export default class DailyWorkTrackList extends React.Component {
         //   </div>
         // );
       });
-      console.log(listings);
+      // console.log(listings);
 
       return (
         <CollapsiblePanel
