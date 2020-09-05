@@ -237,6 +237,7 @@ class Attedence extends React.Component {
       projectTitle: "Select Project",
       showSubButton: false,
     });
+    // console.log(param);
 
     dispatch(requestPost(param));
     if (type == 1) {
@@ -285,6 +286,8 @@ class Attedence extends React.Component {
     }
   };
   onTimeChange = (value, name, id, workerName) => {
+    console.log(value);
+
     this.timeValuesArr[name] = value.format("HH:mm");
     let check = name.split("_"),
       { projects, projectId } = this.state,
@@ -485,19 +488,40 @@ class Attedence extends React.Component {
 
           let invalue = "";
           let outvalue = "";
-          if (worker.inTime != "00:00:00") {
-            invalue = moment(`03-25-2015 ${worker.inTime}`);
+          // console.log(this.state.selectedOption);
+
+          if (worker.inTime != "00:00:00" && this.state.selectedOption == "1") {
+            invalue = moment(
+              `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
+            );
             this.timeValuesArr[InName] = worker.inTime;
-          } else {
-            invalue = moment(`03-25-2015 ${startTime}`);
+          } else if (
+            worker.inTime == "00:00:00" &&
+            this.state.selectedOption == "1"
+          ) {
+            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
             this.timeValuesArr[InName] = startTime;
-          }
-          if (worker.outTime != "00:00:00") {
-            outvalue = moment(`03-25-2015 ${worker.outTime}`);
-            this.timeValuesArr[OutName] = worker.outTime;
           } else {
-            outvalue = moment(`03-25-2015 ${endTime}`);
+            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
+            this.timeValuesArr[InName] = "00:00:00";
+          }
+          if (
+            worker.outTime != "00:00:00" &&
+            this.state.selectedOption == "2"
+          ) {
+            outvalue = moment(
+              `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
+            );
+            this.timeValuesArr[OutName] = worker.outTime;
+          } else if (
+            worker.outTime == "00:00:00" &&
+            this.state.selectedOption == "2"
+          ) {
+            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
             this.timeValuesArr[OutName] = endTime;
+          } else {
+            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
+            this.timeValuesArr[OutName] = "00:00:00";
           }
           rec++;
           const disable = (worker.assignedWorker == 1)? true : false;
@@ -652,7 +676,7 @@ class Attedence extends React.Component {
     if (this.props.userType == 5 || this.props.userType == 3) {
       readonly = true;
     }
-    // console.log(this.state.projects);
+    // console.log(this.timeValuesArr);
 
     return (
       <div className="work-arr-container">

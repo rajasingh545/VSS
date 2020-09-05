@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import baseHOC from "./baseHoc";
 import CustInput from "../components/CustInput";
 import TimeField from "../components/TimePicker";
+import TimePicker from "rc-time-picker";
 import {
   getCurrentDate,
   getReasons,
@@ -105,6 +106,19 @@ class AttedenceEdit extends React.Component {
         this.state.availableSupervisorsList =
           nextProps.requestDet.supervisorsList;
         this.state.team = nextProps.requestDet.team;
+        if (
+          this.props.match.params.pid &&
+          nextProps.requestDet.projects.length > 0
+        ) {
+          this.state.projects.map((element) => {
+            if (element.projectId === this.props.match.params.pid) {
+              this.setState({
+                startTime: element.startTime,
+                endTime: element.endTime,
+              });
+            }
+          });
+        }
       } else if (nextProps.listingDetails) {
         this.setState({
           workersList: nextProps.listingDetails.workerlist,
@@ -149,6 +163,8 @@ class AttedenceEdit extends React.Component {
       return false;
     }
     let error = 0;
+    // console.log(this.timeValuesArr);
+
     this.selectedIds.map((id) => {
       if (this.timeValuesArr["in_" + id]) {
         finalValuesArr[id] = {
@@ -183,6 +199,7 @@ class AttedenceEdit extends React.Component {
       WAId: this.WAId,
       type,
     };
+    // console.log(finalValuesArr);
 
     dispatch(requestPost(param));
     toast.success("Attendance Submitted Successfully", { autoClose: 3000 });
@@ -217,74 +234,90 @@ class AttedenceEdit extends React.Component {
     }
     // console.log("After", this.errorIdArr);
   };
-  onTimeChange = (el) => {
-    this.timeValuesArr[el.name] = el.value;
-    let { projects, projectId } = this.state,
-      { requestDet, listingDetails } = this.props,
-      startTime = "",
-      endTime = "",
-      wId = el.name.split("_")[1],
-      workerIn = "00:00:00",
-      workerOut = "00:00:00";
+  onTimeChange = (value, name, id, workerName) => {
+    this.timeValuesArr[name] = moment(value).format("HH:mm:ss");
+    const { projects, projectId } = this.state;
+    const check = name.split("_");
+    let startTime = "";
+    let endTime = "";
+    let workerIn = "00:00:00";
+    let workerOut = "00:00:00";
     const selectedProject = projects.find(
       (element) => element.projectId === projectId
     );
     startTime = selectedProject.startTime;
     endTime = selectedProject.endTime;
-    if (el.name.split("_")[0] == "in") {
-      workerIn = el.value;
+    if (check[0] === "in") {
+      workerIn = this.timeValuesArr[name];
     } else {
-      workerOut = el.value;
+      workerOut = this.timeValuesArr[name];
     }
-    // console.log(startTime, endTime, workerIn, workerOut, wId);
-    this.timeFunc(startTime, endTime, workerIn, workerOut, wId);
+    // console.log(this.timeValuesArr);
+    this.timeFunc(startTime, endTime, workerIn, workerOut, id);
     this.setState({ projectStartTime: startTime, projectEndTime: endTime });
   };
-  timeFunc = (startTime, endTime, workerIn, workerOut, wId) => {
+  timeFunc = (
+    startTime,
+    endTime,
+    workerIn = "00:00:00",
+    workerOut = "00:00:00",
+    wId
+  ) => {
+    // console.log(startTime, endTime, workerIn, workerOut, wId);
+
     const sTime = startTime.split(":").slice(0, 2).join("."),
       eTime = endTime.split(":").slice(0, 2).join("."),
       wIn = workerIn.split(":").slice(0, 2).join("."),
       wOut = workerOut.split(":").slice(0, 2).join(".");
     // console.log(this.timeValuesArr, this.timeValuesArr["reason_" + wId], wId);
-    // console.log(Number(sTime), Number(wIn), Number(eTime), Number(wOut), wId);
 
+    let checkInTime = Number(wIn);
+    let checkOutTime = Number(wOut);
+    // console.log(Number(sTime), checkInTime, Number(eTime), checkOutTime, wId);
     if (
-      Number(sTime) < Number(wIn) &&
+      Number(sTime) < Number(checkInTime) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
         this.errorIdArr.push(wId);
       }
     } else if (
-      Number(sTime) > Number(wIn) &&
+      Number(sTime) > Number(checkInTime) &&
+      this.timeValuesArr["reason_" + wId] == undefined
+    ) {
+      if (this.errorIdArr.indexOf(wId) == "-1") {
+        this.errorIdArr.push(wId);
+      }
+    } else if (Number(sTime) == Number(checkInTime)) {
+      const index = this.errorIdArr.indexOf(wId);
+      if (index > -1) {
+        this.errorIdArr.splice(index, 1);
+      }
+    } else if (
+      Number(eTime) > Number(checkOutTime) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
         this.errorIdArr.push(wId);
       }
     } else if (
-      Number(eTime) > Number(wOut) &&
+      Number(eTime) < Number(checkOutTime) &&
       this.timeValuesArr["reason_" + wId] == undefined
     ) {
       if (this.errorIdArr.indexOf(wId) == "-1") {
         this.errorIdArr.push(wId);
+      }
+    } else if (Number(eTime) == Number(checkOutTime)) {
+      const index = this.errorIdArr.indexOf(wId);
+      if (index > -1) {
+        this.errorIdArr.splice(index, 1);
       }
     }
-    // else if (Number(sTime) == Number(wIn)) {
-    //   const index = this.errorIdArr.indexOf(wId);
-    //   if (index > -1) {
-    //     this.errorIdArr.splice(index, 1);
-    //   }
-    // } else if (Number(eTime) == Number(wOut)) {
-    //   const index = this.errorIdArr.indexOf(wId);
-    //   if (index > -1) {
-    //     this.errorIdArr.splice(index, 1);
-    //   }
-    // }
+
     // console.log(this.errorIdArr);
   };
   renderWorkers = (workers, startTime, endTime, type) => {
-    if (workers.length > 0) {
+    if (workers.length > 0 && startTime !== "" && endTime !== "") {
       this.teamArr = [];
       return workers.map((worker, ind) => {
         let workerName = "";
@@ -326,19 +359,29 @@ class AttedenceEdit extends React.Component {
         } else {
           this.teamArr[workerTeam] = 1;
         }
-        this.timeFunc(
-          startTime,
-          endTime,
-          worker.inTime,
-          worker.outTime,
-          worker.workerId
-        );
+        // if (worker.inTime !== "00:00:00") {
+        //   this.timeValuesArr[InName] = worker.inTime;
+        // } else {
+        //   this.timeValuesArr[InName] = worker.inTime;
+        // }
+        // if (worker.outTime !== "00:00:00") {
+        //   this.timeValuesArr[OutName] = worker.outTime;
+        // } else {
+        //   this.timeValuesArr[OutName] = worker.outTime;
+        // }
+        // this.timeFunc(
+        //   startTime,
+        //   endTime,
+        //   worker.inTime,
+        //   worker.outTime,
+        //   worker.workerId
+        // );
         // console.log(
         //   this.errorIdArr,
         //   worker.workerId,
         //   this.errorIdArr.indexOf(worker.workerId) > -1
         // );
-        const disable = (worker.assignedWorker == 1)? true : false;
+        const disable = worker.assignedWorker == 1 ? true : false;
         return (
           <div className="row" key={ind}>
             <div className="col-xs-1" style={{ width: "10px" }}>
@@ -356,21 +399,64 @@ class AttedenceEdit extends React.Component {
             </div>
 
             <div className="col-xs-2" style={{ textAlign: "center" }}>
-              <TimeField
+              <TimePicker
+                defaultValue={
+                  worker.inTime === "00:00:00"
+                    ? moment(`${moment().format("DD-MM-YYYY")} ${startTime}`)
+                    : moment(
+                        `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
+                      )
+                }
+                disabled={
+                  this.props.userType != "1" ? worker.inTimeEntered : false
+                }
+                // value={startTime}
+                showSecond={false}
+                onChange={(value, id = InName) =>
+                  this.onTimeChange(value, id, worker.workerId, workerName)
+                }
+                format="hh:mm a"
+                use12Hours
+                name={InName}
+                className="width100"
+              />
+              {/* <TimeField
                 value={worker.inTime === "00:00:00" ? startTime : worker.inTime}
                 name={InName}
                 className="width100"
                 onChange={this.onTimeChange}
+
                 disabled={disable}
-              />
+              /> */}
             </div>
             <div className="col-xs-2" style={{ textAlign: "center" }}>
-              <TimeField
+              <TimePicker
+                defaultValue={
+                  worker.outTime === "00:00:00"
+                    ? moment(`${moment().format("DD-MM-YYYY")} ${endTime}`)
+                    : moment(
+                        `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
+                      )
+                }
+                disabled={
+                  this.props.userType != "1" ? worker.outTimeEntered : false
+                }
+                // value={startTime}
+                showSecond={false}
+                onChange={(value, id = OutName) =>
+                  this.onTimeChange(value, id, worker.workerId, workerName)
+                }
+                format="hh:mm a"
+                use12Hours
+                name={OutName}
+                className="width100"
+              />
+              {/* <TimeField
                 value={worker.outTime === "00:00:00" ? endTime : worker.outTime}
                 name={OutName}
                 className="width100"
                 onChange={this.onTimeChange}
-              />
+              /> */}
             </div>
             <div className="col-xs-3" style={{ textAlign: "center" }}>
               <Dropdown
@@ -465,6 +551,7 @@ class AttedenceEdit extends React.Component {
     let startTime = "",
       endTime = "",
       projectTitle = "";
+
     if (this.props.match.params.pid && projectId && projects.length > 0) {
       projects.map((element) => {
         if (element.projectId === projectId) {
@@ -475,6 +562,7 @@ class AttedenceEdit extends React.Component {
       });
       // selectedProject = projects.find(element => element.projectId === projectId);
     }
+    // console.log(this.timeValuesArr);
     // if (this.props.userType == 5) {
     //   readonly = true;
     // }

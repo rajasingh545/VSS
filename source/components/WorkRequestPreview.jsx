@@ -8,13 +8,18 @@ class WorkRequestPreview extends Component {
     this.state = {
       curState: props.curState,
       images: props.images,
-      isLoading:false,
-      drawingImage:props.curState.drawImageshow
+      isLoading: false,
+      isLoading: false,
+      drawingImage: props.curState.drawImageshow,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    this.setState({ curState: nextProps.curState, images: nextProps.images,drawingImage:nextProps.curState.drawingImage });
+    this.setState({
+      curState: nextProps.curState,
+      images: nextProps.images,
+      drawingImage: nextProps.curState.drawingImage,
+    });
   }
 
   setItemList = (itemList) => {
@@ -239,9 +244,10 @@ class WorkRequestPreview extends Component {
   click = () => {
     console.log("working");
   };
-  
+
   filepload = (e) => {
-    this.setState({isLoading:true});
+    this.setState({ isLoading: true });
+    const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
     const formData = new FormData();
@@ -259,17 +265,22 @@ class WorkRequestPreview extends Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.setState({ images: this.state.images.concat(res.imageurl),isLoading:false });
+          this.state.drawingimage = res.imageurl;
+          this.setState({
+            images: this.state.images.concat(res.imageurl),
+            isLoading: false,
+          });
         } else {
-          this.setState({isLoading:false});
-          //toast.error(res.response, { autoClose: 3000 });
+          this.setState({ isLoading: false });
+
+          console.log(res.response);
+          // toast.error(res.response, { autoClose: 3000 });
         }
       });
   };
 
-  
   render() {
-    const { curState, images,isLoading,drawingImage } = this.state;
+    const { curState, images, isLoading, drawingImage } = this.state;
     return (
       <div>
         <div className="container work-arr-container">
@@ -307,11 +318,12 @@ class WorkRequestPreview extends Component {
           </div>
           {drawingImage && (
             <div className="row">
-            <div className="col-sm-6">
-              <label>DrawingImage:</label>
-            </div>
-            <div className="col-sm-6"><img src={drawingImage}></img>
-            </div>
+              <div className="col-sm-6">
+                <label>DrawingImage:</label>
+              </div>
+              <div className="col-sm-6">
+                <img src={drawingImage}></img>
+              </div>
             </div>
           )}
           {curState.cType == 1 && this.setItemList(curState.itemList)}
@@ -352,25 +364,25 @@ class WorkRequestPreview extends Component {
               <label>Images:</label>
             </div>
             <div className="col-sm-6">
-              {
-                isLoading && (
-                  <p style={{color:'green'}}>Loading...</p>
-                )
-              }
+              {isLoading && <p style={{ color: "green" }}>Loading...</p>}
+              {images.length < 6 ? (
                 <input
-                type="file"
-                id="drawingAttachedFile"
-                name="drawingAttachedFile"
-                multiple
-                onChange={this.filepload}
-              />
+                  type="file"
+                  id="drawingAttachedFile"
+                  name="drawingAttachedFile"
+                  multiple
+                  onChange={this.filepload}
+                />
+              ) : (
+                ""
+              )}
             </div>
             {images && images.length > 0 ? (
               <div className="col-sm-12">
                 <Grid>
                   <Grid.Row columns={8}>
                     {images.map((_x) => (
-                      <Grid.Column >
+                      <Grid.Column>
                         <Image src={_x} onClick={this.click} />
                       </Grid.Column>
                     ))}

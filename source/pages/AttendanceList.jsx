@@ -57,7 +57,7 @@ export default class AttendanceList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
-    console.log("nextProps", nextProps);
+    // console.log("nextProps", nextProps);
 
     const { requestDet } = nextProps;
     this.setState({ listingDetails: nextProps.listingDetails });
@@ -202,6 +202,8 @@ export default class AttendanceList extends React.Component {
             wl.endTime = projects[i].endTime;
             wl.Title =
               projects[i].projectName +
+              " -  Created By: " +
+              wl.createdByName +
               " -  Created on: " +
               wl.createdOn +
               " - Start Time: (" +
@@ -236,6 +238,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Late";
               } else if (wl.supervisorlist[j].reason == 6) {
                 jsonValue.reason = "Early Start";
+              } else if (wl.supervisorlist[j].reason == 7) {
+                jsonValue.reason = "OT";
               } else {
                 jsonValue.reason = "Others";
               }
@@ -273,6 +277,8 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Late";
               } else if (wl.workerlist[j].reason == 6) {
                 jsonValue.reason = "Early Start";
+              } else if (wl.workerlist[j].reason == 7) {
+                jsonValue.reason = "OT";
               } else {
                 jsonValue.reason = "Others";
               }

@@ -8,14 +8,14 @@ class DropdownMultiple extends Component {
     this.state = {
       listOpen: false,
       headerTitle: this.props.title,
-      timeOut: null
+      timeOut: null,
     };
     this.initialList = this.props.list;
     this.close = this.close.bind(this);
   }
 
   componentDidMount(props) {
-    const count = this.props.list.filter(function(a) {
+    const count = this.props.list.filter(function (a) {
       return a.selected;
     }).length;
     this.countUpdate(props, count);
@@ -24,10 +24,12 @@ class DropdownMultiple extends Component {
     if (nextProps.list != this.props.list) {
       this.setState({ list: nextProps.list });
     }
-    const count = nextProps.list.filter(function(a) {
-      return a.selected;
-    }).length;
-    this.countUpdate(nextProps, count);
+    if (nextProps && nextProps.list && nextProps.list.length > 0) {
+      const count = nextProps.list.filter(function (a) {
+        return a.selected;
+      }).length;
+      this.countUpdate(nextProps, count);
+    }
 
     if (nextProps.reset === true) {
       this.reset();
@@ -61,20 +63,20 @@ class DropdownMultiple extends Component {
   };
   close(timeOut) {
     this.setState({
-      listOpen: false
+      listOpen: false,
     });
   }
 
   toggleList() {
-    this.setState(prevState => ({
-      listOpen: !prevState.listOpen
+    this.setState((prevState) => ({
+      listOpen: !prevState.listOpen,
     }));
   }
   toggleSelected(id, key) {
     let temp = this.state[key];
     temp[id].selected = !temp[id].selected;
     this.setState({
-      [key]: temp
+      [key]: temp,
     });
   }
   selectItem(index, stateKey, keyName) {
@@ -82,8 +84,8 @@ class DropdownMultiple extends Component {
     // list.forEach(item => item.selected = false);
     list[index].selected = !list[index].selected;
     list[index].isPartial = false;
-    let selectedList = list.filter(item => item.selected === true);
-    let selectedids = selectedList.map(item => item[keyName]);
+    let selectedList = list.filter((item) => item.selected === true);
+    let selectedids = selectedList.map((item) => item[keyName]);
     this.props.toggleItem(list, stateKey, selectedids, selectedList);
   }
 
@@ -105,7 +107,7 @@ class DropdownMultiple extends Component {
           )}
         </div>
         {listOpen && (
-          <ul className="dd-list" onClick={e => e.stopPropagation()}>
+          <ul className="dd-list" onClick={(e) => e.stopPropagation()}>
             {list.map((item, index) => (
               <li
                 className="dd-list-item"

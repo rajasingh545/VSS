@@ -1,8 +1,7 @@
- //export const CONTEXT ="http://localhost:8081/productivity-api";
-//export const CONTEXT = "http://productivityapi.vinayak.com.sg";
+// export const CONTEXT = "http://localhost:8080/productivity-api";
+// export const CONTEXT = "http://productivityapi.vinayak.com.sg";
 // export const CONTEXT = "http://bridgeplayschool.com/vinayak/productivity-api";
 export const CONTEXT = "http://productivity-api.macinc.in/productivity-api";
-
 
 export const COMMONAPI_URI = `${CONTEXT}/commonAPIs.php`;
 export const REQUEST_URI = `${CONTEXT}/requests.php`;
