@@ -11,9 +11,7 @@ export default class WorkRequestDWTR extends Component {
 
     this.state = {
       uniqueId: Date.now(),
-      
     };
-
   }
 
   selectImages = (event) => {
@@ -83,8 +81,7 @@ export default class WorkRequestDWTR extends Component {
       toast.error("Please select sub division", { autoClose: 3000 });
       return false;
     }
-    if(this.state.workType == 1){
-
+    if (this.state.workType == 1) {
       if (!this.state.L) {
         toast.error("Length is required", { autoClose: 3000 });
         return false;
@@ -110,7 +107,10 @@ export default class WorkRequestDWTR extends Component {
         return false;
       }
       let totalTodayWork =
-          Number(this.state.L) * Number(this.state.H) * Number(this.state.W),
+          Number(this.state.L) *
+          Number(this.state.H) *
+          Number(this.state.W) *
+          Number(this.state.set),
         totalWork = this.state.selectedArr.totalset,
         workDone = this.state.selectedArr.workdonetotal,
         pendingWork = totalWork - workDone,
@@ -179,7 +179,6 @@ export default class WorkRequestDWTR extends Component {
     const selectedArr = this.state.subItem.filter(
       (item) => key === item.itemId
     )[0];
-
     this.setState({ desc: selectedArr.desc });
     this.setState({ selectedArr: selectedArr });
     this.setState({ requestByName: selectedArr.requestBy });
@@ -188,7 +187,6 @@ export default class WorkRequestDWTR extends Component {
   };
 
   render() {
-   
     return (
       <div className="orginalContract">
         <div className="row">

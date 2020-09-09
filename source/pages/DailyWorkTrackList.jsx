@@ -136,24 +136,24 @@ export default class DailyWorkTrackList extends React.Component {
           projectName +
           " : " +
           clientname +
-          " , Created By: " +
+          " , " +
           data.createdByName +
-          " , Created On: " +
-          data.createdOn;
+          " , " +
+          moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
         data.paragraph = "";
         let p = "";
 
-        if (data.requestSizeList.length > 0) {
+        if (data.requestSizeList && data.requestSizeList.length > 0) {
           data.requestSizeList.map((_x) => {
             p += "<p> " + _x.expandteams + " ;</p>  </br>";
           });
         }
-        if (data.requestMatList.length > 0) {
+        if (data.requestMatList && data.requestMatList.length > 0) {
           data.requestMatList.map((_x) => {
             p += "<p> " + _x.expandmaterials + " ;</p>  </br>";
           });
         }
-        if (data.requestItems.length > 0) {
+        if (data.requestItems && data.requestItems.length > 0) {
           data.requestItems.map((_x) => {
             p += "<p> " + _x.WR_text + " : " + _x.expanditems + " ;</p>  </br>";
           });

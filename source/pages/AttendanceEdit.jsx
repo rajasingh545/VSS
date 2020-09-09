@@ -418,6 +418,7 @@ class AttedenceEdit extends React.Component {
                 format="hh:mm a"
                 use12Hours
                 name={InName}
+                id={InName}
                 className="width100"
               />
               {/* <TimeField
@@ -449,6 +450,7 @@ class AttedenceEdit extends React.Component {
                 format="hh:mm a"
                 use12Hours
                 name={OutName}
+                id={OutName}
                 className="width100"
               />
               {/* <TimeField

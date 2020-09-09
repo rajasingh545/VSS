@@ -153,7 +153,7 @@ export default class WorkRequestList extends React.Component {
     let response = "";
     let requestDetails = {};
     this.initialItems = [];
-    if (workRequestData && workRequestData.length > 0) {
+    if (listings && listings.length > 0) {
       response = listings.map((data, index) => {
         let projectName = "";
         let clientname = "";
@@ -185,11 +185,12 @@ export default class WorkRequestList extends React.Component {
         let elmId = "elm_" + requestDetails.workArrangementId;
         let wrstr =
           "VSS-" +
-          CName +
+          data.clientcode +
           "-" +
-          PName +
+          data.projectcode +
           "-WR-" +
-          ("0000" + data.workRequestId).substring(data.workRequestId.length);
+          data.workReqCount;
+        //("0000" + data.workRequestId).substring(data.workRequestId.length);
 
         data.Title =
           wrstr +
@@ -199,10 +200,10 @@ export default class WorkRequestList extends React.Component {
           clientname +
           "  Requested By :  " +
           data.requestedBy +
-          " , Created By :  " +
+          " , " +
           data.createdByName +
-          " , Created On :  " +
-          data.createdOn;
+          " ,  " +
+          moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
         // console.log(data.title, data.requestSizeList, data.requestmanpower);
         if (data.requestSizeList && data.requestSizeList.length > 0) {
           let text = "";

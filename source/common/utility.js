@@ -95,13 +95,7 @@ export function getDetailsWithLib2(listingDet, libArr) {
         }
       });
 
-      text =
-        text +
-        " , Created By: " +
-        obj.createdByName +
-        " , Created On: " +
-        obj.createdOn +
-        "  ";
+      text = text + " , " + obj.createdByName + " , " + obj.createdOn + " , ";
       obj.workerNames = text;
     }
 
