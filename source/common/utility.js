@@ -34,6 +34,8 @@ export function getFormattedDate(dat) {
 export function getDetailsWithLib2(listingDet, libArr) {
   // console.log(listingDet, libArr);
   let obj = {};
+  obj.createdByName = listingDet.createdByName;
+  obj.createdOn = listingDet.createdOn;
   if (libArr) {
     let supervisors = listingDet.addSupervsor.map((id) => {
       return getDetailsWithMatchedKey2(
@@ -92,6 +94,8 @@ export function getDetailsWithLib2(listingDet, libArr) {
           text += " + " + _x;
         }
       });
+
+      text = text + " , " + obj.createdByName + " , " + obj.createdOn + " , ";
       obj.workerNames = text;
     }
 
@@ -141,7 +145,9 @@ export function getWorkersDetailsByTeam(tid, tna, nArr, returnKey) {
     });
   }
   if (nameArr.length > 0) {
-    return tna + ": " + nameArr.length + "pax  ( " + nameArr.join() + " ) ";
+    return (
+      tna + ": " + nameArr.length + "pax  ( " + nameArr.join(",  ") + " ) "
+    );
   }
 }
 export function getPreviewContent(obj, libArr) {
@@ -181,6 +187,7 @@ export function getReasons() {
     { id: 4, reason: "Home Leave" },
     { id: 5, reason: "Late" },
     { id: 6, reason: "Early Start" },
+    { id: 7, reason: "OT" },
     { id: 99, reason: "Others" },
   ];
 }

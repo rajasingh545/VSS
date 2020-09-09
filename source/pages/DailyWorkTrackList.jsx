@@ -57,7 +57,7 @@ export default class DailyWorkTrackList extends React.Component {
     //  }
   }
   componentWillReceiveProps(nextProps) {
-    console.log(nextProps);
+    // console.log(nextProps);
 
     const { requestDet } = nextProps;
     this.setState({ listingDetails: nextProps.listingDetails });
@@ -98,7 +98,7 @@ export default class DailyWorkTrackList extends React.Component {
   };
 
   Listings = (listings) => {
-    console.log(listings);
+    // console.log(listings);
 
     let { workRequestData, requestDet } = this.props;
     let response = "";
@@ -132,26 +132,34 @@ export default class DailyWorkTrackList extends React.Component {
           clientname,
         });
         let elmId = "elm_" + requestDetails.workArrangementId;
-        data.Title = projectName + " : " + clientname;
+        data.Title =
+          projectName +
+          " : " +
+          clientname +
+          " , " +
+          data.createdByName +
+          " , " +
+          moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
         data.paragraph = "";
         let p = "";
 
-        if (data.requestSizeList.length > 0) {
+        if (data.requestSizeList && data.requestSizeList.length > 0) {
           data.requestSizeList.map((_x) => {
             p += "<p> " + _x.expandteams + " ;</p>  </br>";
           });
         }
-        if (data.requestMatList.length > 0) {
+        if (data.requestMatList && data.requestMatList.length > 0) {
           data.requestMatList.map((_x) => {
             p += "<p> " + _x.expandmaterials + " ;</p>  </br>";
           });
         }
-        if (data.requestItems.length > 0) {
+        if (data.requestItems && data.requestItems.length > 0) {
           data.requestItems.map((_x) => {
             p += "<p> " + _x.WR_text + " : " + _x.expanditems + " ;</p>  </br>";
           });
         }
         data.paragraph += p;
+        // console.log(data);
 
         // return (
         //   <div
@@ -164,7 +172,7 @@ export default class DailyWorkTrackList extends React.Component {
         //   </div>
         // );
       });
-      console.log(listings);
+      // console.log(listings);
 
       return (
         <CollapsiblePanel

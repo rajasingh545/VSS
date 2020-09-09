@@ -3,11 +3,14 @@ import { Accordion, Icon, Label, Menu, Table } from "semantic-ui-react";
 
 export default class AccordionExampleFluid extends Component {
   state = { activeIndex: 0, workArrangementList: [] };
-
-  componentWillReceiveProps(nextprops) {
-    // console.log(nextprops);
+  componentDidMount() {
     this.setState({
-      workArrangementList: nextprops.listingDetails,
+      workArrangementList: this.props.listingDetails,
+    });
+  }
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      workArrangementList: nextProps.listingDetails,
     });
   }
 
@@ -23,9 +26,13 @@ export default class AccordionExampleFluid extends Component {
   };
   // eslint-disable-next-line consistent-return
   render() {
-    const { activeIndex } = this.state;
+    const { activeIndex, workArrangementList } = this.state;
+    // console.log(workArrangementList);
+
     if (Array.isArray(this.props.listingDetails)) {
-      if (this.props.listingDetails.length === 0) {
+      // console.log("this.props.listingDetails", this.props.listingDetails);
+
+      if (workArrangementList.length === 0) {
         return (
           <div
             style={{
@@ -39,10 +46,10 @@ export default class AccordionExampleFluid extends Component {
             No Listings Found
           </div>
         );
-      } else if (this.props.listingDetails.length > 0) {
+      } else if (workArrangementList.length > 0) {
         return (
           <Accordion fluid styled>
-            {this.props.listingDetails.map((listData, index) => (
+            {workArrangementList.map((listData, index) => (
               <div>
                 <Accordion.Title
                   active={activeIndex === index}

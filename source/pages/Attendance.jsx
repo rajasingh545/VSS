@@ -237,6 +237,7 @@ class Attedence extends React.Component {
       projectTitle: "Select Project",
       showSubButton: false,
     });
+    // console.log(this.timeValuesArr, finalValuesArr);
 
     dispatch(requestPost(param));
     if (type == 1) {
@@ -285,7 +286,9 @@ class Attedence extends React.Component {
     }
   };
   onTimeChange = (value, name, id, workerName) => {
-    this.timeValuesArr[name] = value.format("HH:mm");
+    // console.log(value);
+
+    this.timeValuesArr[name] = value.format("HH:mm:ss");
     let check = name.split("_"),
       { projects, projectId } = this.state,
       { requestDet, listingDetails } = this.props,
@@ -461,13 +464,13 @@ class Attedence extends React.Component {
           }
           // console.log("startTime, endTime", startTime, endTime);
 
-          this.timeFunc(
-            startTime.split(":").slice(0, 2).join("."),
-            endTime.split(":").slice(0, 2).join("."),
-            worker.inTime,
-            worker.outTime,
-            worker.workerId
-          );
+          // this.timeFunc(
+          //   startTime.split(":").slice(0, 2).join("."),
+          //   endTime.split(":").slice(0, 2).join("."),
+          //   worker.inTime,
+          //   worker.outTime,
+          //   worker.workerId
+          // );
           const InName = `in_${worker.workerId}`;
           const OutName = `out_${worker.workerId}`;
           const reasonId = `reason_${worker.workerId}`;
@@ -476,7 +479,6 @@ class Attedence extends React.Component {
 
           this.state[`select_${worker.workerId}`] = "Select..";
 
-          
           if (this.teamArr[workerTeam]) {
             this.teamArr[workerTeam] = parseInt(this.teamArr[workerTeam]) + 1;
           } else {
@@ -485,22 +487,37 @@ class Attedence extends React.Component {
 
           let invalue = "";
           let outvalue = "";
-          if (worker.inTime != "00:00:00") {
-            invalue = moment(`03-25-2015 ${worker.inTime}`);
-            this.timeValuesArr[InName] = worker.inTime;
+          // console.log(this.state.selectedOption);
+
+          if (worker.inTime != "00:00:00" && this.state.selectedOption == "1") {
+            invalue = moment(
+              `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
+            );
+          } else if (
+            worker.inTime == "00:00:00" &&
+            this.state.selectedOption == "1"
+          ) {
+            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
           } else {
-            invalue = moment(`03-25-2015 ${startTime}`);
-            this.timeValuesArr[InName] = startTime;
+            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
           }
-          if (worker.outTime != "00:00:00") {
-            outvalue = moment(`03-25-2015 ${worker.outTime}`);
-            this.timeValuesArr[OutName] = worker.outTime;
+          if (
+            worker.outTime != "00:00:00" &&
+            this.state.selectedOption == "2"
+          ) {
+            outvalue = moment(
+              `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
+            );
+          } else if (
+            worker.outTime == "00:00:00" &&
+            this.state.selectedOption == "2"
+          ) {
+            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
           } else {
-            outvalue = moment(`03-25-2015 ${endTime}`);
-            this.timeValuesArr[OutName] = endTime;
+            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
           }
           rec++;
-          const disable = (worker.assignedWorker == 1)? true : false;
+          const disable = worker.assignedWorker == 1 ? true : false;
           return (
             <div className="row" key={ind}>
               <div className="col-xs-1" style={{ width: "10px" }}>
@@ -528,6 +545,7 @@ class Attedence extends React.Component {
                     }
                     use12Hours
                     name={InName}
+                    id={InName}
                     className="width100"
                     disabled={disable}
                   />
@@ -548,6 +566,7 @@ class Attedence extends React.Component {
                     }
                     use12Hours
                     name={OutName}
+                    id={OutName}
                     className="width100"
                     disabled={disable}
                   />
@@ -652,7 +671,7 @@ class Attedence extends React.Component {
     if (this.props.userType == 5 || this.props.userType == 3) {
       readonly = true;
     }
-    // console.log(this.state.projects);
+    // console.log(this.timeValuesArr);
 
     return (
       <div className="work-arr-container">

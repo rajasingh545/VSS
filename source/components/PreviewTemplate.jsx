@@ -37,7 +37,11 @@ class PreviewTemplate extends React.Component {
       <div
         style={{
           pointerEvents: detailsArr.isNew ? "" : "none",
-          color: detailsArr.isNew ? "green" : "red",
+          color: detailsArr.isNew
+            ? "green"
+            : detailsArr.isDeleted
+            ? "blue"
+            : "red",
         }}
       >
         {list === true && (

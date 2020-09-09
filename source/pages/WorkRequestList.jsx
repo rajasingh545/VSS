@@ -135,6 +135,7 @@ export default class WorkRequestList extends React.Component {
         startDate1: dateSelected,
       });
       this.state.startDate = actualDate;
+      this.state.endDate = actualDate;
       this.handleRequestType(requestType, [], "", requestTypeTitle);
     }
   }
@@ -152,7 +153,7 @@ export default class WorkRequestList extends React.Component {
     let response = "";
     let requestDetails = {};
     this.initialItems = [];
-    if (workRequestData && workRequestData.length > 0) {
+    if (listings && listings.length > 0) {
       response = listings.map((data, index) => {
         let projectName = "";
         let clientname = "";
@@ -184,11 +185,12 @@ export default class WorkRequestList extends React.Component {
         let elmId = "elm_" + requestDetails.workArrangementId;
         let wrstr =
           "VSS-" +
-          CName +
+          data.clientcode +
           "-" +
-          PName +
+          data.projectcode +
           "-WR-" +
-          ("0000" + data.workRequestId).substring(data.workRequestId.length);
+          data.workReqCount;
+        //("0000" + data.workRequestId).substring(data.workRequestId.length);
 
         data.Title =
           wrstr +
@@ -198,10 +200,10 @@ export default class WorkRequestList extends React.Component {
           clientname +
           "  Requested By :  " +
           data.requestedBy +
-          "  Created By :  " +
+          " , " +
           data.createdByName +
-          "  Created On :  " +
-          data.createdOn;
+          " ,  " +
+          moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
         // console.log(data.title, data.requestSizeList, data.requestmanpower);
         if (data.requestSizeList && data.requestSizeList.length > 0) {
           let text = "";
@@ -354,6 +356,11 @@ export default class WorkRequestList extends React.Component {
         "YYYY/MM/DD"
       );
     }
+    if (JSONData.requestJsonData.endDate === "") {
+      JSONData.requestJsonData.endDate = moment(new Date()).format(
+        "YYYY/MM/DD"
+      );
+    }
     if (
       Number(moment(new Date(requestJsonData.startDate1)).format("YYYYMMDD")) >
       Number(moment(new Date(requestJsonData.endDate1)).format("YYYYMMDD"))
@@ -437,7 +444,7 @@ export default class WorkRequestList extends React.Component {
               className=" form-control"
               isClearable={false}
               onChange={this.onStartDateChange}
-              minDate={userType == 1 ? "" : subDays(new Date(), 1)}
+              // minDate={userType == 1 ? "" : subDays(new Date(), 1)}
               maxDate={new Date()}
               name="startDate"
               dateFormat="DD-MM-YYYY"
@@ -450,7 +457,7 @@ export default class WorkRequestList extends React.Component {
               className=" form-control"
               isClearable={false}
               onChange={this.onEndDateChange}
-              minDate={userType == 1 ? "" : new Date()}
+              // minDate={userType == 1 ? "" : new Date()}
               maxDate={addDays(new Date(), 1)}
               name="startDate"
               dateFormat="DD-MM-YYYY"
@@ -492,7 +499,7 @@ export default class WorkRequestList extends React.Component {
               resetThenSet={this.onSelectDropdownProject}
             />
           </div>
-          {workRequestData && loading == false && (
+          {/* {workRequestData && loading == false && (
             <div className="col-xs-2">
               <div style={{ zIndex: 0 }}>
                 <InputSearch
@@ -501,7 +508,7 @@ export default class WorkRequestList extends React.Component {
                 />
               </div>
             </div>
-          )}
+          )} */}
           <div className="col-xs-4">
             <Button
               bsStyle="primary"

@@ -128,6 +128,7 @@ export default class WorkArrangementList extends React.Component {
     let requestDetails = {};
     if (Array.isArray(listings) && listings.length > 0) {
       response = listings.map((data, index) => {
+        data.createdOn = moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
         if (this.state.requestDet)
           requestDetails = getDetailsWithLib2(data, this.state.requestDet);
         // console.log(requestDetails);
