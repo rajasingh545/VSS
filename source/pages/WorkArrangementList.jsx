@@ -155,6 +155,7 @@ export default class WorkArrangementList extends React.Component {
               elementId={elmId}
               onClickList={() => this.redirectView(data.workArrangementId)}
               userType={this.props.userType}
+              data={data}
             />
           </div>
         );
