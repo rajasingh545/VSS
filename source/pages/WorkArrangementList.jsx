@@ -151,6 +151,7 @@ export default class WorkArrangementList extends React.Component {
               detailsArr={requestDetails}
               list={checkBox}
               checkBoxChecked={this.state.selectAll}
+              selectedIds={this.selectedIds}
               onCheckBoxClickCallBack={this.onCheckBoxClickCallBack}
               elementId={elmId}
               onClickList={() => this.redirectView(data.workArrangementId)}
@@ -291,12 +292,16 @@ export default class WorkArrangementList extends React.Component {
     if (e.target.checked) {
       this.setState({ selectAll: true });
       this.state.listingDetails.map((item) => {
-        this.onCheckBoxClickCallBack(item.workArrangementId, true);
+        if (item.isNew) {
+          this.onCheckBoxClickCallBack(item.workArrangementId, true);
+        }
       });
     } else {
       this.setState({ selectAll: false });
       this.state.listingDetails.map((item) => {
-        this.onCheckBoxClickCallBack(item.workArrangementId, false);
+        if (item.isNew) {
+          this.onCheckBoxClickCallBack(item.workArrangementId, false);
+        }
       });
     }
   };

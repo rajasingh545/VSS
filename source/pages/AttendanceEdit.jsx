@@ -381,6 +381,15 @@ class AttedenceEdit extends React.Component {
         //   worker.workerId,
         //   this.errorIdArr.indexOf(worker.workerId) > -1
         // );
+        let a = worker.inTime === "00:00:00" ? startTime : worker.inTime;
+        let b = worker.outTime === "00:00:00" ? endTime : worker.outTime;
+        let aInHr = a.split(":")[0];
+        let aInMi = a.split(":")[1];
+        let bInHr = b.split(":")[0];
+        let bInMi = b.split(":")[1];
+        const format = "hh:mm a";
+        const nowIn = moment().hour(Number(aInHr)).minute(Number(aInMi));
+        const nowOut = moment().hour(Number(bInHr)).minute(Number(bInMi));
         const disable = worker.assignedWorker == 1 ? true : false;
         return (
           <div className="row" key={ind}>
@@ -400,13 +409,14 @@ class AttedenceEdit extends React.Component {
 
             <div className="col-xs-2" style={{ textAlign: "center" }}>
               <TimePicker
-                defaultValue={
-                  worker.inTime === "00:00:00"
-                    ? moment(`${moment().format("DD-MM-YYYY")} ${startTime}`)
-                    : moment(
-                        `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
-                      )
-                }
+                defaultValue={nowIn}
+                // defaultValue={
+                //   worker.inTime === "00:00:00"
+                //     ? moment(`${moment().format("DD-MM-YYYY")} ${startTime}`)
+                //     : moment(
+                //         `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
+                //       )
+                // }
                 disabled={
                   this.props.userType != "1" ? worker.inTimeEntered : false
                 }
@@ -415,7 +425,7 @@ class AttedenceEdit extends React.Component {
                 onChange={(value, id = InName) =>
                   this.onTimeChange(value, id, worker.workerId, workerName)
                 }
-                format="hh:mm a"
+                format={format}
                 use12Hours
                 name={InName}
                 id={InName}
@@ -432,13 +442,14 @@ class AttedenceEdit extends React.Component {
             </div>
             <div className="col-xs-2" style={{ textAlign: "center" }}>
               <TimePicker
-                defaultValue={
-                  worker.outTime === "00:00:00"
-                    ? moment(`${moment().format("DD-MM-YYYY")} ${endTime}`)
-                    : moment(
-                        `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
-                      )
-                }
+                defaultValue={nowOut}
+                // defaultValue={
+                //   worker.outTime === "00:00:00"
+                //     ? moment(`${moment().format("DD-MM-YYYY")} ${endTime}`)
+                //     : moment(
+                //         `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
+                //       )
+                // }
                 disabled={
                   this.props.userType != "1" ? worker.outTimeEntered : false
                 }
@@ -447,7 +458,7 @@ class AttedenceEdit extends React.Component {
                 onChange={(value, id = OutName) =>
                   this.onTimeChange(value, id, worker.workerId, workerName)
                 }
-                format="hh:mm a"
+                format={format}
                 use12Hours
                 name={OutName}
                 id={OutName}
