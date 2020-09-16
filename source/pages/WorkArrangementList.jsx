@@ -128,7 +128,7 @@ export default class WorkArrangementList extends React.Component {
     let requestDetails = {};
     if (Array.isArray(listings) && listings.length > 0) {
       response = listings.map((data, index) => {
-        data.createdOn = moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
+        data.createdOn = moment(data.createdOn).format("MM-DD-YYYY HH:mm A");
         if (this.state.requestDet)
           requestDetails = getDetailsWithLib2(data, this.state.requestDet);
         // console.log(requestDetails);
@@ -151,10 +151,12 @@ export default class WorkArrangementList extends React.Component {
               detailsArr={requestDetails}
               list={checkBox}
               checkBoxChecked={this.state.selectAll}
+              selectedIds={this.selectedIds}
               onCheckBoxClickCallBack={this.onCheckBoxClickCallBack}
               elementId={elmId}
               onClickList={() => this.redirectView(data.workArrangementId)}
               userType={this.props.userType}
+              data={data}
             />
           </div>
         );
@@ -290,12 +292,16 @@ export default class WorkArrangementList extends React.Component {
     if (e.target.checked) {
       this.setState({ selectAll: true });
       this.state.listingDetails.map((item) => {
-        this.onCheckBoxClickCallBack(item.workArrangementId, true);
+        if (item.isNew) {
+          this.onCheckBoxClickCallBack(item.workArrangementId, true);
+        }
       });
     } else {
       this.setState({ selectAll: false });
       this.state.listingDetails.map((item) => {
-        this.onCheckBoxClickCallBack(item.workArrangementId, false);
+        if (item.isNew) {
+          this.onCheckBoxClickCallBack(item.workArrangementId, false);
+        }
       });
     }
   };

@@ -29,9 +29,14 @@ class PreviewTemplate extends React.Component {
       elementId,
       checkBoxChecked,
       onClickList,
+      data,
+      selectedIds,
     } = this.props;
     let checkedValue = checkBoxChecked == true ? true : this.state.checked;
-    // console.log(detailsArr);
+    let index = selectedIds.indexOf(elementId.split("_")[1]);
+    checkedValue = index != "-1" ? true : this.state.checked;
+    // this.selectedIds.splice(index, 1);
+    // console.log(selectedIds, elementId, index);
 
     return (
       <div
@@ -44,7 +49,7 @@ class PreviewTemplate extends React.Component {
             : "red",
         }}
       >
-        {list === true && (
+        {list === true && data.isNew === true && (
           <span style={{ zIndex: "999" }}>
             <input
               value={detailsArr.workArrangementId}
