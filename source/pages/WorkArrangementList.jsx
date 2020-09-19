@@ -86,6 +86,8 @@ export default class WorkArrangementList extends React.Component {
     dispatch(clearListing());
   }
   componentDidMount() {
+    const date = moment().format("YYYY/MM/DD");
+    this.setState({ startDate: date });
     this.getlist();
   }
   getlist = () => {

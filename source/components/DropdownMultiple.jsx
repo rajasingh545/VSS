@@ -97,11 +97,11 @@ class DropdownMultiple extends Component {
         <div className="dd-header" onClick={() => this.toggleList()}>
           <div className="dd-header-title">{headerTitle}</div>
           {listOpen ? (
-            <a href="#">
+            <a>
               <Glyphicon glyph="menu-up" />
             </a>
           ) : (
-            <a href="#">
+            <a>
               <Glyphicon glyph="menu-down" />
             </a>
           )}
@@ -118,7 +118,7 @@ class DropdownMultiple extends Component {
               >
                 {item[name]}{" "}
                 {item.selected && (
-                  <a href="#">
+                  <a>
                     <Glyphicon glyph="ok-circle" />
                   </a>
                 )}
