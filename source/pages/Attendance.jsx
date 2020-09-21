@@ -191,6 +191,16 @@ class Attedence extends React.Component {
   onSubmit = (type) => {
     const { dispatch } = this.props;
     const finalValuesArr = [];
+    let selectedProject = {},
+      startTime = "",
+      endTime = "";
+    if (this.state.projectId !== "" && this.state.projects.length > 0) {
+      selectedProject = this.state.projects.find(
+        (element) => element.projectId === this.state.projectId
+      );
+      startTime = selectedProject.startTime;
+      endTime = selectedProject.endTime;
+    }
     if (this.selectedIds.length == 0) {
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
@@ -201,12 +211,25 @@ class Attedence extends React.Component {
         finalValuesArr[id] = {
           IN: this.timeValuesArr[`in_${id}`],
         };
+      } else {
+        if (this.state.selectedOption == "1") {
+          finalValuesArr[id] = {
+            IN: startTime,
+          };
+        }
       }
       if (this.timeValuesArr[`out_${id}`]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
           OUT: this.timeValuesArr[`out_${id}`],
         };
+      } else {
+        if (this.state.selectedOption == "2") {
+          finalValuesArr[id] = {
+            ...finalValuesArr[id],
+            OUT: endTime,
+          };
+        }
       }
       if (this.timeValuesArr[`reason_${id}`]) {
         finalValuesArr[id] = {
@@ -237,7 +260,6 @@ class Attedence extends React.Component {
       projectTitle: "Select Project",
       showSubButton: false,
     });
-    // console.log(this.timeValuesArr, finalValuesArr);
 
     dispatch(requestPost(param));
     if (type == 1) {
