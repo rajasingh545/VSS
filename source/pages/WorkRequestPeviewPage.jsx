@@ -409,7 +409,7 @@ class WorkRequestPreviewPage extends React.Component {
         </div>
 
         <br />
-        <WorkRequestPreview curState={this.state} images={this.state.images} />
+        <WorkRequestPreview curState={this.state} images={this.state.images} submitBefore={1} />
         <br />
       </div>
     );

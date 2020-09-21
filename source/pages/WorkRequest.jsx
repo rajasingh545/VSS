@@ -51,10 +51,12 @@ class WorkRequest extends React.Component {
       manpowerList: [],
       clientsStore: [],
       showSizePopup: false,
-      drawingimage: "",
-      drawImageshow: "",
+      //drawingimage: "",
+      drawingimage: [],
+      drawImageshow: [],
       isLoading: false,
       contractSize: 0,
+      basePath:'',
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -237,7 +239,42 @@ class WorkRequest extends React.Component {
   onTimeChange = (el) => {
     this.setState({ [el.name]: el.value });
   };
-  filepload = (e) => {
+
+  multiplefileupload = (e) => {
+    e.preventDefault();
+    this.setState({ isLoading: true });
+    let formData = new FormData();
+    formData.append("uniqueId", this.state.userId);
+    formData.append("requestCode", 24);
+    //formData.append("workrequestid", this.state.listingId);
+    for (let i = 0; i < e.target.files.length; i++) {
+      formData.append("drawingimage[]", e.target.files[i]);
+    }
+     fetch(API.WORKREQUEST_URI, {
+      method: "post",
+      body: formData,
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          const basePath = res.basePath;
+          const imageURL = res.imageurl;
+          const drawURL = basePath.concat(imageURL);
+          this.state.drawingimage = res.imageurl;
+          this.setState({
+            drawingimage: res.imageurl,
+            drawImageshow: drawURL,
+            isLoading: false,
+            basepath:basePath
+          });
+        } else {
+          this.setState({isLoading:false});
+          //toast.error(res.response, { autoClose: 3000 });
+        }
+      });
+  };
+
+  fileupload = (e) => {
     e.preventDefault();
     this.setState({ isLoading: true });
     const formData = new FormData();
@@ -265,6 +302,7 @@ class WorkRequest extends React.Component {
         }
       });
   };
+  
   submitRequest = (status) => {
     const { dispatch } = this.props;
     const formValidation = this.validateForm();
@@ -275,7 +313,7 @@ class WorkRequest extends React.Component {
       }
       this.state.requestCode = 14;
       this.state.status = status;
-      this.state.drawImageshow = "";
+      this.state.drawImageshow = [];
 
       dispatch(workRequestPost(Object.assign(this.state)));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
@@ -620,14 +658,9 @@ class WorkRequest extends React.Component {
                     ref="file"
                     id="drawingAttachedFile"
                     name="drawingAttachedFile"
-                    onChange={this.filepload}
+                    onChange={this.multiplefileupload}
+                    multiple
                   />
-                </div>
-              )}
-
-              {drawingimage && (
-                <div className="col-sm-12">
-                  <Image src={drawImageshow} onClick={this.click} />
                 </div>
               )}
             </div>
@@ -656,7 +689,7 @@ class WorkRequest extends React.Component {
                   ref="file"
                   id="drawingAttachedFile"
                   name="drawingAttachedFile"
-                  onChange={this.filepload}
+                  onChange={this.multiplefileupload}
                 />
               </div>
             )}
@@ -918,7 +951,7 @@ class WorkRequest extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <WorkRequestPreview curState={this.state} images={[]} />
+            <WorkRequestPreview curState={this.state} images={[]} submitBefore={1} />
           </Modal.Body>
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>
