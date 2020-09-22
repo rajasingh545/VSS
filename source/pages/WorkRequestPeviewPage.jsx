@@ -37,6 +37,7 @@ class WorkRequestPreviewPage extends React.Component {
       sizeList: [],
       manpowerList: [],
       images: [],
+      drawingImage: [],
     };
     this.itemList = [];
     this.sizeList = [];
@@ -147,7 +148,7 @@ class WorkRequestPreviewPage extends React.Component {
         "clientId",
         "clientName"
       );
-      let images = "";
+      let images = [];
       if (
         nextProps.workRequestData &&
         nextProps.workRequestData.requestDetails.completionImages &&

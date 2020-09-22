@@ -3,6 +3,7 @@ import { Grid, Image } from "semantic-ui-react";
 import { Modal } from "react-bootstrap";
 import {Button} from 'react-bootstrap';
 import * as API from "../config/api-config";
+
 import CustomButton from "./CustomButton";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -12,21 +13,21 @@ class WorkRequestPreview extends Component {
     this.state = {
       curState: props.curState,
       images: props.images,
-      isLoading: false,
-      drawingImage: props.curState.drawImageshow,
+      drawingImage: props.curState.drawingImage,
       submitBefore:props.submitBefore,
       show:false,
       imageShow:false,
       modalShowImage: '',
+      isLoading: false,
     };
   }
 
   componentWillReceiveProps(nextProps) {
-    console.log("constructor",nextProps);
     this.setState({
       curState: nextProps.curState,
       images: nextProps.images,
       drawingImage: nextProps.curState.drawingImage,
+      submitBefore:nextProps.submitBefore,
     });
   }
 
@@ -35,6 +36,45 @@ class WorkRequestPreview extends Component {
   };
 
 
+  drawingImageShowList = (itemList) =>{
+    const imgURL = API.CONTEXT;
+    return itemList.map((item, index) => {
+      return (
+        <div><Image src={imgURL+"/"+item} className="ui tiny image" onClick={()=>this.drawclick(item)} />
+        </div>
+      );
+    });
+  }
+
+  imageShowList = (itemList) =>{
+    const imgURL = API.CONTEXT;
+    return itemList.map((item, index) => {
+      return (
+        <div><Image src={imgURL+"/"+item} className="ui tiny image" onClick={()=>this.imageClick(item)} />
+        </div>
+      );
+    });
+  }
+
+  gridDrawList = (itemList) => {
+    return (
+      <Grid>
+        <Grid.Row columns={8} key={Math.random()}>
+         {this.drawingImageShowList(itemList)}
+        </Grid.Row>
+        </Grid>
+    )
+  }
+
+  gridImageList = (itemList) =>{
+    return (
+      <Grid>
+        <Grid.Row columns={8} key={Math.random()}>
+         {this.imageShowList(itemList)}
+        </Grid.Row>
+        </Grid>
+    )
+  }
   setItemList = (itemList) => {
     return itemList.map((item) => {
       const sizeList = item.sizeList ? item.sizeList[0] : [];
@@ -267,6 +307,7 @@ class WorkRequestPreview extends Component {
     }
     
     drawDeleteAction = (image,reqId,uniqueId) => {
+      const { curState } = this.state
       const obj = {
         requestCode:27,
         imageId:image,
@@ -283,8 +324,7 @@ class WorkRequestPreview extends Component {
       .then(response =>response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.state.drawingimage.concat(res.imageurl);
-          this.setState({images: this.state.drawingimage.concat(res.imageurl),show: false, modalShowImage:""});
+          this.setState({drawingImage: res.imageurl,show: false, modalShowImage:""});
         } else {
           this.setState({
              show: false, modalShowImage:""
@@ -311,7 +351,7 @@ class WorkRequestPreview extends Component {
       .then(response =>response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.setState({images: this.state.images.concat(res.imageurl),imageShow: false, modalShowImage:""});
+          this.setState({images: res.imageurl,imageShow: false, modalShowImage: "" });
         } else {
           this.setState({
              imageShow: false, modalShowImage:""
@@ -339,8 +379,7 @@ class WorkRequestPreview extends Component {
         .then((response) => response.json())
         .then((res) => {
           if (res.responsecode === 1) {
-            this.state.drawingimage = res.imageurl;
-            this.setState({drawingimage: this.state.drawingimage.concat(res.imageurl)});
+            this.setState({drawingImage: res.imageurl});
           } else {
             console.log(res.response);
             // toast.error(res.response, { autoClose: 3000 });
@@ -350,14 +389,12 @@ class WorkRequestPreview extends Component {
 
   filepload = (e) => {
     this.setState({ isLoading: true });
-    const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
     const formData = new FormData();
     formData.append("uniqueId", curState.userId);
     formData.append("requestCode", 25);
     formData.append("workrequestid", curState.listingId);
-    let images = [];
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("images[]", e.target.files[i]);
     }
@@ -368,21 +405,21 @@ class WorkRequestPreview extends Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.state.images = res.imageurl;
           this.setState({
-            images: this.state.images.concat(res.imageurl),
+            images: res.imageurl,
             isLoading: false,
           });
         } else {
           this.setState({ isLoading: false });
-          console.log(res.response);
-          // toast.error(res.response, { autoClose: 3000 });
+          toast.error(res.response, { autoClose: 3000 });
         }
       });
   };
 
   render() {
-    const { curState, images, isLoading, drawingImage } = this.state;
+    const { curState, images, isLoading, drawingImage,modalShowImage } = this.state;
+    console.log("before submission",curState);
+    const imgURL = API.CONTEXT;
     return (
       <div>
         <div className="container work-arr-container">
@@ -437,25 +474,15 @@ class WorkRequestPreview extends Component {
             </div>
             </div>
              ):("")}
-          {drawingImage && drawingImage.length > 0 ? (
+          {drawingImage.length > 0 && (
             <div className="row">
-                <div className="col-sm-2">
-                <label>DrawingImage:</label>
+              <div className="col-sm-2">
+              <label>DrawingImage:</label>
               </div>
               <div className="col-sm-10">
-                <Grid>
-                  <Grid.Row columns={8} key={Math.random()}>
-                    {drawingImage.map((_x,index) => (
-                      <Grid.Column>
-                        <Image src={_x} className="ui tiny image" onClick={()=>this.drawclick(_x)} />
-                      </Grid.Column>
-                    ))}
-                  </Grid.Row>
-                </Grid>
+              {this.gridDrawList(drawingImage)}
               </div>
-              </div>
-            ) : (
-              ""
+            </div>
             )}
             <Modal
           show={this.state.show}
@@ -467,7 +494,7 @@ class WorkRequestPreview extends Component {
               {
                 curState.userType == 1 || curState.userType == 5 ? (
                   <div>
-                    <Button onClick={()=>this.drawDeleteAction(this.state.modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
+                    <Button onClick={()=>this.drawDeleteAction(modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
                   </div>
                              ):("")
               }
@@ -475,11 +502,11 @@ class WorkRequestPreview extends Component {
           </Modal.Header>
           <Modal.Body>
             <div>
-            <Image src={this.state.modalShowImage} className="ui centered large image" />
+            <Image src={imgURL+"/"+modalShowImage} className="ui centered large image" />
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <CustomButton bsStyle="secondary" onClick={this.handleClose}>
+            <CustomButton variant="secondary" onClick={this.handleClose}>
               Close
             </CustomButton>
           </Modal.Footer>
@@ -540,22 +567,17 @@ class WorkRequestPreview extends Component {
             </div>
             </div>
              ):("")}
-            {images && images.length > 0 ? (
-              <div className="col-sm-12">
-                <Grid>
-                  <Grid.Row columns={8}>
-                    {images.map((_x) => (
-                      <Grid.Column>
-                        <Image src={_x} className="ui tiny image" onClick={()=>this.imageClick(_x)} />
-                      </Grid.Column>
-                    ))}
-                  </Grid.Row>
-                </Grid>
+             {images.length > 0 && (
+            <div className="row">
+              <div className="col-sm-2">
+              <label>Images:</label>
               </div>
-            ) : (
-              ""
+              <div className="col-sm-10">
+              {this.gridImageList(images)}
+              </div>
+            </div>
             )}
-             <Modal
+            <Modal
           show={this.state.imageShow}
           onHide={this.handleClose}
           dialogClassName="modallg"
@@ -565,7 +587,7 @@ class WorkRequestPreview extends Component {
               {
                 curState.userType == 1 || curState.userType == 5 ? (
                   <div>
-                    <Button onClick={()=>this.imageDeleteAction(this.state.modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
+                    <Button onClick={()=>this.imageDeleteAction(modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
                   </div>
                              ):("")
               }
@@ -573,11 +595,11 @@ class WorkRequestPreview extends Component {
           </Modal.Header>
           <Modal.Body>
             <div>
-            <Image src={this.state.modalShowImage} className="ui centered large image" />
+            <Image src={imgURL+"/"+modalShowImage} className="ui centered large image" />
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <CustomButton bsStyle="secondary" onClick={this.handleClose}>
+            <CustomButton variant="secondary" onClick={this.handleClose}>
               Close
             </CustomButton>
           </Modal.Footer>

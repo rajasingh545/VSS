@@ -51,12 +51,9 @@ class WorkRequest extends React.Component {
       manpowerList: [],
       clientsStore: [],
       showSizePopup: false,
-      //drawingimage: "",
-      drawingimage: [],
-      drawImageshow: [],
+      drawingImage: [],
       isLoading: false,
       contractSize: 0,
-      basePath:'',
     };
     this.drawingAttachedFile = [];
     this.itemList = [];
@@ -257,15 +254,10 @@ class WorkRequest extends React.Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          const basePath = res.basePath;
-          const imageURL = res.imageurl;
-          const drawURL = basePath.concat(imageURL);
-          this.state.drawingimage = res.imageurl;
+          this.state.drawingImage = res.imageurl;
           this.setState({
-            drawingimage: res.imageurl,
-            drawImageshow: drawURL,
+            drawingImage: res.imageurl,
             isLoading: false,
-            basepath:basePath
           });
         } else {
           this.setState({isLoading:false});
@@ -288,13 +280,9 @@ class WorkRequest extends React.Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          const basePath = res.basepath;
-          const imageURL = res.imageurl;
-          const drawURL = basePath.concat(imageURL);
-          this.state.drawingimage = res.imageurl;
+          this.state.drawingImage = res.imageurl;
           this.setState({
-            drawingimage: res.imageurl,
-            drawImageshow: drawURL,
+            drawingImage: res.imageurl,
             isLoading: false,
           });
         } else {
@@ -313,8 +301,7 @@ class WorkRequest extends React.Component {
       }
       this.state.requestCode = 14;
       this.state.status = status;
-      this.state.drawImageshow = [];
-
+      console.log("before submit data",this.state);
       dispatch(workRequestPost(Object.assign(this.state)));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
 
@@ -486,8 +473,7 @@ class WorkRequest extends React.Component {
 
   /* Render */
   render() {
-    const { itemtitle, drawingimage, isLoading, drawImageshow } = this.state;
-    // console.log("==",this.state.scaffoldworktypetitle, this.state.scaffoldtypetitle,this.state.scaffoldcategorytitle);
+    const { itemtitle, isLoading } = this.state;
 
     let showSizeAddButton = true;
     let showManPowerAddButton = true;
@@ -908,35 +894,62 @@ class WorkRequest extends React.Component {
         <div className="row">
           <div className="col-12">
             <div className="col-sm-3">
-              <CustomButton
+            {
+              isLoading ? (<CustomButton
+                disabled
                 id="draft"
                 bsStyle="secondary"
                 type="submit"
                 onClick={() => this.submitRequest(2)}
               >
                 Draft
-              </CustomButton>{" "}
-            </div>
-            <div className="col-sm-3">
-              {" "}
-              <CustomButton
-                bsStyle="warning"
-                id="preview"
+              </CustomButton>) : (<CustomButton
+                id="draft"
+                bsStyle="secondary"
                 type="submit"
-                onClick={this.setPreview}
+                onClick={() => this.submitRequest(2)}
               >
-                Preview
-              </CustomButton>
+                Draft
+              </CustomButton>)
+            }
             </div>
             <div className="col-sm-3">
-              <CustomButton
+              {
+                isLoading ? (<CustomButton
+                  disabled
+                  bsStyle="warning"
+                  id="preview"
+                  type="submit"
+                  onClick={this.setPreview}
+                >Preview
+                </CustomButton>) : (<CustomButton
+                  bsStyle="warning"
+                  id="preview"
+                  type="submit"
+                  onClick={this.setPreview}
+                >Preview
+                </CustomButton>)
+              }
+              </div>
+            <div className="col-sm-3">
+              {
+                isLoading ? (<CustomButton
+                  disabled
+                  bsStyle="primary"
+                  id="draft"
+                  type="submit"
+                  onClick={() => this.submitRequest(1)}
+                >
+                  Submit
+                </CustomButton>) : (<CustomButton
                 bsStyle="primary"
                 id="draft"
                 type="submit"
                 onClick={() => this.submitRequest(1)}
               >
                 Submit
-              </CustomButton>{" "}
+              </CustomButton>)
+              }
             </div>
           </div>
         </div>
@@ -951,7 +964,7 @@ class WorkRequest extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <WorkRequestPreview curState={this.state} images={[]} submitBefore={1} />
+            <WorkRequestPreview curState={this.state} images={[]} submitBefore={0} />
           </Modal.Body>
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>
