@@ -100,7 +100,7 @@ class DailyWorkTrack extends React.Component {
       requestByName: "",
       showManpowerPopup: false,
       selectedWRId: 0,
-      imagePush: [1, 2, 3],
+      imagePush: [1],
       isLoading: false,
     };
 
@@ -170,8 +170,8 @@ class DailyWorkTrack extends React.Component {
     this.setState({
       isLoading: true,
     });
-    // this.images[event.target.name] = event.target.files[0];
-    // this.setState({ images:this.images });
+    this.images[event.target.name] = event.target.files[0];
+    this.setState({ images:this.images });
     const ext = event.target.files[0].name.split(".");
 
     const data = new FormData();
@@ -317,7 +317,9 @@ class DailyWorkTrack extends React.Component {
       }, 3000);
     }
   };
+
   validateForm = () => {
+    const { photo_1, photo_2, photo_3,photo_4,photo_5,photo_6,photo_7,photo_8,photo_9,photo_10 } = this.state;
     if (!this.state.value_projects) {
       toast.error("Project is required", { autoClose: 3000 });
       return false;
@@ -338,6 +340,15 @@ class DailyWorkTrack extends React.Component {
       }
     }
 
+    if (this.state.cType == 2) {
+      if(!photo_1 && !photo_2 && !photo_3 && !photo_4 && !photo_5 && !photo_6 && !photo_7 && !photo_8 && !photo_9 && !photo_10){
+        toast.error("upload photo atleast one is required", { autoClose: 3000 });
+          return false;
+      }
+    }
+
+  
+
     if (this.state.matMisuse == 1 && !this.state.matPhotos) {
       toast.error("Material misuse photo is required", { autoClose: 3000 });
       return false;
@@ -351,6 +362,7 @@ class DailyWorkTrack extends React.Component {
   };
 
   setPreview = () => {
+    console.log("state data",this.state);
     this.setState({ show: true });
   };
   handleClose = () => {
@@ -752,7 +764,7 @@ class DailyWorkTrack extends React.Component {
                   </div>
                 );
               })}
-            {this.state.imagePush.length <= 5 && (
+            {this.state.imagePush.length <= 9 && (
               <div className="row pull-right">
                 <div className="col-xs-6">
                   <button

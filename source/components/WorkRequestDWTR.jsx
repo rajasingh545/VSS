@@ -11,12 +11,14 @@ export default class WorkRequestDWTR extends Component {
 
     this.state = {
       uniqueId: Date.now(),
+      imagePush: [1],
+      isLoading: false,
     };
   }
 
   selectImages = (event) => {
+    this.setState({isLoading:true});
     const ext = event.target.files[0].name.split(".");
-
     const data = new FormData();
     data.append("image", event.target.files[0], event.target.files[0].name);
     data.append("uniqueId", this.state.uniqueId);
@@ -26,11 +28,10 @@ export default class WorkRequestDWTR extends Component {
       [event.target
         .name]: `images/${this.state.uniqueId}/${event.target.name}.${ext[1]}`,
     });
-
-    this.uploadImages(data);
+    this.uploadImages(data,event.target.name);
   };
 
-  uploadImages = (obj) => {
+  uploadImages = (obj,imageAttr) => {
     fetch(API.WORKREQUEST_URI, {
       method: "post",
       mode: "cors",
@@ -41,8 +42,10 @@ export default class WorkRequestDWTR extends Component {
   };
   imageUploadSuccess = (json) => {
     if (json.responsecode == 1) {
+      this.setState({isLoading:false});
       toast.success("Image uploaded Successfully", { autoClose: 3000 });
     } else {
+      this.setState({isLoading:false});
       toast.error(`Error: ${json.response}`, { autoClose: 3000 });
     }
   };
@@ -69,7 +72,16 @@ export default class WorkRequestDWTR extends Component {
     this.onFormChange(e);
   };
 
+  itemAddition = () => {
+    let arrayData = this.state.imagePush;
+    const lastData = arrayData.slice(-1)[0];
+    const newCount = lastData + 1;
+    if (!arrayData.includes(newCount)) arrayData.push(newCount);
+    this.setState({ imagePush: arrayData });
+  };
+
   validateWorkRequestForm = () => {
+    const { photo_1, photo_2, photo_3,photo_4,photo_5,photo_6,photo_7,photo_8,photo_9,photo_10 } = this.state;
     if (typeof this.state.wrno === "undefined" || this.state.wrno == "") {
       toast.error("Please select work request id", { autoClose: 3000 });
       return false;
@@ -123,16 +135,21 @@ export default class WorkRequestDWTR extends Component {
       }
     }
 
-    if (this.state.selectedArrWR.workRequestsizebased == "yes") {
-      if (
-        typeof this.state.photo_1 === "undefined" ||
-        typeof this.state.photo_2 === "undefined" ||
-        typeof this.state.photo_3 === "undefined"
-      ) {
-        // msg1 = "Required upload photos";
-        toast.error("Required upload photos", { autoClose: 3000 });
+    if(!photo_1 && !photo_2 && !photo_3 && !photo_4 && !photo_5 && !photo_6 && !photo_7 && !photo_8 && !photo_9 && !photo_10){
+      toast.error("Required upload photos", { autoClose: 3000 });
         return false;
-      }
+    }
+
+    if (this.state.selectedArrWR.workRequestsizebased == "yes") {
+      // if (
+      //   typeof this.state.photo_1 === "undefined" ||
+      //   typeof this.state.photo_2 === "undefined" ||
+      //   typeof this.state.photo_3 === "undefined"
+      // ) {
+      //   // msg1 = "Required upload photos";
+      //   toast.error("Required upload photos", { autoClose: 3000 });
+      //   return false;
+      // }
     }
 
     return true;
@@ -159,7 +176,15 @@ export default class WorkRequestDWTR extends Component {
         photo_1: this.state.photo_1,
         photo_2: this.state.photo_2,
         photo_3: this.state.photo_3,
+        photo_4: this.state.photo_4,
+        photo_5: this.state.photo_5,
+        photo_6: this.state.photo_6,
+        photo_7: this.state.photo_7,
+        photo_8: this.state.photo_8,
+        photo_9: this.state.photo_9,
+        photo_10: this.state.photo_10,
       };
+      console.log("add work request images",list);
       this.props.handleSubmit(list);
     }
   };
@@ -187,6 +212,7 @@ export default class WorkRequestDWTR extends Component {
   };
 
   render() {
+    const { imagePush } = this.state;
     return (
       <div className="orginalContract">
         <div className="row">
@@ -349,29 +375,40 @@ export default class WorkRequestDWTR extends Component {
         )}
         <br />
         <br />
-
-        <div className="row" style={{ paddingTop: "15px" }}>
-          <div className="col-xs-3">Upload Photo 1</div>
-          <div className="col-xs-6">
-            {" "}
-            <input type="file" name="photo_1" onChange={this.selectImages} />
-          </div>
-        </div>
-        <div className="row" style={{ paddingTop: "15px" }}>
-          <div className="col-xs-3">Upload Photo 2</div>
-          <div className="col-xs-6">
-            {" "}
-            <input type="file" name="photo_2" onChange={this.selectImages} />
-          </div>
-        </div>
-        <div className="row" style={{ paddingTop: "15px" }}>
-          <div className="col-xs-3">Upload Photo 2</div>
-          <div className="col-xs-6">
-            {" "}
-            <input type="file" name="photo_3" onChange={this.selectImages} />
-          </div>
-        </div>
-
+        {imagePush.length > 0 &&
+              imagePush.map((data, index) => {
+                return (
+                  <div
+                    className="row"
+                    style={{ paddingTop: "15px" }}
+                    key={index}
+                  >
+                    <div className="col-xs-3">Upload Photo {data}</div>
+                    <div className="col-xs-6">
+                      {" "}
+                      <input
+                        type="file"
+                        name={"photo_" + data}
+                        onChange={this.selectImages}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
+            {imagePush.length <= 9 && (
+              <div className="row pull-right">
+                <div className="col-xs-6">
+                  <button
+                    type="button"
+                    id="Add"
+                    onClick={this.itemAddition}
+                    className="btn btn-default btn-sm right"
+                  >
+                    <span className="glyphicon glyphicon-plus right" />
+                  </button>
+                </div>
+              </div>
+            )}
         <br />
         <hr />
         <br />
@@ -388,9 +425,17 @@ export default class WorkRequestDWTR extends Component {
             </div>
             <div className="col-sm-6">
               {" "}
-              <CustomButton bsStyle="primary" onClick={this.handleSubmit}>
+              {
+                this.state.isLoading ? (
+                  <CustomButton bsStyle="primary" disabled onClick={this.handleSubmit}>
                 Submit
               </CustomButton>
+                ) : (
+                  <CustomButton bsStyle="primary" onClick={this.handleSubmit}>
+                Submit
+              </CustomButton>
+                )
+              }
             </div>
           </div>
         </div>
