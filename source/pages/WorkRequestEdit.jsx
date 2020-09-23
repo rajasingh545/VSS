@@ -47,9 +47,8 @@ class WorkRequestEdit extends React.Component {
       itemList: [],
       sizeList: [],
       manpowerList: [],
-      drawImageshow:"",
       contractSize: 0,
-
+      drawingImage: [],
     };
     this.itemList = [];
     this.sizeList = [];
@@ -183,7 +182,6 @@ class WorkRequestEdit extends React.Component {
         remarks: requestDet.remarks,
         drawingAttached:requestDet.drawingAttach,
         drawingImage:requestDet.drawingImage,
-        drawImageshow:requestDet.drawingImage,
         completionImages:requestDet.completionImages,
         location1:requestDet.location,
         basePath:requestDet.basePath,
@@ -236,11 +234,8 @@ class WorkRequestEdit extends React.Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          const basePath = res.basepath;
-          const imageURL = res.imageurl;
-          const drawURL = basePath.concat(imageURL);
-          this.state.drawingimage = res.imageurl;
-          this.setState({ drawingimage: imageURL,drawImageshow:drawURL });
+          this.state.drawingImage = res.imageurl;
+          this.setState({ drawingImage: imageURL });
         }else{
         }
       });
@@ -917,12 +912,12 @@ class WorkRequestEdit extends React.Component {
                   />
                 </div>
               )}
-              {this.state.drawImageshow && (
+              {this.state.drawingImage && (
                 <div className="col-sm-12">
                  <Grid>
                   <Grid.Row columns={8}>
                       <Grid.Column >
-                        <Image src={this.state.drawImageshow} onClick={this.click} />
+                        <Image src={this.state.drawingImage} onClick={this.click} />
                       </Grid.Column>
                   </Grid.Row>
                 </Grid>
@@ -1178,7 +1173,7 @@ class WorkRequestEdit extends React.Component {
             </Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <WorkRequestPreview curState={this.state} images={[]}/>
+            <WorkRequestPreview curState={this.state} images={[]} submitBefore={0} />
           </Modal.Body>
           <Modal.Footer>
             <CustomButton bsStyle="secondary" onClick={this.handleClose}>
