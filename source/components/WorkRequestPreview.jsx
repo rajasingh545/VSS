@@ -1,16 +1,24 @@
 import React, { Component } from "react";
 import { Grid, Image } from "semantic-ui-react";
+import { Modal } from "react-bootstrap";
+import {Button} from 'react-bootstrap';
 import * as API from "../config/api-config";
+
+import CustomButton from "./CustomButton";
 import { ToastContainer, toast } from "react-toastify";
+
 class WorkRequestPreview extends Component {
   constructor(props) {
     super(props);
     this.state = {
       curState: props.curState,
       images: props.images,
+      drawingImage: props.curState.drawingImage,
+      submitBefore:props.submitBefore,
+      show:false,
+      imageShow:false,
+      modalShowImage: '',
       isLoading: false,
-      isLoading: false,
-      drawingImage: props.curState.drawImageshow,
     };
   }
 
@@ -19,9 +27,54 @@ class WorkRequestPreview extends Component {
       curState: nextProps.curState,
       images: nextProps.images,
       drawingImage: nextProps.curState.drawingImage,
+      submitBefore:nextProps.submitBefore,
     });
   }
 
+  handleClose = () => {
+    this.setState({ imageShow: false,show: false,modalShowImage:'' });
+  };
+
+
+  drawingImageShowList = (itemList) =>{
+    const imgURL = API.CONTEXT;
+    return itemList.map((item, index) => {
+      return (
+        <div><Image src={imgURL+"/"+item} className="ui tiny image" onClick={()=>this.drawclick(item)} />
+        </div>
+      );
+    });
+  }
+
+  imageShowList = (itemList) =>{
+    const imgURL = API.CONTEXT;
+    return itemList.map((item, index) => {
+      return (
+        <div><Image src={imgURL+"/"+item} className="ui tiny image" onClick={()=>this.imageClick(item)} />
+        </div>
+      );
+    });
+  }
+
+  gridDrawList = (itemList) => {
+    return (
+      <Grid>
+        <Grid.Row columns={8} key={Math.random()}>
+         {this.drawingImageShowList(itemList)}
+        </Grid.Row>
+        </Grid>
+    )
+  }
+
+  gridImageList = (itemList) =>{
+    return (
+      <Grid>
+        <Grid.Row columns={8} key={Math.random()}>
+         {this.imageShowList(itemList)}
+        </Grid.Row>
+        </Grid>
+    )
+  }
   setItemList = (itemList) => {
     return itemList.map((item) => {
       const sizeList = item.sizeList ? item.sizeList[0] : [];
@@ -241,20 +294,107 @@ class WorkRequestPreview extends Component {
     });
   };
 
-  click = () => {
-    console.log("working");
-  };
+    click = () => {
+      console.log("working");
+    };
+
+    drawclick = (image) => {
+       this.setState({ show: true,modalShowImage:image });
+    }
+
+    imageClick = (image) => {
+      this.setState({ imageShow: true, modalShowImage:image });
+    }
+    
+    drawDeleteAction = (image,reqId,uniqueId) => {
+      const { curState } = this.state
+      const obj = {
+        requestCode:27,
+        imageId:image,
+        workrequestid:reqId,
+        uniqueId:uniqueId,
+      }
+      const newObj = Object.assign(obj);
+      fetch(API.WORKREQUEST_URI, {
+        method: 'post',
+        mode:'cors',
+        headers: {'Content-Type':'text/plain'},
+        body: JSON.stringify(newObj)
+      })
+      .then(response =>response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.setState({drawingImage: res.imageurl,show: false, modalShowImage:""});
+        } else {
+          this.setState({
+             show: false, modalShowImage:""
+          });
+          toast.error(res.response, { autoClose: 3000 });
+        }
+      });
+    }
+    
+    imageDeleteAction = (image,reqId,uniqueId) => {
+      const obj = {
+        requestCode:28,
+        imageId:image,
+        workrequestid:reqId,
+        uniqueId:uniqueId,
+      }
+      const newObj = Object.assign(obj);
+      fetch(API.WORKREQUEST_URI, {
+        method: 'post',
+        mode:'cors',
+        headers: {'Content-Type':'text/plain'},
+        body: JSON.stringify(newObj)
+      })
+      .then(response =>response.json())
+      .then((res) => {
+        if (res.responsecode === 1) {
+          this.setState({images: res.imageurl,imageShow: false, modalShowImage: "" });
+        } else {
+          this.setState({
+             imageShow: false, modalShowImage:""
+          });
+          toast.error(res.response, { autoClose: 3000 });
+        }
+      });
+    }
+
+    drawingFilepload = (e) => {
+      const { curState } = this.state;
+      e.preventDefault();
+      const drawformData = new FormData();
+      drawformData.append("uniqueId", curState.userId);
+      drawformData.append("requestCode", 52);
+      drawformData.append("workrequestid", curState.listingId);
+      for (let i = 0; i < e.target.files.length; i++) {
+        drawformData.append("drawingimage[]", e.target.files[i]);
+      }
+      console.log("drawformData",drawformData);
+      fetch(API.WORKREQUEST_URI, {
+        method: "post",
+        body: drawformData,
+      })
+        .then((response) => response.json())
+        .then((res) => {
+          if (res.responsecode === 1) {
+            this.setState({drawingImage: res.imageurl});
+          } else {
+            console.log(res.response);
+            // toast.error(res.response, { autoClose: 3000 });
+          }
+        });
+    }
 
   filepload = (e) => {
     this.setState({ isLoading: true });
-    const { dispatch } = this.props;
     const { curState } = this.state;
     e.preventDefault();
     const formData = new FormData();
     formData.append("uniqueId", curState.userId);
     formData.append("requestCode", 25);
     formData.append("workrequestid", curState.listingId);
-    let images = [];
     for (let i = 0; i < e.target.files.length; i++) {
       formData.append("images[]", e.target.files[i]);
     }
@@ -265,22 +405,21 @@ class WorkRequestPreview extends Component {
       .then((response) => response.json())
       .then((res) => {
         if (res.responsecode === 1) {
-          this.state.drawingimage = res.imageurl;
           this.setState({
-            images: this.state.images.concat(res.imageurl),
+            images: res.imageurl,
             isLoading: false,
           });
         } else {
           this.setState({ isLoading: false });
-
-          console.log(res.response);
-          // toast.error(res.response, { autoClose: 3000 });
+          toast.error(res.response, { autoClose: 3000 });
         }
       });
   };
 
   render() {
-    const { curState, images, isLoading, drawingImage } = this.state;
+    const { curState, images, isLoading, drawingImage,modalShowImage } = this.state;
+    console.log("before submission",curState);
+    const imgURL = API.CONTEXT;
     return (
       <div>
         <div className="container work-arr-container">
@@ -316,16 +455,62 @@ class WorkRequestPreview extends Component {
             </div>
             <div className="col-sm-6 strong">{curState.description}</div>
           </div>
-          {drawingImage && (
+          {
+             this.state.submitBefore === 1 && (curState.userType == 1 || curState.userType == 5) ? (
+              <div className="row">
+            <div>
+              <div className="col-sm-6">
+              <label>DrawingImage:</label>
+            </div>
+            <div className="col-sm-6">
+                <input
+                  type="file"
+                  id="drawingAttachedFiles"
+                  name="drawingAttachedFiles"
+                  multiple
+                  onChange={this.drawingFilepload}
+                />
+            </div>
+            </div>
+            </div>
+             ):("")}
+          {drawingImage.length > 0 && (
             <div className="row">
-              <div className="col-sm-6">
-                <label>DrawingImage:</label>
+              <div className="col-sm-2">
+              <label>DrawingImage:</label>
               </div>
-              <div className="col-sm-6">
-                <img src={drawingImage}></img>
+              <div className="col-sm-10">
+              {this.gridDrawList(drawingImage)}
               </div>
             </div>
-          )}
+            )}
+            <Modal
+          show={this.state.show}
+          onHide={this.handleClose}
+          dialogClassName="modallg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {
+                curState.userType == 1 || curState.userType == 5 ? (
+                  <div>
+                    <Button onClick={()=>this.drawDeleteAction(modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
+                  </div>
+                             ):("")
+              }
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+            <Image src={imgURL+"/"+modalShowImage} className="ui centered large image" />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <CustomButton variant="secondary" onClick={this.handleClose}>
+              Close
+            </CustomButton>
+          </Modal.Footer>
+        </Modal>
           {curState.cType == 1 && this.setItemList(curState.itemList)}
           {curState.cType == 2 && (
             <div>
@@ -360,7 +545,10 @@ class WorkRequestPreview extends Component {
           </div>
           <br></br> <hr></hr>
           <div className="row">
-            <div className="col-sm-6">
+          {
+             this.state.submitBefore === 1 && (curState.userType == 1 || curState.userType == 5) ? (
+               <div>
+              <div className="col-sm-6">
               <label>Images:</label>
             </div>
             <div className="col-sm-6">
@@ -377,21 +565,45 @@ class WorkRequestPreview extends Component {
                 ""
               )}
             </div>
-            {images && images.length > 0 ? (
-              <div className="col-sm-12">
-                <Grid>
-                  <Grid.Row columns={8}>
-                    {images.map((_x) => (
-                      <Grid.Column>
-                        <Image src={_x} onClick={this.click} />
-                      </Grid.Column>
-                    ))}
-                  </Grid.Row>
-                </Grid>
+            </div>
+             ):("")}
+             {images.length > 0 && (
+            <div className="row">
+              <div className="col-sm-2">
+              <label>Images:</label>
               </div>
-            ) : (
-              ""
+              <div className="col-sm-10">
+              {this.gridImageList(images)}
+              </div>
+            </div>
             )}
+            <Modal
+          show={this.state.imageShow}
+          onHide={this.handleClose}
+          dialogClassName="modallg"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title>
+              {
+                curState.userType == 1 || curState.userType == 5 ? (
+                  <div>
+                    <Button onClick={()=>this.imageDeleteAction(modalShowImage,curState.listingId,curState.userId)}>Delete</Button>
+                  </div>
+                             ):("")
+              }
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <div>
+            <Image src={imgURL+"/"+modalShowImage} className="ui centered large image" />
+            </div>
+          </Modal.Body>
+          <Modal.Footer>
+            <CustomButton variant="secondary" onClick={this.handleClose}>
+              Close
+            </CustomButton>
+          </Modal.Footer>
+        </Modal>
           </div>
         </div>
       </div>
