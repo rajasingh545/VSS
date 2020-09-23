@@ -328,7 +328,7 @@ class WorkArrangementEdit extends React.Component {
       });
 
       this.setState({
-        userId: selectedIds,
+        userIds: selectedIds,
         Name: nameArr,
         selectedItemsAddSup: selectedItems,
         selectedListSup: selectedList,
