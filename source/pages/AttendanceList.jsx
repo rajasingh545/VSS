@@ -70,7 +70,9 @@ export default class AttendanceList extends React.Component {
     dispatch(clearListing());
   }
   componentDidMount() {
-    this.handleRequestType("");
+    const date = moment().format("YYYY/MM/DD");
+    this.setState({ startDate: date });
+    this.handleRequestType(date);
   }
   redirectView = (requestId, pid) => {
     this.props.history.push("/Attendance/" + requestId + "/" + pid);

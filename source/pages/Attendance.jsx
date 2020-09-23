@@ -191,6 +191,16 @@ class Attedence extends React.Component {
   onSubmit = (type) => {
     const { dispatch } = this.props;
     const finalValuesArr = [];
+    let selectedProject = {},
+      startTime = "",
+      endTime = "";
+    if (this.state.projectId !== "" && this.state.projects.length > 0) {
+      selectedProject = this.state.projects.find(
+        (element) => element.projectId === this.state.projectId
+      );
+      startTime = selectedProject.startTime;
+      endTime = selectedProject.endTime;
+    }
     if (this.selectedIds.length == 0) {
       toast.error("Please select worker to submit", { autoClose: 3000 });
       return false;
@@ -201,12 +211,25 @@ class Attedence extends React.Component {
         finalValuesArr[id] = {
           IN: this.timeValuesArr[`in_${id}`],
         };
+      } else {
+        if (this.state.selectedOption == "1") {
+          finalValuesArr[id] = {
+            IN: startTime,
+          };
+        }
       }
       if (this.timeValuesArr[`out_${id}`]) {
         finalValuesArr[id] = {
           ...finalValuesArr[id],
           OUT: this.timeValuesArr[`out_${id}`],
         };
+      } else {
+        if (this.state.selectedOption == "2") {
+          finalValuesArr[id] = {
+            ...finalValuesArr[id],
+            OUT: endTime,
+          };
+        }
       }
       if (this.timeValuesArr[`reason_${id}`]) {
         finalValuesArr[id] = {
@@ -237,7 +260,6 @@ class Attedence extends React.Component {
       projectTitle: "Select Project",
       showSubButton: false,
     });
-    // console.log(this.timeValuesArr, finalValuesArr);
 
     dispatch(requestPost(param));
     if (type == 1) {
@@ -490,32 +512,35 @@ class Attedence extends React.Component {
           // console.log(this.state.selectedOption);
 
           if (worker.inTime != "00:00:00" && this.state.selectedOption == "1") {
-            invalue = moment(
-              `${moment().format("DD-MM-YYYY")} ${worker.inTime}`
-            );
+            invalue = worker.inTime;
           } else if (
             worker.inTime == "00:00:00" &&
             this.state.selectedOption == "1"
           ) {
-            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
+            invalue = startTime;
           } else {
-            invalue = moment(`${moment().format("DD-MM-YYYY")} ${startTime}`);
+            invalue = startTime;
           }
           if (
             worker.outTime != "00:00:00" &&
             this.state.selectedOption == "2"
           ) {
-            outvalue = moment(
-              `${moment().format("DD-MM-YYYY")} ${worker.outTime}`
-            );
+            outvalue = worker.outTime;
           } else if (
             worker.outTime == "00:00:00" &&
             this.state.selectedOption == "2"
           ) {
-            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
+            outvalue = endTime;
           } else {
-            outvalue = moment(`${moment().format("DD-MM-YYYY")} ${endTime}`);
+            outvalue = endTime;
           }
+          let aInHr = invalue.split(":")[0];
+          let aInMi = invalue.split(":")[1];
+          let bInHr = outvalue.split(":")[0];
+          let bInMi = outvalue.split(":")[1];
+          const format = "hh:mm a";
+          const nowIn = moment().hour(Number(aInHr)).minute(Number(aInMi));
+          const nowOut = moment().hour(Number(bInHr)).minute(Number(bInMi));
           rec++;
           const disable = worker.assignedWorker == 1 ? true : false;
           return (
@@ -536,9 +561,9 @@ class Attedence extends React.Component {
               {this.state.selectedOption == 1 && (
                 <div className="col-xs-2" style={{ textAlign: "center" }}>
                   <TimePicker
-                    defaultValue={invalue}
+                    defaultValue={nowIn}
                     // value={startTime}
-                    format="hh:mm a"
+                    format={format}
                     showSecond={false}
                     onChange={(value, id = InName) =>
                       this.onTimeChange(value, id, worker.workerId, workerName)
@@ -554,9 +579,9 @@ class Attedence extends React.Component {
               {this.state.selectedOption == 2 && (
                 <div className="col-xs-2" style={{ textAlign: "center" }}>
                   <TimePicker
-                    defaultValue={outvalue}
+                    defaultValue={nowOut}
                     // value={endTime}
-                    format="hh:mm a"
+                    format={format}
                     showSecond={false}
                     onChange={(value, id = OutName) =>
                       this.onTimeChange(value, id, worker.workerId, workerName)

@@ -94,11 +94,11 @@ class Dropdown extends Component {
         <div className="dd-header" onClick={() => this.toggleList()}>
           <div className="dd-header-title ellipsis">{headerTitle}</div>
           {listOpen ? (
-            <a href="#">
+            <a>
               <Glyphicon glyph="menu-up" />
             </a>
           ) : (
-            <a href="#">
+            <a>
               <Glyphicon glyph="menu-down" />
             </a>
           )}
