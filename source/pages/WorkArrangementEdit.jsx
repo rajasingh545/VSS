@@ -373,13 +373,13 @@ class WorkArrangementEdit extends React.Component {
       return false;
     }
     // console.log(this.state.selectedItemsAddSup.length);
-    if (
+    /*if (
       !this.state.selectedItemsAddSup ||
       this.state.selectedItemsAddSup.length == 0
     ) {
       toast.error("Additional supervisor is required", { autoClose: 3000 });
       return false;
-    }
+    }*/
     if (!this.state.workerIds || this.state.workerIds.length == 0) {
       toast.error("Workers is required", { autoClose: 3000 });
       return false;
