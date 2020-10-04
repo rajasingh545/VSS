@@ -143,20 +143,27 @@ export default class WorkRequestList extends React.Component {
   //   this.props.history.push(`/WorkRequestPreview/${requestId}`);
   // };
   redirectView = (requestId) => {
-    if (this.props.userType == 1) {
+    if (this.props.userType == 1 ) {
       this.props.history.push("/WorkRequestPreview/" + requestId);
       // this.props.history.push(`/WorkRequestPreview/${requestId}`);
-    }
+    }   
+    if (this.props.userType == 5 && this.state.requestJsonData.requestData.name == "Draft")  {
+      this.props.history.push("/WorkRequestPreview/" + requestId);
+      // this.props.history.push(`/WorkRequestPreview/${requestId}`);
+    }       
+    console.log("statusCode "+statusCode);
   };
   Listings = (listings) => {
     let { workRequestData, requestDet } = this.props;
     let response = "";
+    let statusCode = 0;
     let requestDetails = {};
     this.initialItems = [];
     if (listings && listings.length > 0) {
       response = listings.map((data, index) => {
         let projectName = "";
         let clientname = "";
+        statusCode =data.status;
         if (this.props.requestDet) {
           // console.log("==",this.props.requestDet.clients[data.projectId])
 
@@ -246,8 +253,7 @@ export default class WorkRequestList extends React.Component {
       return (
         <CollapsiblePanel
           listingDetails={listings}
-          redirectView={this.redirectView}
-        />
+          redirectView={this.redirectView}        />
       );
     } else {
       response = (
