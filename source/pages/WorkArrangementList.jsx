@@ -111,8 +111,18 @@ export default class WorkArrangementList extends React.Component {
       this.handleRequestType(requestType, [], "", requestTypeTitle);
     }
   };
-  redirectView = (requestId) => {
+  redirectView = (requestId,status) => {
     if (this.props.userType == 1) {
+      // this.props.history.push("/WorkArrangment/" + requestId);
+      this.props.history.push({
+        pathname: "/WorkArrangment/" + requestId,
+        state: {
+          ["requestType_Title"]:
+            this.state.requestType == 1 ? "Submitted" : "Draft",
+        },
+      });
+    }
+    if (this.props.userType == 5 && status == 1) {
       // this.props.history.push("/WorkArrangment/" + requestId);
       this.props.history.push({
         pathname: "/WorkArrangment/" + requestId,
@@ -156,7 +166,7 @@ export default class WorkArrangementList extends React.Component {
               selectedIds={this.selectedIds}
               onCheckBoxClickCallBack={this.onCheckBoxClickCallBack}
               elementId={elmId}
-              onClickList={() => this.redirectView(data.workArrangementId)}
+              onClickList={() => this.redirectView(data.workArrangementId,data.status)}
               userType={this.props.userType}
               data={data}
             />
