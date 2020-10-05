@@ -734,3 +734,12 @@ width: 50%;
   .modallg {
     width: 80% ;
 }
+
+@media only screen and (max-width : 812px) {
+	.col-xs-2 {
+ width: 60%;
+} 
+.col-xs-3 {
+    width: 51%;
+}
+ }

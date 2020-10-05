@@ -94,7 +94,16 @@ export default class DailyWorkTrackList extends React.Component {
     }
   }
   redirectView = (requestId) => {
+    if(this.state.userType == 1)
+    {
     this.props.history.push("/DWTRPreview/" + requestId);
+    }
+    console.log("this.state.requestType"+this.state.requestType);
+    if(this.state.userType == 5 && this.state.requestType == 2)
+    {
+    this.props.history.push("/DWTRPreview/" + requestId);
+    }
+    
   };
 
   Listings = (listings) => {

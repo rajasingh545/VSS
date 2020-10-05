@@ -204,7 +204,7 @@ export default class AttendanceList extends React.Component {
             wl.endTime = projects[i].endTime;
             wl.Title =
               projects[i].projectName +
-              " -  " +
+              " - Created By: " +
               wl.createdByName +
               " , " +
               wl.createdOn +
