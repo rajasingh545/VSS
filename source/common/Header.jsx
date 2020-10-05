@@ -157,6 +157,7 @@ export default class Header extends Component {
     sessionStorage.setItem("userId", "");
     sessionStorage.setItem("userType", "");       
     sessionStorage.setItem("userName", ""); 
+    sessionStorage.setItem("wrAccess", ""); 
     this.onSetOpen(false) ;     
     this.props.history.push('/Login');
   }
@@ -217,6 +218,7 @@ export default class Header extends Component {
       };
        let username = sessionStorage.getItem("userName");      
        let userType = sessionStorage.getItem("userType");      
+       let wrAccess = sessionStorage.getItem("wrAccess");      
     return(
     <div style={styles2.content}>
          
@@ -245,7 +247,7 @@ export default class Header extends Component {
               <a href="javascript:void(0);" onClick={()=>this.goToUrl('/AttendanceList')} style={styles2.sidebarLink}> Attendance List</a> 
               } 
             </div>
-            {(userType == 1 || userType == 5) && 
+            {(userType == 1 || (userType == 5 && wrAccess == 1)) && 
               <div label='Work Request'>
                
                 <a href="javascript:void(0);" onClick={()=>this.goToUrl('/WorkRequest')} style={styles2.sidebarLink}> Create Work Request</a>   

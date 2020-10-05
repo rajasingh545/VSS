@@ -33,7 +33,8 @@ componentWillReceiveProps(nextProps){
             sessionStorage.setItem("userId", userId.userId);
             sessionStorage.setItem("userType", userId.userType);
             sessionStorage.setItem("userName", userId.userName);   
-            sessionStorage.setItem("project", userId.project);           
+            sessionStorage.setItem("project", userId.project); 
+            sessionStorage.setItem("wrAccess", userId.wrAccess);          
             this.props.history.push('/Home');
              
         }
