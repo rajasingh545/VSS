@@ -377,7 +377,7 @@ class WorkRequestPreviewPage extends React.Component {
     return (
       <div>
         <br />
-        {userType == 1 && (
+        {userType == 1 ? (
           <div className="row">
             <div className="col-xs-6">
               <br />
@@ -392,7 +392,22 @@ class WorkRequestPreviewPage extends React.Component {
             </div>
             <div className="col-xs-6"> &nbsp;</div>
           </div>
-        )}
+        ) : userType == 5 ? (
+          <div className="row">
+            <div className="col-xs-6">
+              <br />
+              <CustomButton
+                bsStyle="primary"
+                id="draft"
+                type="submit"
+                onClick={() => this.edit(1)}
+              >
+                Edit
+              </CustomButton>
+            </div>
+            <div className="col-xs-6"> &nbsp;</div>
+          </div>
+        ) : ""}
         <div className="row">
           <div className="col-xs-6">
             <br />

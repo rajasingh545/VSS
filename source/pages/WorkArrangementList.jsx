@@ -121,17 +121,7 @@ export default class WorkArrangementList extends React.Component {
             this.state.requestType == 1 ? "Submitted" : "Draft",
         },
       });
-    }
-    if (this.props.userType == 5 && status == 1) {
-      // this.props.history.push("/WorkArrangment/" + requestId);
-      this.props.history.push({
-        pathname: "/WorkArrangment/" + requestId,
-        state: {
-          ["requestType_Title"]:
-            this.state.requestType == 1 ? "Submitted" : "Draft",
-        },
-      });
-    }
+    }    
   };
 
   Listings = (listings) => {
@@ -140,7 +130,7 @@ export default class WorkArrangementList extends React.Component {
     let requestDetails = {};
     if (Array.isArray(listings) && listings.length > 0) {
       response = listings.map((data, index) => {
-        data.createdOn = moment(data.createdOn).format("MM-DD-YYYY HH:mm A");
+        data.createdOn = moment(data.createdOn);//moment(data.createdOn).format("MM-DD-YYYY HH:mm A");
         if (this.state.requestDet)
           requestDetails = getDetailsWithLib2(data, this.state.requestDet);
         // console.log(requestDetails);
