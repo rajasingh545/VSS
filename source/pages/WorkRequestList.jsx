@@ -150,7 +150,10 @@ export default class WorkRequestList extends React.Component {
     if (this.props.userType == 5 && this.state.requestJsonData.requestData.name == "Draft")  {
       this.props.history.push("/WorkRequestPreview/" + requestId);
       // this.props.history.push(`/WorkRequestPreview/${requestId}`);
-    }       
+    }
+    if (this.props.userType == 5 && this.state.requestJsonData.requestData.name == "Submitted")  {
+      this.props.history.push("/WorkRequestPreview/" + requestId);
+    }
     console.log("statusCode "+statusCode);
   };
   Listings = (listings) => {
