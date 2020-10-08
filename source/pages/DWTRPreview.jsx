@@ -380,7 +380,6 @@ class DWTRPreview extends React.Component {
     return (
       <div className="container work-arr-container">
         <br />
-        {userType == 1 && (
           <div className="col-sm-6">
             <CustomButton
               bsStyle="primary"
@@ -391,7 +390,6 @@ class DWTRPreview extends React.Component {
               Edit
             </CustomButton>{" "}
           </div>
-        )}
         <br />
         <br />
 
