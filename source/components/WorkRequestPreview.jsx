@@ -380,9 +380,10 @@ class WorkRequestPreview extends Component {
         .then((res) => {
           if (res.responsecode === 1) {
             this.setState({drawingImage: res.imageurl});
+            toast.success("Drwaing Image upload Successfully", { autoClose: 3000 });
           } else {
             console.log(res.response);
-            // toast.error(res.response, { autoClose: 3000 });
+            toast.error("Drawing Image upload failed.Please try again!", { autoClose: 3000 });
           }
         });
     }
@@ -423,6 +424,8 @@ class WorkRequestPreview extends Component {
     return (
       <div>
         <div className="container work-arr-container">
+        <ToastContainer autoClose={8000} />
+        <br />
           <div className="row">
             <div className="col-sm-6">
               <label>Project:</label>
