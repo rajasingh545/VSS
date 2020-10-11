@@ -34,7 +34,7 @@ export default class SizeWorkRequest extends Component {
 
   componentWillReceiveProps(nextProps) {
 
-    const addedSize = nextProps.sizeList.length > 0 ? this.getAddedSize(this.props.sizeList) : 0;
+    const addedSize = nextProps.sizeList && nextProps.sizeList.length > 0 ? this.getAddedSize(this.props.sizeList) : 0;
     
     if (nextProps.workRequestData) {
       const total = nextProps.workRequestData.total ? (nextProps.workRequestData.total - addedSize) : 0 
