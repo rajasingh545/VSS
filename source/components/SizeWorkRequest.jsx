@@ -33,11 +33,23 @@ export default class SizeWorkRequest extends Component {
   }
 
   componentWillReceiveProps(nextProps) {
+
+    const addedSize = nextProps.sizeList.length > 0 ? this.getAddedSize(this.props.sizeList) : 0;
+    
     if (nextProps.workRequestData) {
-      const total = nextProps.workRequestData.total ? nextProps.workRequestData.total : 0 
+      const total = nextProps.workRequestData.total ? (nextProps.workRequestData.total - addedSize) : 0 
       this.setState({ completedTotal: total});
       this.setState({ remainingSize: parseInt(this.props.contractSize) - parseInt(total) });
     }
+  }
+
+  getAddedSize = (sizeList) => {
+    let addedSize = 0;
+
+    sizeList.map((size) => {
+      addedSize = addedSize + parseInt(size.H * size.L * size.W * size.set);
+    });
+    return addedSize;
   }
 
   onFormChange = (e) => {
