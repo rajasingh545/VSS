@@ -410,7 +410,8 @@ export default class WorkArrangementList extends React.Component {
               </CustomButton>
             </div>
           )}
-          {this.state.showSubButton && (
+
+          {this.state.showSubButton && this.state.userType == "1" && (
             <div className="col-sm-3">
               <br />{" "}
               <CustomButton
