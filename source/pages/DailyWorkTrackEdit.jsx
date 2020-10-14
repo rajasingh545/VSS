@@ -1018,7 +1018,7 @@ class DailyWorkTrackEdit extends React.Component {
             {this.state.disphoto_1 && (
               <div className="row">
                 <div className="col-sm-3">
-                  <label>Photo 1:</label>
+                  <label>Photo 122:</label>
                 </div>
                 <div className="col-sm-3">
                   <button onClick={() => this.delelteImageAction('photo_1')}>Remove</button>
@@ -1228,7 +1228,7 @@ class DailyWorkTrackEdit extends React.Component {
           </div>
         )}
         <div className="row">
-          <div className="col-xs-3">Remarks</div>
+          <div className="col-xs-3">remarks</div>
           <div className="col-xs-6">
             {" "}
             <CustInput

@@ -391,6 +391,10 @@ class DailyWorkTrackPreview extends Component{
                     <div className="col-sm-6 strong"><a href={imgURL+"/"+curState.photo_10} target="_blank"><Image src={imgURL+"/"+curState.photo_10} className="ui tiny image" onClick={()=>this.imageClick(_x)} /></a></div>
                 </div>
               }
+              <div className="row">
+            <div className="col-sm-6"><label>Remarks</label></div>
+            <div className="col-sm-6 strong">{curState.remarks}</div>
+           </div>
            <div className="row">
             <div className="col-sm-6"><label>Mat.Misuse</label></div>
             <div className="col-sm-6 strong">{(curState.matMisuse == "1")? "Yes":"No"}</div>
