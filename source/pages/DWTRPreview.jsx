@@ -379,7 +379,7 @@ class DWTRPreview extends React.Component {
     const { userType } = this.props;
     return (
       <div className="container work-arr-container">
-       {/* <br />
+       {/* <br /> 
           <div className="col-sm-6">
             <CustomButton
               bsStyle="primary"

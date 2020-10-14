@@ -259,7 +259,7 @@ class DailyWorkTrackPreview extends Component{
           method: 'post',
           mode:'cors',
           headers: {'Content-Type':'text/plain'},
-          body: JSON.stringify(newObj)
+          body: JSON.stringify(newObj) 
         })
         .then(response =>response.json())
         .then((res) => {
