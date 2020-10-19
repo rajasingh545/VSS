@@ -355,7 +355,7 @@ export default class WorkArrangementList extends React.Component {
             <div className="col-xs-2">&nbsp;</div>
           </div>
         )}
-        {this.props.userType == 1 && (
+        {(
           <div className="row">
             <div className="col-xs-8">
               <Dropdown
@@ -397,7 +397,7 @@ export default class WorkArrangementList extends React.Component {
           {listingDetails && loading == false && this.Listings(listingDetails)}
         </div>
         <div>
-          {this.state.showSubButton && this.state.requestType !== "1" && (
+          {this.state.showSubButton && this.state.requestType != "1" && (
             <div className="col-sm-3">
               <br />{" "}
               <CustomButton

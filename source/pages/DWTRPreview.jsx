@@ -74,6 +74,7 @@ class DWTRPreview extends React.Component {
   componentWillMount() {
     const { dispatch } = this.props;
     this.state.userType = this.props.userType;
+    this.state.requestType = this.props.requestType;
     this.state.userId = this.props.userId;
     dispatch(requestDetails(this.state));
     if (this.props.match.params && this.props.match.params.id) {
@@ -395,8 +396,9 @@ class DWTRPreview extends React.Component {
 
         <DailyWorkTrackPreview
           curState={this.state}
-          userType={this.props.userType}
+          userType={this.props.userType}          
           history={this.props.history}
+          requestType={this.props.requestType}
         />
       </div>
     );

@@ -16,6 +16,7 @@ class DailyWorkTrackPreview extends Component{
         modalShowImage:"",
         show:false,
        }
+    
      }
     
     setItemList = (itemList)=>{
@@ -276,15 +277,16 @@ class DailyWorkTrackPreview extends Component{
    
    render(){
        const {curState, userType,show,modalShowImage} = this.props;
-
        const imgURL = CONFIG.CONTEXT;
        console.log("baseurl",imgURL);
        console.log("image upload props",this.props);
+       console.log(sessionStorage.getItem("requestType"));
        return(
        <div>
            <br />
+          
            <div className="container work-arr-container">
-           {userType == 1 &&
+           {(userType == 1 || sessionStorage.getItem("requestType") == "2" ) && 
             <div className="col-sm-6"><CustomButton bsStyle="primary"  id="draft" type="submit" onClick={()=>this.edit(1)}>Edit</CustomButton> </div>
            }
    <br /><br />
