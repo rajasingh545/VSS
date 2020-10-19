@@ -281,8 +281,10 @@ export default class AttendanceList extends React.Component {
                 jsonValue.reason = "Early Start";
               } else if (wl.workerlist[j].reason == 7) {
                 jsonValue.reason = "OT";
-              } else {
+              } else if (wl.workerlist[j].reason != 0){
                 jsonValue.reason = "Others";
+              }else{
+                jsonValue.reason = "";
               }
               wl.paragraph +=
                 "<p> " +
@@ -290,10 +292,13 @@ export default class AttendanceList extends React.Component {
                 " -  (" +
                 wl.workerlist[j].inTime +
                 " / " +
-                wl.workerlist[j].outTime +
-                ") - " +
-                jsonValue.reason +
-                "</p> </br> ";
+                wl.workerlist[j].outTime+")";
+                if (jsonValue.reason != "")
+                {
+                  wl.paragraph +=" - " +
+                jsonValue.reason;                
+                }
+                wl.paragraph +="</p> </br> ";;
               wl.finalRenderList.push(jsonValue);
             }
           }
