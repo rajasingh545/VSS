@@ -52,6 +52,7 @@ export default class DailyWorkTrackList extends React.Component {
     dispatch(requestPostClear());
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
+    this.state.requestType = this.props.requestType;
     //  if(!this.props.requestDet){
     dispatch(requestDetails(this.state));
     //  }
@@ -69,6 +70,7 @@ export default class DailyWorkTrackList extends React.Component {
     }
   }
   componentWillUnmount() {
+   
     const { dispatch } = this.props;
     dispatch(clearListing());
   }
@@ -90,6 +92,7 @@ export default class DailyWorkTrackList extends React.Component {
         startDate1: dateSelected,
       });
       this.state.startDate = actualDate;
+      this.state.requestType=requestType;
       this.handleRequestType(requestType, [], "", requestTypeTitle);
     }
   }
@@ -99,6 +102,7 @@ export default class DailyWorkTrackList extends React.Component {
     this.props.history.push("/DWTRPreview/" + requestId);
     }
     console.log("this.state.requestType"+this.state.requestType);
+    sessionStorage.setItem("requestType",this.state.requestType);
     if(this.state.userType == 5 && this.state.requestType == 2)
     {
     this.props.history.push("/DWTRPreview/" + requestId);
