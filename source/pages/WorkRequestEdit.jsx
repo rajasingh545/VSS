@@ -993,6 +993,7 @@ class WorkRequestEdit extends React.Component {
             contractSize = {this.state.contractSize}
             contractDesc = {this.state.desc}
             sizeList = {this.state.sizeList}
+            cType = { this.state.cType }
           />
         </Popup>
 

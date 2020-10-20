@@ -100,7 +100,7 @@ export default class SizeWorkRequest extends Component {
 
     const enteredSize = this.state.L * this.state.H * this.state.W * this.state.set;
 
-    if(enteredSize > this.state.remainingSize){
+    if(enteredSize > this.state.remainingSize && this.props.cType == 1){
       toast.error('Entered size can not be more that remaining size', { autoClose: 3000 });
       return false;
     }

@@ -819,6 +819,7 @@ class WorkRequest extends React.Component {
             contractId={this.state.value_item}
             contractSize={this.state.contractSize}
             contractDesc={this.state.desc}
+            cType = { this.state.cType }
           />
         </Popup>
 
