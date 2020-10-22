@@ -32,7 +32,8 @@ export default class WorkArrangementList extends React.Component {
     let arr = [];
     arr[0] = { id: "1", name: "Submitted" };
     arr[1] = { id: "2", name: "Draft" };
-
+   
+    
     this.state = {
       requestCode: 2,
       requestStatus: 2,
@@ -355,7 +356,7 @@ export default class WorkArrangementList extends React.Component {
             <div className="col-xs-2">&nbsp;</div>
           </div>
         )}
-        {(
+        {this.state.userType == 1 && (
           <div className="row">
             <div className="col-xs-8">
               <Dropdown
