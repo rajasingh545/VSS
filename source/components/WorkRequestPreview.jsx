@@ -19,6 +19,7 @@ class WorkRequestPreview extends Component {
       imageShow:false,
       modalShowImage: '',
       isLoading: false,
+      drawingLoading:false,
     };
   }
 
@@ -363,6 +364,7 @@ class WorkRequestPreview extends Component {
 
     drawingFilepload = (e) => {
       const { curState } = this.state;
+      this.setState({drawingLoading:true});
       e.preventDefault();
       const drawformData = new FormData();
       drawformData.append("uniqueId", curState.userId);
@@ -379,11 +381,13 @@ class WorkRequestPreview extends Component {
         .then((response) => response.json())
         .then((res) => {
           if (res.responsecode === 1) {
-            this.setState({drawingImage: res.imageurl});
+            this.setState({drawingImage: res.imageurl,drawingLoading:false});
             toast.success("Drwaing Image upload Successfully", { autoClose: 3000 });
           } else {
             console.log(res.response);
-            toast.error("Drawing Image upload failed.Please try again!", { autoClose: 3000 });
+            this.setState({drawingLoading:false});
+            toast.error(res.response, { autoClose: 3000 });
+            //toast.error("Drawing Image upload failed.Please try again!", { autoClose: 3000 });
           }
         });
     }
@@ -418,7 +422,7 @@ class WorkRequestPreview extends Component {
   };
 
   render() {
-    const { curState, images, isLoading, drawingImage,modalShowImage } = this.state;
+    const { curState, images, isLoading, drawingImage,modalShowImage,drawingLoading } = this.state;
     console.log("before submission",curState);
     const imgURL = API.CONTEXT;
     return (
@@ -466,6 +470,7 @@ class WorkRequestPreview extends Component {
               <label>DrawingImage:</label>
             </div>
             <div className="col-sm-6">
+            {drawingLoading && <p style={{ color: "green" }}>Loading...</p>}
                 <input
                   type="file"
                   id="drawingAttachedFiles"
