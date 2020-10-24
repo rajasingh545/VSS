@@ -262,8 +262,8 @@ class WorkRequest extends React.Component {
           toast.success("Drwaing Image upload Successfully", { autoClose: 3000 });
         } else {
           this.setState({isLoading:false});
-          //toast.error(res.response, { autoClose: 3000 });
-          toast.error("Drwaing Image upload failed. Please try again!", { autoClose: 3000 });
+          toast.error(res.response, { autoClose: 3000 });
+          //toast.error("Drwaing Image upload failed. Please try again!", { autoClose: 3000 });
         }
       });
   };  
