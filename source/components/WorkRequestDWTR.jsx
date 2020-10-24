@@ -14,8 +14,12 @@ export default class WorkRequestDWTR extends Component {
       imagePush: [1],
       isLoading: false,
     };
-  }
+    sessionStorage.setItem("deleteCount",0);
 
+  }
+  componentDidMount() {
+    sessionStorage.setItem("deleteCount",0);
+  };
   selectImages = (event) => {
     this.setState({isLoading:true});
     const ext = event.target.files[0].name.split(".");
@@ -128,7 +132,12 @@ export default class WorkRequestDWTR extends Component {
         pendingWork = totalWork - workDone,
         msg = "",
         msg1 = "";
+        if(!isNaN(sessionStorage.getItem("deleteCount")))
+        {
+          workDone=workDone-sessionStorage.getItem("deleteCount");
+        }
       if (pendingWork < totalTodayWork) {
+        console.log(sessionStorage.getItem("deleteCount"));
         msg = "Available volume is " + pendingWork;
         toast.error(msg, { autoClose: 3000 });
         return false;

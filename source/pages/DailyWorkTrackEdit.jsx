@@ -572,7 +572,7 @@ class DailyWorkTrackEdit extends React.Component {
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success("DWTR updated Successfully", { autoClose: 3000 });
-
+      sessionStorage.setItem("deleteCount",0);
       setTimeout(() => {
         this.props.history.push("/DailyWorkTrackList");
       }, 3000);
@@ -665,7 +665,7 @@ class DailyWorkTrackEdit extends React.Component {
   deleteTeamItem = (index) => {
     if (this.teamList.length === 1) {
       this.teamList = [];
-    } else {
+    } else {     
       this.teamList = this.teamList.filter((item) => item.uniqueId !== index);
     }
     this.setState({ teamList: this.teamList });
@@ -715,15 +715,24 @@ class DailyWorkTrackEdit extends React.Component {
   };
 
   deleteWorkRequest = (index, subdivision) => {
+    var delCount = this.itemList[index].H*this.itemList[index].L*this.itemList[index].W*this.itemList[index].set;
+    //console.log("this.state.deleteCount ",sessionStorage.getItem("deleteCount"));
+    console.log(sessionStorage.getItem("deleteCount"));
+    if(sessionStorage.getItem("deleteCount") != 'undefined'  && !isNaN(sessionStorage.getItem("deleteCount")))
+    {
+      console.log("entered");
+      delCount=parseInt(sessionStorage.getItem("deleteCount"))+delCount;
+    }
     if (this.itemList.length === 1) {
       this.itemList = [];
     } else {
       this.itemList.splice(index, 1);
-    }
-
+    }    
     this.teamList = this.teamList.filter(
       (item) => item.subdivision !== subdivision
     );
+     
+    
     this.materialList = this.materialList.filter(
       (item) => item.subdivision !== subdivision
     );
@@ -731,6 +740,9 @@ class DailyWorkTrackEdit extends React.Component {
     this.setState({ itemList: this.itemList });
     this.setState({ teamList: this.teamList });
     this.setState({ materialList: this.materialList });
+    //this.setState({deleteCount:delCount});
+    console.log(delCount);
+    sessionStorage.setItem("deleteCount", delCount);
   };
 
   displayWorkRequestList = (data) => {
@@ -919,6 +931,7 @@ class DailyWorkTrackEdit extends React.Component {
             workStatus={this.state.workStatus}
             handleClose={this.displayWorkRequestPopup}
             handleSubmit={this.addWorkRequest}
+            deleteCount={this.props.deleteCount}
           />
         </Popup>
         {this.state.workRequests.length > 0 && this.state.cType == 1 && (
