@@ -197,6 +197,7 @@ export default class WorkArrangementList extends React.Component {
     }
   };
   onStartDateChange = (e) => {
+    console.log('work arrangement date selected is '+e.format("YYYY/MM/DD"));
     const { dispatch, userType } = this.props;
     if (e != null) {
       this.setState({
