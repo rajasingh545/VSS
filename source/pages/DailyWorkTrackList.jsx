@@ -225,6 +225,7 @@ export default class DailyWorkTrackList extends React.Component {
     }
   };
   onStartDateChange = (e) => {
+    console.log('Date selected '+e.format("YYYY/MM/DD"));
     const { dispatch } = this.props;
     if (e != null) {
       this.setState({

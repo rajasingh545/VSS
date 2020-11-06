@@ -46,7 +46,7 @@ export default class Home extends Component {
       userType, requestDet
     } = this.props;
     const {listingDetails} = this.state;
-// console.log("usertype", userType);
+ console.log("Welcome to the Vinayak Application ");
 const {loading} = this.props;
   
 let loadingurl = DOMAIN_NAME+"/assets/img/loading.gif";
