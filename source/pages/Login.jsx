@@ -88,7 +88,7 @@ componentWillReceiveProps(nextProps){
                         <input type="password" className="form-control" value={password} onChange={this.setPassword} id="txtPwd" name="txtPwd" placeholder="Password" />
                     </div>
                    
-                    <Button bsStyle="primary" id="login" type="submit" onClick={this.handleLogin}>{loading === true ? "Loading ..." : "Login"}</Button>
+                    <Button bsStyle="primary" id="login" type="submit" onClick={this.handleLogin}>{loading === true ? "Loading ..." : "Login Here"}</Button>
                 </div>
        
       </div>
