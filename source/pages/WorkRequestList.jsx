@@ -198,7 +198,7 @@ export default class WorkRequestList extends React.Component {
           "-WR-" +
           data.workReqCount;
         //("0000" + data.workRequestId).substring(data.workRequestId.length);
-
+        sessionStorage.setItem("wrstr",wrstr);
         data.Title =
           wrstr +
           " " +
