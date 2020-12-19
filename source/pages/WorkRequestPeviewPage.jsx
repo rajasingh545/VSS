@@ -50,6 +50,7 @@ class WorkRequestPreviewPage extends React.Component {
     dispatch(requestDetails(this.state));
     if (this.props.match.params && this.props.match.params.id) {
       this.state.listingId = this.props.match.params.id;
+      this.state.listingno=sessionStorage.getItem("wrstr");
       this.state.requestCode = 16;
       dispatch(workRequestPost(this.state));
     }
@@ -413,7 +414,7 @@ class WorkRequestPreviewPage extends React.Component {
             <br />
             <CustomButton bsStyle="secondary">
               <a
-                href={`${CONTEXT}/workrequestpdf.php?workrequestid=${this.state.listingId}`}
+                href={`${CONTEXT}/workrequestpdf.php?workrequestid=${this.state.listingId}&workrequstNumber=${this.state.listingno}`}
                 target="_blank"
               >
                 {" "}
