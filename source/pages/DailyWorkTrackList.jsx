@@ -152,7 +152,8 @@ export default class DailyWorkTrackList extends React.Component {
           " , " +
           data.createdByName +
           " , " +
-          moment(data.createdOn).format("DD-MM-YYYY HH:mm A");
+          moment(data.createdOn).format("DD-MM-YYYY HH:mm A")+" , " +
+          data.remarks;
         data.paragraph = "";
         let p = "";
 
@@ -171,6 +172,7 @@ export default class DailyWorkTrackList extends React.Component {
             p += "<p> " + _x.WR_text + " : " + _x.expanditems + " ;</p>  </br>";
           });
         }
+        
         data.paragraph += p;
         // console.log(data);
 
