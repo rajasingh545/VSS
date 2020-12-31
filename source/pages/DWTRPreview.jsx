@@ -107,7 +107,8 @@ class DWTRPreview extends React.Component {
 
       const requestDet = this.props.workRequestData.requestDetails;
       let requestItemsArr = this.props.workRequestData.requestItems;
-      const requestItems = requestItemsArr[requestItemsArr.length - 1];
+
+      const requestItems = requestItemsArr != null ? requestItemsArr[requestItemsArr.length - 1] : 0 ;
       let itemTitle = "Select WR #";
       let subdivisionTitle = "Select Sub Division";
       let subdivisiontype = "";
@@ -257,7 +258,7 @@ class DWTRPreview extends React.Component {
   }
   populateItemText = (requestItemsArr, requestDet) => {
     const items = [];
-    if (this.props.requestDet && this.props.requestDet.items) {
+    if (this.props.requestDet && this.props.requestDet.items && requestItemsArr != null) {
       requestItemsArr.map((item) => {
         const subdivisionTitle = getDetailsWithMatchedKeyObject(
           item.subDivisionId,

@@ -14,11 +14,11 @@ export default class WorkRequestDWTR extends Component {
       imagePush: [1],
       isLoading: false,
     };
-    sessionStorage.setItem("deleteCount",0);
+   // sessionStorage.setItem("deleteCount",0);
 
   }
   componentDidMount() {
-    sessionStorage.setItem("deleteCount",0);
+    //sessionStorage.setItem("deleteCount",0);
   };
   selectImages = (event) => {
     this.setState({isLoading:true});
@@ -116,8 +116,7 @@ export default class WorkRequestDWTR extends Component {
       }
 
       if (
-        typeof this.state.workstatus === "undefined" ||
-        this.state.workstatus == ""
+        typeof this.state.workstatus === "undefined" || this.state.workstatus == ""
       ) {
         toast.error("Please select work status", { autoClose: 3000 });
         return false;
@@ -132,14 +131,14 @@ export default class WorkRequestDWTR extends Component {
         pendingWork = totalWork - workDone,
         msg = "",
         msg1 = "";
-        if(!isNaN(sessionStorage.getItem("deleteCount")))
+        if(sessionStorage.getItem("totalTodayWork") != null && sessionStorage.getItem("totalTodayWork") != "undefined"  )
         {
-          workDone=workDone-sessionStorage.getItem("deleteCount");
+          totalTodayWork=sessionStorage.getItem("totalTodayWork")+totalTodayWork;
         }
-      if (pendingWork < totalTodayWork) {
-        console.log(sessionStorage.getItem("deleteCount"));
+        sessionStorage.setItem("totalTodayWork",totalTodayWork);
+        if (pendingWork < totalTodayWork) {
         msg = "Available volume is " + pendingWork;
-        toast.error(msg, { autoClose: 3000 });
+        toast.error(msg, { autoClose: 3000 });        
         return false;
       }
     }
@@ -170,7 +169,7 @@ export default class WorkRequestDWTR extends Component {
         uniqueId: this.state.uniqueId,
         wr_no: this.state.wrno,
         value_subdivision: this.state.subdivision,
-        text_subdivision: this.state.subdivision_text,
+       // text_subdivision: this.state.subdivision_text,
         L: this.state.L,
         H: this.state.H,
         W: this.state.W,
@@ -195,6 +194,7 @@ export default class WorkRequestDWTR extends Component {
       };
       console.log("add work request images",list);
       this.props.handleSubmit(list);
+      sessionStorage.removeItem("totalTodayWork");
     }
   };
 

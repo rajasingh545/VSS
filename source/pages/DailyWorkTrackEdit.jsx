@@ -147,7 +147,7 @@ class DailyWorkTrackEdit extends React.Component {
 
       const requestDet = this.props.workRequestData.requestDetails;
       let requestItemsArr = this.props.workRequestData.requestItems;
-      const requestItems = requestItemsArr[requestItemsArr.length - 1];
+      const requestItems = requestItemsArr != null ? requestItemsArr[requestItemsArr.length - 1] : 0;
       let itemTitle = "Select WR #";
       let subdivisionTitle = "Select Sub Division";
       let subdivisiontype = "";
@@ -318,7 +318,7 @@ class DailyWorkTrackEdit extends React.Component {
   };
   populateItemText = (requestItemsArr, requestDet) => {
     const items = [];
-    if (this.props.requestDet && this.props.requestDet.items) {
+    if (this.props.requestDet && this.props.requestDet.items && requestItemsArr != null) {
       requestItemsArr.map((item) => {
         const subdivisionTitle = getDetailsWithMatchedKeyObject(
           item.subDivisionId,
@@ -572,7 +572,7 @@ class DailyWorkTrackEdit extends React.Component {
       dispatch(workRequestPost(this.state));
       // this.setState({show:true, modalTitle:"Request Confirmation", modalMsg:"Work Arrangement Created Successfully"});
       toast.success("DWTR updated Successfully", { autoClose: 3000 });
-      sessionStorage.setItem("deleteCount",0);
+     // sessionStorage.setItem("deleteCount",0);
       setTimeout(() => {
         this.props.history.push("/DailyWorkTrackList");
       }, 3000);
@@ -592,12 +592,12 @@ class DailyWorkTrackEdit extends React.Component {
       return false;
     }
 
-    if (this.state.cType == 1) {
-      if (this.itemList.length === 0) {
+    /*if (this.state.cType == 1) {
+      /*if (this.itemList.length === 0) {
         toast.error("Please add work request", { autoClose: 3000 });
         return false;
       }
-    }
+    }*/
 
     if (this.state.matMisuse == 1 && !this.state.matPhotos) {
       toast.error("Material misuse photo is required", { autoClose: 3000 });
