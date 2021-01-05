@@ -12,7 +12,7 @@ export default class WorkRequestDWTR extends Component {
     this.state = {
       uniqueId: Date.now(),
       imagePush: [1],
-      isLoading: false,
+      isLoading: false,      
     };
    // sessionStorage.setItem("deleteCount",0);
 
@@ -121,26 +121,43 @@ export default class WorkRequestDWTR extends Component {
         toast.error("Please select work status", { autoClose: 3000 });
         return false;
       }
-      let totalTodayWork =
+       let totalTodayWork =
           Number(this.state.L) *
           Number(this.state.H) *
           Number(this.state.W) *
           Number(this.state.set),
-        totalWork = this.state.selectedArr.totalset,
-        workDone = this.state.selectedArr.workdonetotal,
-        pendingWork = totalWork - workDone,
+          totalWork = this.state.selectedArr.totalset,
+          workDone = this.state.selectedArr.workdonetotal,
+          pendingWork = totalWork - workDone,
         msg = "",
-        msg1 = "";
-        if(sessionStorage.getItem("totalTodayWork") != null && sessionStorage.getItem("totalTodayWork") != "undefined"  )
+        msg1 = "";    
+        console.log(this.props.itemList);
+        let h =0,l =0,w =0,set =0, todayPreWork=0;
+        for(let index=0;index<this.props.itemList.length;index++)
         {
-          totalTodayWork=sessionStorage.getItem("totalTodayWork")+totalTodayWork;
+          h=h+Number(this.props.itemList[index].H);
+          l=l+Number(this.props.itemList[index].L);
+          w=w+Number(this.props.itemList[index].W);
+          set=set+Number(this.props.itemList[index].set);
         }
-        sessionStorage.setItem("totalTodayWork",totalTodayWork);
-        if (pendingWork < totalTodayWork) {
+        todayPreWork=h*l*w*set;
+        console.log(h*l*w*set);
+        workDone=workDone+todayPreWork;
+        pendingWork = totalWork - workDone;
+        if (totalWork-pendingWork > 0) {
+        msg = "Available volume is " + pendingWork;
+        toast.error(msg, { autoClose: 3000 });        
+        return false;
+        
+      }
+
+      if(totalTodayWork+todayPreWork > totalWork)
+      {
         msg = "Available volume is " + pendingWork;
         toast.error(msg, { autoClose: 3000 });        
         return false;
       }
+     
     }
 
     if(!photo_1 && !photo_2 && !photo_3 && !photo_4 && !photo_5 && !photo_6 && !photo_7 && !photo_8 && !photo_9 && !photo_10){
@@ -194,7 +211,7 @@ export default class WorkRequestDWTR extends Component {
       };
       console.log("add work request images",list);
       this.props.handleSubmit(list);
-      sessionStorage.removeItem("totalTodayWork");
+    //  sessionStorage.removeItem("totalTodayWork");
     }
   };
 

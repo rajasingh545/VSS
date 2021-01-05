@@ -932,6 +932,7 @@ class DailyWorkTrackEdit extends React.Component {
             handleClose={this.displayWorkRequestPopup}
             handleSubmit={this.addWorkRequest}
             deleteCount={this.props.deleteCount}
+            itemList={this.state.itemList}
           />
         </Popup>
         {this.state.workRequests.length > 0 && this.state.cType == 1 && (
