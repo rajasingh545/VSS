@@ -133,6 +133,8 @@ export default class WorkRequestDWTR extends Component {
         msg1 = "";    
         console.log(this.props.itemList);
         let h =0,l =0,w =0,set =0, todayPreWork=0;
+        if(this.props.itemList != null && this.props.itemList != 'undefined')
+        {
         for(let index=0;index<this.props.itemList.length;index++)
         {
           h=h+Number(this.props.itemList[index].H);
@@ -140,6 +142,7 @@ export default class WorkRequestDWTR extends Component {
           w=w+Number(this.props.itemList[index].W);
           set=set+Number(this.props.itemList[index].set);
         }
+      }
         todayPreWork=h*l*w*set;
         console.log(h*l*w*set);
         workDone=workDone+todayPreWork;
