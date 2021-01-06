@@ -45,7 +45,7 @@ export default class WorkRequestDWTRPreview extends Component {
         key={index}
       >
         <div>
-          Sub Division : {item.text_subdivision}, Desc: {item.desc}
+         1 Sub Division : {item.text_subdivision}, Desc: {item.desc}
         </div>
 
         <div className="row " style={{ marginTop: "10px" }}>
