@@ -122,7 +122,8 @@ class DailyWorkTrack extends React.Component {
     //   nextProps.requestDet.assignedbasesupervisors == "yes"
     // ) {
     //   this.setState({ show1: true });
-    // }
+    // }    
+    console.log(nextProps);
     if (nextProps.requestDet && nextProps.requestDet.projects) {
       this.state.projects = nextProps.requestDet.projects;
       this.state.clients = nextProps.requestDet.clients;
@@ -144,8 +145,8 @@ class DailyWorkTrack extends React.Component {
           autoClose: 3000,
         });
       }
-    }
-
+    }  
+    
     if (nextProps.requestDet && nextProps.requestDet.supervisors) {
       this.setState({ supervisors: nextProps.requestDet.supervisors });
       this.setState({ basesupervisor: nextProps.requestDet.basesupervisor });
@@ -163,6 +164,12 @@ class DailyWorkTrack extends React.Component {
         "basesupervisor",
         nextProps.requestDet.basesupervisor[0].Name
       );
+    }
+    if(nextProps.responsecode == 0)
+    {
+      toast.error("No work requests available for this project and client", {
+        autoClose: 3000,
+      });
     }
   }
   selectImages = (event) => {
@@ -303,13 +310,13 @@ class DailyWorkTrack extends React.Component {
     const { dispatch } = this.props;
 
     const formValidation = this.validateForm();
-
+    
     if (formValidation == true) {
       this.state.requestCode = 17;
       this.state.listingstatus = status;
-
+      
       dispatch(workRequestPost(this.state));
-
+      
       toast.success("DWTR Created Successfully", { autoClose: 3000 });
 
       setTimeout(() => {
