@@ -128,39 +128,54 @@ export default class WorkRequestDWTR extends Component {
           Number(this.state.set),
           totalWork = this.state.selectedArr.totalset,
           workDone = this.state.selectedArr.workdonetotal,
+          workRequestTotal=this.state.selectedArr.workRequstTotal,
+          workDoneTotalForallSubset=this.state.selectedArr.workdonetotal,
           pendingWork = totalWork - workDone,
-        msg = "",
-        msg1 = "";    
-        console.log(this.props.itemList);
+          msg = "",
+          msg1 = "";    
+          console.log("workRequestTotal"+workRequestTotal);
+          console.log("workDoneTotalForallSubset"+workDoneTotalForallSubset);
         let h =0,l =0,w =0,set =0, todayPreWork=0;
         if(this.props.itemList != null && this.props.itemList != 'undefined')
         {
         for(let index=0;index<this.props.itemList.length;index++)
         {
-          h=h+Number(this.props.itemList[index].H);
-          l=l+Number(this.props.itemList[index].L);
-          w=w+Number(this.props.itemList[index].W);
-          set=set+Number(this.props.itemList[index].set);
+          todayPreWork=todayPreWork+Number(this.props.itemList[index].H)*Number(this.props.itemList[index].L)*Number(this.props.itemList[index].W)*+Number(this.props.itemList[index].set);
         }
       }
-        todayPreWork=h*l*w*set;
-        console.log(h*l*w*set);
+        console.log(todayPreWork);
+        if(todayPreWork > 0)
+        {
+          workDone=0;
+            
+        }
         workDone=workDone+todayPreWork;
         pendingWork = totalWork - workDone;
-        if (totalWork-pendingWork > 0) {
+        if (totalWork-pendingWork < 0) {
         msg = "Available volume is " + pendingWork;
         toast.error(msg, { autoClose: 3000 });        
         return false;
         
       }
-
+      console.log("workDone"+workDone);
+      console.log("todayPreWork"+todayPreWork);
       if(totalTodayWork+todayPreWork > totalWork)
       {
         msg = "Available volume is " + pendingWork;
         toast.error(msg, { autoClose: 3000 });        
         return false;
       }
-     
+      if(Number(workRequestTotal) < (Number(workDoneTotalForallSubset)+totalTodayWork)) 
+      {
+        let remDisplay=Number(workRequestTotal)-Number(workDoneTotalForallSubset);
+        if(remDisplay < 0)
+        {
+          remDisplay=0;
+        }
+        msg = "Available volume is " + remDisplay + ": Work request size defined is "+workRequestTotalq;
+        toast.error(msg, { autoClose: 3000 });        
+        return false;
+      }
     }
 
     if(!photo_1 && !photo_2 && !photo_3 && !photo_4 && !photo_5 && !photo_6 && !photo_7 && !photo_8 && !photo_9 && !photo_10){
