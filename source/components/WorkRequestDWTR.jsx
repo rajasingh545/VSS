@@ -129,7 +129,7 @@ export default class WorkRequestDWTR extends Component {
           totalWork = this.state.selectedArr.totalset,
           workDone = this.state.selectedArr.workdonetotal,
           workRequestTotal=this.state.selectedArr.workRequstTotal,
-          workDoneTotalForallSubset=this.state.selectedArr.workdonetotal,
+          workDoneTotalForallSubset=this.state.selectedArr.sumTotal,
           pendingWork = totalWork - workDone,
           msg = "",
           msg1 = "";    
@@ -172,7 +172,7 @@ export default class WorkRequestDWTR extends Component {
         {
           remDisplay=0;
         }
-        msg = "Available volume is " + remDisplay + ": Work request size defined is "+workRequestTotalq;
+        msg = "Available volume is " + remDisplay + ": Work request size defined is "+workRequestTotal;
         toast.error(msg, { autoClose: 3000 });        
         return false;
       }
@@ -204,7 +204,7 @@ export default class WorkRequestDWTR extends Component {
         uniqueId: this.state.uniqueId,
         wr_no: this.state.wrno,
         value_subdivision: this.state.subdivision,
-       // text_subdivision: this.state.subdivision_text,
+        text_subdivision: this.state.subdivision_text != null ? this.state.subdivision_text : "",
         L: this.state.L,
         H: this.state.H,
         W: this.state.W,
