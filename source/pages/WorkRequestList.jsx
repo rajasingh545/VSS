@@ -198,7 +198,7 @@ export default class WorkRequestList extends React.Component {
           "-WR-" +
           data.workReqCount;
         //("0000" + data.workRequestId).substring(data.workRequestId.length);
-        sessionStorage.setItem("wrstr",wrstr);
+        sessionStorage.setItem("wrstr","VSS-" + data.clientcode +"-" + data.projectcode + "-WR-");
         data.Title =
           wrstr +
           " " +
@@ -381,7 +381,7 @@ export default class WorkRequestList extends React.Component {
   };
   setPreview = () => {
     let contArr = [];
-    this.selectedIds.map((ind) => {
+    this.selectedIds.map((ind) => {      
       contArr.push(document.getElementById("elm_" + ind).innerHTML + "<br />");
     });
     this.setState({ show: true, modalCont: contArr.join("") });
