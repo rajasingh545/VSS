@@ -50,7 +50,19 @@ class WorkRequestPreviewPage extends React.Component {
     dispatch(requestDetails(this.state));
     if (this.props.match.params && this.props.match.params.id) {
       this.state.listingId = this.props.match.params.id;
-      this.state.listingno=sessionStorage.getItem("wrstr");
+      if(this.state.listingId.length >= 3)
+      {
+        this.state.zerostr="";
+      }
+      if(this.state.listingId.length == 2)
+      {
+        this.state.zerostr="0";
+      }
+      if(this.state.listingId.length == 1)
+      {
+        this.state.zerostr="00";
+      }
+      this.state.listingno=sessionStorage.getItem("wrstr")+this.state.zerostr+this.state.listingId;
       this.state.requestCode = 16;
       dispatch(workRequestPost(this.state));
     }
