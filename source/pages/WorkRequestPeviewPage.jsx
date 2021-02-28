@@ -426,7 +426,7 @@ class WorkRequestPreviewPage extends React.Component {
             <br />
             <CustomButton bsStyle="secondary">
               <a
-                href={`${CONTEXT}/workrequestpdf.php?workrequestid=${this.state.listingId}&workrequstNumber=${this.state.listingno}`}
+                href={`${CONTEXT}/workrequestpdf.php?workrequestid=${this.state.listingId}&workrequstNumber=${sessionStorage.getItem("pdfTitle")}`}
                 target="_blank"
               >
                 {" "}
