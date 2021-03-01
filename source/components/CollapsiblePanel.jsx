@@ -20,12 +20,16 @@ export default class AccordionExampleFluid extends Component {
     const newIndex = activeIndex === index ? -1 : index;
 
     this.setState({ activeIndex: newIndex });
+    
   };
-  handleClick1 = (workArrangementId, projectId) => {
+  handleClick1 = (workArrangementId, projectId,title) => {
+    //console.log("tile"+title.substring(0,title.indexOf(" ")));
+    sessionStorage.setItem("pdfTitle",title.substring(0,title.indexOf(" ")));
     this.props.redirectView(workArrangementId, projectId);
   };
   // eslint-disable-next-line consistent-return
   render() {
+    
     const { activeIndex, workArrangementList } = this.state;
     // console.log(workArrangementList);
 
@@ -47,6 +51,7 @@ export default class AccordionExampleFluid extends Component {
           </div>
         );
       } else if (workArrangementList.length > 0) {
+        
         return (
           <Accordion fluid styled>
             {workArrangementList.map((listData, index) => (
@@ -68,7 +73,7 @@ export default class AccordionExampleFluid extends Component {
                         : listData.worktrackId
                         ? listData.worktrackId
                         : listData.workRequestId,
-                      listData.projectId
+                      listData.projectId,listData.Title
                     )
                   }
                 >
@@ -77,7 +82,10 @@ export default class AccordionExampleFluid extends Component {
                   />
                 </Accordion.Content>
               </div>
-            ))}
+              
+            ))
+            
+            }
           </Accordion>
         );
       }
