@@ -184,10 +184,10 @@ class AttedenceEdit extends React.Component {
         };
       }
     });
-    if (finalValuesArr.length == 0) {
+    /*if (finalValuesArr.length == 0) {
       toast.error("Please make any one change to submit", { autoClose: 3000 });
       return false;
-    }
+    }*/
     if (this.errorIdArr.length > 0) {
       toast.error("Please select the reason to submit", { autoClose: 3000 });
       return false;

@@ -38,9 +38,36 @@ export default class DailyWorkTrackList extends React.Component {
       projectId: "",
       options: arr,
       startDate1: moment(),
+      endDate1: moment(),
       show: false,
       modalCont: "",
       requestTypeTitle: "Select Status",
+      projects: [],
+      clients: [],
+      supervisors: [],
+      requestJsonData: {
+        startDate: "",
+        startDate1: moment(new Date()),
+        endDate: "",
+        endDate1: moment(new Date()),
+        requestData: {},
+        selectedProjectData: {
+          projectId: "0",
+          projectName: "Select All",
+          selected: true,        
+        },
+        selectedClientData: {
+          clientId: "0",
+          clientName: "Select All",
+          projects: "0",
+          selected: true,
+        },selectedSupervisorData:{
+          userId: "0",
+          userName: "Select All",
+          supervisors: "0",
+          selected: true,
+        },
+      }
     };
 
     this.selectedIds = [];
@@ -53,6 +80,10 @@ export default class DailyWorkTrackList extends React.Component {
     this.state.userType = this.props.userType;
     this.state.userId = this.props.userId;
     this.state.requestType = this.props.requestType;
+    this.state.clientName = this.props.clientName;
+    this.state.projectName = this.props.projectName;
+    this.state.supervisorName = this.props.supervisorName;
+
     //  if(!this.props.requestDet){
     dispatch(requestDetails(this.state));
     //  }
@@ -68,6 +99,34 @@ export default class DailyWorkTrackList extends React.Component {
       // this.initialItems = nextProps.workRequestData;
       this.setState({ workRequestData: nextProps.workRequestData });
     }
+
+    let projects = requestDet ? [...requestDet.projects] : [],
+      clients = requestDet ? [...requestDet.clients] : [],
+      defaultProject = {
+        endTime: "",
+        projectId: "0",
+        projectName: "Select All",
+        selected: true,
+        startTime: "",
+      },
+      defaultClient = {
+        clientId: "0",
+        clientName: "Select All",
+        projects: "0",
+        selected: true,
+      };
+    projects.splice(0, 0, defaultProject);
+    clients.splice(0, 0, defaultClient);
+    this.setState({ listingDetails: nextProps.listingDetails });
+    this.setState({ requestDet: requestDet });
+    this.setState({ projects: nextProps.requestDet.projects });
+    this.setState({ clients: nextProps.requestDet.clients });
+    this.setState({supervisors: nextProps.requestDet.supervisorsList  });
+    this.state.supervisors = nextProps.requestDet.supervisorsList;
+    this.state.projects = nextProps.requestDet.projects;
+    this.state.clients = nextProps.requestDet.clients;
+
+
   }
   componentWillUnmount() {
    
@@ -76,6 +135,9 @@ export default class DailyWorkTrackList extends React.Component {
   }
   componentDidMount() {
     let requestType = sessionStorage.getItem("requestType");
+    let clientId = sessionStorage.getItem("clientId");
+    let projectId = sessionStorage.getItem("projectId");
+    let userId = sessionStorage.getItem("userId");
     let requestTypeTitle = sessionStorage.getItem("requestTypeTitle");
     let selectedDate = moment();
     if (sessionStorage.getItem("dateSelected")) {
@@ -246,6 +308,44 @@ export default class DailyWorkTrackList extends React.Component {
       dispatch(workRequestPost(this.state));
     }
   };
+
+  onEndDateChange = (e) => {
+    console.log('Date selected '+e.format("YYYY/MM/DD"));
+    const { dispatch } = this.props;
+    if (e != null) {
+      this.setState({
+        endDate: e.format("YYYY/MM/DD"),
+        endDate1: e,
+      });
+      sessionStorage.setItem("dateSelected", e.format("YYYY/MM/DD"));
+    } else {
+      this.setState({
+        endDate: "",
+        endDate1: "",
+      });
+    }
+    this.state.endDate = e.format("YYYY/MM/DD");
+    if (this.state.requestType) {
+      dispatch(workRequestPost(this.state));
+    }
+  };
+
+  onSelectDropdownClient = (key, list, stateKey, title, selectedData) => {
+    let { requestJsonData } = this.state;
+    requestJsonData.selectedClientData = selectedData;
+    this.setState({ requestJsonData });
+  };
+  
+  onSelectDropdownProject = (key, list, stateKey, title, selectedData) => {
+    let { requestJsonData } = this.state;
+    requestJsonData.selectedProjectData = selectedData;
+    this.setState({ requestJsonData });
+  };
+  onSelectDropdown = (key, list, stateKey, title, selectedData) => {
+    let { requestJsonData } = this.state;
+    requestJsonData.selectedSupervisorData = selectedData;
+    this.setState({ requestJsonData });
+  };
   setPreview = () => {
     let contArr = [];
     this.selectedIds.map((ind) => {
@@ -255,15 +355,33 @@ export default class DailyWorkTrackList extends React.Component {
   };
 
   handleRequestType = (key, list, stateKey, title) => {
-    const { dispatch, userType, userId } = this.props;
+    const { dispatch, userType, userId,projectId,clientId } = this.props;
 
     this.state.requestType = key;
     this.state.requestCode = 18;
     this.state.userType = userType;
     this.state.userId = userId;
-
-    // console.log("this.state", this.state)
+    this.state.projectId = projectId;
+    this.state.clientId = clientId;
+    if(this.state.requestJsonData != null && this.state.requestJsonData != undefined)
+    {
+      if(this.state.requestJsonData.selectedClientData.clientId === "0")
+      {
+      toast.error("Please select Client", { autoClose: 2000 });
+      }else if(this.state.requestJsonData.selectedProjectData.projectId === "0")
+      {
+      toast.error("Please select Project", { autoClose: 2000 });
+      }else if(this.state.requestJsonData.selectedSupervisorData.userId === "0")
+      {
+      toast.error("Please select Supervisor", { autoClose: 2000 });
+      }else{
+        console.log("this.state", this.state)
+       dispatch(workRequestPost(this.state));
+       }
+    }else{
+     console.log("this.state", this.state)
     dispatch(workRequestPost(this.state));
+    }
   };
 
   setProjectId = (e) => {
@@ -291,7 +409,7 @@ export default class DailyWorkTrackList extends React.Component {
   };
   render() {
     const { userType, requestDet, workRequestData } = this.props;
-    const { requestType } = this.state;
+    const { requestType , projects, clients,clientId, projectNo,userId} = this.state;
     // console.log("options", options);
     const { loading } = this.props;
 
@@ -302,7 +420,7 @@ export default class DailyWorkTrackList extends React.Component {
         <br />
 
         <div className="row">
-          <div className="col-xs-8">
+        <div className="col-xs-2">
             <DatePicker
               selected={this.state.startDate1}
               className=" form-control"
@@ -311,12 +429,56 @@ export default class DailyWorkTrackList extends React.Component {
               name="startDate"
               dateFormat="DD-MM-YYYY"
               locale="UTC"
+            /> 
+            </div>
+            <div className="col-xs-2">
+            <DatePicker
+              selected={this.state.endDate1}
+              className=" form-control"
+              isClearable={false}
+              onChange={this.onEndDateChange}
+              name="endDate"
+              dateFormat="DD-MM-YYYY"
+              locale="UTC"
+            />
+            </div>
+             <div className="col-xs-2">
+            <Dropdown
+              title="Select Client"
+              name="clientName"
+              keyName="clientId"
+              stateId="status"
+              list={clients}
+              value={clientId}
+              resetThenSet={this.onSelectDropdownClient}
             />
           </div>
-          <div className="col-xs-2">&nbsp;</div>
+
+          <div className="col-xs-2">
+            <Dropdown
+              title="Select Project"
+              name="projectName"
+              keyName="projectId"
+              stateId="status"
+              list={projects}
+              value={projectNo}              
+              resetThenSet={this.onSelectDropdownProject}
+            />
+          </div>
+          <div className="col-xs-2">
+          <Dropdown
+              title="Select Supervisor"
+              name="Name"
+              keyName="userId"
+              stateId="supervisors"              
+              list={this.state.supervisors}
+              value={userId}
+              resetThenSet={this.onSelectDropdown}
+            />
         </div>
-        <div className="row">
-          <div className="col-xs-8">
+
+          <div className="col-xs-2">
+          
             <Dropdown
               title={this.state.requestTypeTitle}
               name="name"
@@ -326,7 +488,11 @@ export default class DailyWorkTrackList extends React.Component {
               value={requestType}
               resetThenSet={this.handleRequestType}
             />
+          
           </div>
+        </div>
+        <div className="row">
+          
           <div className="col-xs-2">&nbsp;</div>
         </div>
 
