@@ -1,5 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
+import { Button } from "react-bootstrap";
 import Dropdown from "../components/Dropdown";
 import { DOMAIN_NAME } from "../config/api-config";
 import baseHOC from "./baseHoc";
@@ -346,6 +347,11 @@ export default class DailyWorkTrackList extends React.Component {
     requestJsonData.selectedSupervisorData = selectedData;
     this.setState({ requestJsonData });
   };
+  onSelectStatus = (key, list, stateKey, title, selectedData) => {
+    let { requestJsonData } = this.state;
+    requestJsonData.selectedStatusData = selectedData;
+    this.setState({ requestJsonData });
+  };
   setPreview = () => {
     let contArr = [];
     this.selectedIds.map((ind) => {
@@ -357,12 +363,13 @@ export default class DailyWorkTrackList extends React.Component {
   handleRequestType = (key, list, stateKey, title) => {
     const { dispatch, userType, userId,projectId,clientId } = this.props;
 
-    this.state.requestType = key;
+   // this.state.requestType = key;
     this.state.requestCode = 18;
     this.state.userType = userType;
     this.state.userId = userId;
     this.state.projectId = projectId;
     this.state.clientId = clientId;
+    //this.state.requestType = requestType;
     if(this.state.requestJsonData != null && this.state.requestJsonData != undefined)
     {
       if(this.state.requestJsonData.selectedClientData.clientId === "0")
@@ -373,14 +380,15 @@ export default class DailyWorkTrackList extends React.Component {
       toast.error("Please select Project", { autoClose: 2000 });
       }else if(this.state.requestJsonData.selectedSupervisorData.userId === "0")
       {
-      toast.error("Please select Supervisor", { autoClose: 2000 });
-      }else{
+      toast.error("Please select Supervisor", { autoClose: 2000 });     
+      }else if(this.state.requestJsonData.selectedStatusData === undefined)
+      {
+      toast.error("Please select Status", { autoClose: 2000 });
+      }
+      else{
         console.log("this.state", this.state)
        dispatch(workRequestPost(this.state));
        }
-    }else{
-     console.log("this.state", this.state)
-    dispatch(workRequestPost(this.state));
     }
   };
 
@@ -459,7 +467,7 @@ export default class DailyWorkTrackList extends React.Component {
               title="Select Project"
               name="projectName"
               keyName="projectId"
-              stateId="status"
+              stateId="projects"
               list={projects}
               value={projectNo}              
               resetThenSet={this.onSelectDropdownProject}
@@ -486,11 +494,21 @@ export default class DailyWorkTrackList extends React.Component {
               stateId="status"
               list={this.state.options}
               value={requestType}
-              resetThenSet={this.handleRequestType}
+              resetThenSet={this.onSelectStatus}             
             />
           
           </div>
         </div>
+
+        <div className="col-xs-4">
+            <Button
+              bsStyle="primary"
+              type="submit"
+              onClick={this.handleRequestType}
+            >
+              {loading === true ? "Loading ..." : "Search"}
+            </Button>
+          </div>
         <div className="row">
           
           <div className="col-xs-2">&nbsp;</div>
