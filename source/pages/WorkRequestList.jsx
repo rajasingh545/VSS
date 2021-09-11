@@ -9,6 +9,7 @@ import {
   requestDetails,
   workRequestPost,
   requestPostClear,
+  workRequestSumaryExport,
   listigDetails,
   clearListing,
 } from "actions/workArrangement.actions";
@@ -342,6 +343,45 @@ export default class WorkRequestList extends React.Component {
     requestJsonData.selectedClientData = selectedData;
     this.setState({ requestJsonData });
   };
+
+  onExportHandler = () => {
+    const { dispatch } = this.props;
+    let {
+        requestCode,
+        requestJsonData,
+        startDate1,
+        userId,
+        userType,
+      } = this.state,
+      JSONData = {};
+    JSONData.requestCode = 31;
+    JSONData.requestJsonData = requestJsonData;
+    JSONData.startDate1 = startDate1;
+    JSONData.userId = userId;
+    JSONData.userType = userType;
+    if (JSONData.requestJsonData.startDate === "") {
+      JSONData.requestJsonData.startDate = moment(new Date()).format(
+        "YYYY/MM/DD"
+      );
+    }
+    if (JSONData.requestJsonData.endDate === "") {
+      JSONData.requestJsonData.endDate = moment(new Date()).format(
+        "YYYY/MM/DD"
+      );
+    }
+    if (
+      Number(moment(new Date(requestJsonData.startDate1)).format("YYYYMMDD")) >
+      Number(moment(new Date(requestJsonData.endDate1)).format("YYYYMMDD"))
+    ) {
+      toast.error("Please select correct date", { autoClose: 2000 });
+    }
+    if (JSONData.requestJsonData.requestData.id === undefined) {
+      toast.error("Please select Status", { autoClose: 2000 });
+    } else {
+      dispatch(workRequestSumaryExport(JSONData));
+    }
+  }
+
   onSearchHandle = () => {
     const { dispatch } = this.props;
     let {
@@ -522,6 +562,15 @@ export default class WorkRequestList extends React.Component {
               onClick={this.onSearchHandle}
             >
               {loading === true ? "Loading ..." : "Search"}
+            </Button>
+          </div>
+          <div className="col-xs-4">
+            <Button
+              bsStyle="success"
+              type="submit"
+              onClick={this.onExportHandler}
+            >
+              {loading === true ? "Loading ..." : "Export"}
             </Button>
           </div>
         </div>
